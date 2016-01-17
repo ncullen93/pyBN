@@ -1,0 +1,48 @@
+{
+    "V": ["Burglary", "Earthquake", "Alarm", "JohnCalls", "MaryCalls"],
+    "E": [["Burglary", "Alarm"],
+        ["Earthquake", "Alarm"],
+        ["Alarm", "JohnCalls"],
+        ["Alarm", "MaryCalls"]],
+    "Vdata": {
+        "Burglary": {
+            "numoutcomes": 2,
+            "vals": ["No", "Yes"],
+            "parents": [],
+            "children": ["Alarm"],
+            "cprob": [0.999,0.001]
+        },
+
+        "Earthquake": {
+            "numoutcomes": 2,
+            "vals": ["No", "Yes"],
+            "parents": [],
+            "children": ["Alarm"],
+            "cprob": [0.998,0.002]
+        },
+
+        "Alarm": {
+            "numoutcomes": 2,
+            "vals": ["No","Yes"],
+            "parents": ["Burglary", "Earthquake"],
+            "children": ["JohnCalls","MaryCalls"],
+            "cprob": [[0.999,0.001],[0.71,0.29],[0.06,0.94],[0.05,0.95]]
+        },
+
+        "JohnCalls": {
+            "numoutcomes": 2,
+            "vals": ["No","Yes"],
+            "parents": ["Alarm"],
+            "children": [],
+            "cprob": [[0.95,0.05],[0.1,0.9]]
+        },
+
+        "MaryCalls": {
+            "numoutcomes": 2,
+            "vals": ["No", "Yes"],
+            "parents": ["Alarm"],
+            "children": [],
+            "cprob":  [[0.99,0.01],[0.3,0.7]]
+        }
+    }
+}

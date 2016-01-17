@@ -1,0 +1,134 @@
+{
+  "Vdata": {
+    "lie": {
+      "vals": [
+        "yes", 
+        "no"
+      ], 
+      "parents": [], 
+      "cprob": [
+        0.05, 
+        0.95
+      ], 
+      "numoutcomes": 2, 
+      "children": [
+        "personal_action"
+      ]
+    }, 
+    "draw": {
+      "vals": [
+        "red", 
+        "blue"
+      ], 
+      "parents": [], 
+      "cprob": [
+        0.33, 
+        0.67
+      ], 
+      "numoutcomes": 2, 
+      "children": [
+        "personal_action"
+      ]
+    }, 
+    "personal_action": {
+      "vals": [
+        "red", 
+        "blue"
+      ], 
+      "parents": [
+        "draw", 
+        "lie"
+      ], 
+      "cprob": [
+        [
+          0.01, 
+          0.99
+        ], 
+        [
+          0.99, 
+          0.01
+        ], 
+        [
+          0.99, 
+          0.01
+        ], 
+        [
+          0.01, 
+          0.99
+        ]
+      ], 
+      "numoutcomes": 2, 
+      "children": []
+    }, 
+    "group_action": {
+      "vals": [
+        "red", 
+        "blue"
+      ], 
+      "parents": [], 
+      "cprob": [
+        0.5, 
+        0.5
+      ], 
+      "numoutcomes": 2, 
+      "children": [
+        "actual_action"
+      ]
+    }, 
+    "actual_action": {
+      "vals": [
+        "red", 
+        "blue"
+      ], 
+      "parents": [
+        "personal_action", 
+        "group_action"
+      ], 
+      "cprob": [
+        [
+          0.95, 
+          0.05
+        ], 
+        [
+          0.95, 
+          0.05
+        ], 
+        [
+          0.05, 
+          0.95
+        ], 
+        [
+          0.05, 
+          0.95
+        ]
+      ], 
+      "numoutcomes": 2, 
+      "children": []
+    }
+  }, 
+  "E": [
+    [
+      "draw", 
+      "personal_action"
+    ], 
+    [
+      "lie", 
+      "personal_action"
+    ], 
+    [
+      "personal_action", 
+      "actual_action"
+    ], 
+    [
+      "group_action", 
+      "actual_action"
+    ]
+  ], 
+  "V": [
+    "draw", 
+    "lie", 
+    "personal_action", 
+    "group_action", 
+    "actual_action"
+  ]
+}

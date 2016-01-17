@@ -1,0 +1,43 @@
+network unknown {
+}
+variable draw {
+	type discrete [ 2 ] { red, blue };
+}
+variable lie {
+	type discrete [ 2 ] { yes, no };
+}
+variable personal_action {
+	type discrete [ 2 ] { red, blue };
+}
+variable group_action {
+	type discrete [ 2 ] { rr, rb, br, bb };
+}
+variable actual_action {
+	type discrete [ 2 ] { red, blue };
+}
+probability ( draw ) {
+	table 0.33, 0.67;
+}
+probability ( lie ) {
+	table 0.05, 0.95;
+}
+probability ( group_action ) {
+	table 0.25, 0.25, 0.25, 0.25;
+}
+probability ( personal_action | draw, lie ) {
+	(red, yes) 0.01, 0.99;
+	(blue, yes) 0.99, 0.01;
+	(red, no) 0.99, 0.01;
+	(blue, no) 0.01, 0.99;
+}
+
+probability ( actual_action | personal_action, group_action ) {
+	(red, rr) 1.0, 0.0;
+	(blue, rr) 0.99, 0.01;
+	(red, rb) 0.75, 0.25;
+	(blue, rb) 0.25, 0.75;
+	(red, br) 0.75, 0.25;
+	(blue, br) 0.25, 0.75;
+	(red, bb) 0.01, 0.99;
+	(blue, bb) 0.0, 1.0;
+}

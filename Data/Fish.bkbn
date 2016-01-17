@@ -1,0 +1,502 @@
+{
+  "I": {
+    "(B) Fishing livelihood is threatened": [
+      "Yes", 
+      "No"
+    ], 
+    "(B) Boarding skills are obtainable": [
+      "Yes", 
+      "No"
+    ], 
+    "(B) Fish supply is sufficient": [
+      "No", 
+      "Yes"
+    ], 
+    "(B) Attitude towards piracy": [
+      "Negative", 
+      "Positive"
+    ], 
+    "(X) Boarding skills": [
+      "Yes", 
+      "No"
+    ], 
+    "(B) Survival is moral": [
+      "Yes", 
+      "No"
+    ], 
+    "(B) Revenge is moral": [
+      "Yes", 
+      "No"
+    ], 
+    "(B) Illegal fishing has occurred": [
+      "Yes", 
+      "No"
+    ]
+  }, 
+  "S": {
+    "S-1": {
+      "parents": [
+        [
+          "(B) Revenge is moral", 
+          "Yes"
+        ], 
+        [
+          "(B) Survival is moral", 
+          "No"
+        ]
+      ], 
+      "weight": 0.4, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Negative"
+      ]
+    }, 
+    "S-10": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "No"
+        ]
+      ], 
+      "weight": 0.9, 
+      "child": [
+        "(B) Boarding skills are obtainable", 
+        "No"
+      ]
+    }, 
+    "S-11": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.65, 
+      "child": [
+        "(B) Boarding skills are obtainable", 
+        "Yes"
+      ]
+    }, 
+    "S-12": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "No"
+        ]
+      ], 
+      "weight": 0.1, 
+      "child": [
+        "(B) Boarding skills are obtainable", 
+        "Yes"
+      ]
+    }, 
+    "S-13": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(B) Fish supply is sufficient", 
+        "No"
+      ]
+    }, 
+    "S-14": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "No"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(B) Fish supply is sufficient", 
+        "No"
+      ]
+    }, 
+    "S-15": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(B) Fish supply is sufficient", 
+        "Yes"
+      ]
+    }, 
+    "S-16": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "No"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(B) Fish supply is sufficient", 
+        "Yes"
+      ]
+    }, 
+    "S-17": {
+      "parents": [
+        [
+          "(B) Fish supply is sufficient", 
+          "No"
+        ]
+      ], 
+      "weight": 0.2, 
+      "child": [
+        "(B) Fishing livelihood is threatened", 
+        "No"
+      ]
+    }, 
+    "S-18": {
+      "parents": [
+        [
+          "(B) Fish supply is sufficient", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.6, 
+      "child": [
+        "(B) Fishing livelihood is threatened", 
+        "No"
+      ]
+    }, 
+    "S-19": {
+      "parents": [
+        [
+          "(B) Fish supply is sufficient", 
+          "No"
+        ]
+      ], 
+      "weight": 0.8, 
+      "child": [
+        "(B) Fishing livelihood is threatened", 
+        "Yes"
+      ]
+    }, 
+    "S-2": {
+      "parents": [
+        [
+          "(B) Survival is moral", 
+          "No"
+        ], 
+        [
+          "(B) Revenge is moral", 
+          "No"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Negative"
+      ]
+    }, 
+    "S-20": {
+      "parents": [
+        [
+          "(B) Fish supply is sufficient", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.4, 
+      "child": [
+        "(B) Fishing livelihood is threatened", 
+        "Yes"
+      ]
+    }, 
+    "S-21": {
+      "parents": [], 
+      "weight": 0.0, 
+      "child": [
+        "(B) Illegal fishing has occurred", 
+        "No"
+      ]
+    }, 
+    "S-22": {
+      "parents": [], 
+      "weight": 1.0, 
+      "child": [
+        "(B) Illegal fishing has occurred", 
+        "Yes"
+      ]
+    }, 
+    "S-23": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "No"
+        ]
+      ], 
+      "weight": 0.7, 
+      "child": [
+        "(B) Revenge is moral", 
+        "No"
+      ]
+    }, 
+    "S-24": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(B) Revenge is moral", 
+        "No"
+      ]
+    }, 
+    "S-25": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(B) Revenge is moral", 
+        "Yes"
+      ]
+    }, 
+    "S-26": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "No"
+        ]
+      ], 
+      "weight": 0.3, 
+      "child": [
+        "(B) Revenge is moral", 
+        "Yes"
+      ]
+    }, 
+    "S-27": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(B) Survival is moral", 
+        "No"
+      ]
+    }, 
+    "S-28": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "No"
+        ]
+      ], 
+      "weight": 0.7, 
+      "child": [
+        "(B) Survival is moral", 
+        "No"
+      ]
+    }, 
+    "S-29": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(B) Survival is moral", 
+        "Yes"
+      ]
+    }, 
+    "S-3": {
+      "parents": [
+        [
+          "(B) Revenge is moral", 
+          "No"
+        ], 
+        [
+          "(B) Survival is moral", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.3, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Negative"
+      ]
+    }, 
+    "S-30": {
+      "parents": [
+        [
+          "(B) Fishing livelihood is threatened", 
+          "No"
+        ]
+      ], 
+      "weight": 0.3, 
+      "child": [
+        "(B) Survival is moral", 
+        "Yes"
+      ]
+    }, 
+    "S-31": {
+      "parents": [
+        [
+          "(B) Boarding skills are obtainable", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(X) Boarding skills", 
+        "No"
+      ]
+    }, 
+    "S-32": {
+      "parents": [
+        [
+          "(B) Boarding skills are obtainable", 
+          "No"
+        ]
+      ], 
+      "weight": 0.95, 
+      "child": [
+        "(X) Boarding skills", 
+        "No"
+      ]
+    }, 
+    "S-33": {
+      "parents": [
+        [
+          "(B) Boarding skills are obtainable", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.75, 
+      "child": [
+        "(X) Boarding skills", 
+        "Yes"
+      ]
+    }, 
+    "S-34": {
+      "parents": [
+        [
+          "(B) Boarding skills are obtainable", 
+          "No"
+        ]
+      ], 
+      "weight": 0.05, 
+      "child": [
+        "(X) Boarding skills", 
+        "Yes"
+      ]
+    }, 
+    "S-4": {
+      "parents": [
+        [
+          "(B) Survival is moral", 
+          "Yes"
+        ], 
+        [
+          "(B) Revenge is moral", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.2, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Negative"
+      ]
+    }, 
+    "S-5": {
+      "parents": [
+        [
+          "(B) Survival is moral", 
+          "Yes"
+        ], 
+        [
+          "(B) Revenge is moral", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.8, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Positive"
+      ]
+    }, 
+    "S-6": {
+      "parents": [
+        [
+          "(B) Survival is moral", 
+          "Yes"
+        ], 
+        [
+          "(B) Revenge is moral", 
+          "No"
+        ]
+      ], 
+      "weight": 0.7, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Positive"
+      ]
+    }, 
+    "S-7": {
+      "parents": [
+        [
+          "(B) Revenge is moral", 
+          "Yes"
+        ], 
+        [
+          "(B) Survival is moral", 
+          "No"
+        ]
+      ], 
+      "weight": 0.6, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Positive"
+      ]
+    }, 
+    "S-8": {
+      "parents": [
+        [
+          "(B) Revenge is moral", 
+          "No"
+        ], 
+        [
+          "(B) Survival is moral", 
+          "No"
+        ]
+      ], 
+      "weight": 0.25, 
+      "child": [
+        "(B) Attitude towards piracy", 
+        "Positive"
+      ]
+    }, 
+    "S-9": {
+      "parents": [
+        [
+          "(B) Illegal fishing has occurred", 
+          "Yes"
+        ]
+      ], 
+      "weight": 0.35, 
+      "child": [
+        "(B) Boarding skills are obtainable", 
+        "No"
+      ]
+    }
+  }
+}
