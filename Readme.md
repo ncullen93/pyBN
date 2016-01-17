@@ -4,27 +4,29 @@ This module provides a convenient and intuitive interface for reading/writing Di
 
 The package I have mostly used for BN's is "bnlearn" in the R language. It has incredible implementations of so many structure learning algorithms. However, its support and syntax for both Marginal and MAP inference is quite weak. This package takes care of that, at least.
 
-Current features:
+I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would love to collaborate on this project with anyone who has an interest in graphical models -- the class structure and syntax is easy to pick up! Shoot me an email at ncullen.th@dartmouth.edu
 
-Reading BNs:
+<h2>Current features:</h2>
+
+<h3>Reading BNs:</h3>
 - .bif format
 
-Approx Inference:
+<h3>Approx Inference:</h3>
 - loopy belief propagation
 - forward sampling
 - gibbs sampliing
 - likelihood weighted sampling
 
-Exact Inference:
+<h3>Exact Inference:</h3>
 - Sum-Product Variable Elimination
 - Clique Tree Message Passing/Belief Propagation
 
 
-Future Features (To-Do List):
+<h2>Future Features (To-Do List):</h2>
 
-Structure Learning
+<h3>Structure Learning</h3>
 
-Parameter Learning
+<h3>Parameter Learning</h3>
 - Bayesian Estimation
 - Maximum Likelihood Estimation
 
