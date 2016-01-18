@@ -1,7 +1,7 @@
 """
-******************
-Structure Learning
-******************
+***********************
+Structure Learning Code
+***********************
 
 Structure Learning Algorithms in "bnlearn":
 
@@ -53,7 +53,7 @@ score-based tests
 	the K2 score;
 """
 
-__author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 

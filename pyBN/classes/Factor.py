@@ -1,8 +1,19 @@
+"""
+************
+Factor Class
+************
+
+
+"""
+
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
+
+
 import numpy as np
 
-class FastFactor(object):
+class Factor(object):
     """
-    A FastFactor uses a flattened numpy array for the cpt
+    A Factor uses a flattened numpy array for the cpt
     rather than a Pandas DataFrame. By storing the cpt in
     this manner and taking advantage of efficient algorithms,
     significant speedups occur.

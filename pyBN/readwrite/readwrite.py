@@ -7,7 +7,7 @@ Read (write) a BayesNet object from (to) a file.
 
 """
 
-__author__ = 'N. Cullen'
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu"""
 
 
 

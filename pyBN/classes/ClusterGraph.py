@@ -1,10 +1,12 @@
 """
-***
-Cluster Graph Class
+******************
+ClusterGraph Class
+******************
 
 
 """
 
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 

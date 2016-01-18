@@ -1,3 +1,14 @@
+"""
+***********************
+Parameter Learning Code
+***********************
+
+"""
+
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu"""
+
+
+
 import pandas as pd
 import numpy as np
 

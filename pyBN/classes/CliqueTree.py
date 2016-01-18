@@ -7,7 +7,7 @@ CliqueTree Class
 
 """
 
-__author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 
