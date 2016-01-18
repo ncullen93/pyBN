@@ -60,3 +60,6 @@ class ParameterLearner(object):
 		self.dtype = 'numpy'
 		
 	self.dtype = dtype
+
+
+	
