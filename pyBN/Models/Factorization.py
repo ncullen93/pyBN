@@ -27,6 +27,23 @@ class Factorization(object):
     """
 
     def __init__(self, BN, v_list=None):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.BN = BN
         if v_list:
             self.f_list = [FastFactor(BN,var) for var in v_list if var in self.BN.V]
@@ -39,6 +56,23 @@ class Factorization(object):
 
     def shortest_path_map(self,
                           evidence={}):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         G = self.BN.get_networkx()
         
 
@@ -48,6 +82,22 @@ class Factorization(object):
                              order=None, 
                              marginal=True):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This is the main algorithmic driver of variable elimination --
         Both belief updating (marginal) and    belief revision (MAP) can
         be performed here with margin=True or marginal=False respectively.
@@ -123,6 +173,23 @@ class Factorization(object):
             self.sol=marginal.cpt
 
     def traceback_MAP(self,map_list):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         assignment={}
         for m in reversed(map_list):
             var = list(set(m.scope) - set(assignment.keys()))[0]

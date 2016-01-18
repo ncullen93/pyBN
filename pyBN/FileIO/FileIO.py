@@ -20,9 +20,46 @@ class BNio:
     """
 
     def __init__(self, BN):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+
+        """
         self.BN = BN
 
     def read(self, filepath):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+
+        """
+
         form = filepath.split('.')[-1].lower()
         if form == 'bif':
             self.read_bif(filepath)
@@ -35,6 +72,23 @@ class BNio:
 
         Arguments:
             1. *filename* - the path/name of the file to which the function will write the BKB object.
+
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         """
         total_dump = {"Vdata":self.BN.data, "V": self.BN.V, "E": self.BN.E}
         with open(filepath, 'w') as outfile:
@@ -44,6 +98,23 @@ class BNio:
     def read_bif(self, filepath='pyBN/data/asia.bif'):
         """
         This function reads a .bif file into a BN object
+
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
 
         """
         V = []
@@ -95,6 +166,23 @@ class BNio:
 
     def read_libpgm(self, filepath='data/cmu.bn'):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function reads in a libpgm-style format into a BN object
 
         File Format:
@@ -115,6 +203,8 @@ class BNio:
                     },
                     ...
             }
+
+
         """
         def byteify(input):
             if isinstance(input, dict):

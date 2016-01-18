@@ -5,8 +5,42 @@ import time
 from pyBN.Models.FastFactor import FastFactor
 
 class Sampler:
+    """
+    Class for Sampling from a BayesNet object
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+
+    """
 
     def __init__(self, BN):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         self.BN = BN
         self.sample_dict = []
         self.forward_counter = {}
@@ -14,6 +48,24 @@ class Sampler:
         self.lw_counter = {}
 
     def random_sample(self, n=1, evidence={}):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         sample_dict = []
         weight_list = np.ones(n)
 
@@ -50,6 +102,23 @@ class Sampler:
 
     def forward_sample(self, n=1000):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         Take *n* forward samples of the network and stores the counts in
         self.sample_dict for easy manipulation.
 
@@ -95,6 +164,23 @@ class Sampler:
 
     def gibbs_sample(self, n=5000, burn=500):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         Use Markov Chain Monte Carlo method for Gibbs sampling. 
 
         Starts by drawing a initial random sample of each rv in the network,
@@ -145,6 +231,23 @@ class Sampler:
 
     def lw_sample(self, n=1000, evidence={}):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         Perform likelihood weighted particle sampling over network
         with evidence.
 

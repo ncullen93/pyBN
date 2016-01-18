@@ -28,6 +28,22 @@ class CliqueTree(object):
 
     def __init__(self, BN, method=''):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         Let G be a chordal graph (ie. a graph such that no cycle includes more
         than three nodes), then a CliqueTree is a tree H such that each
         maximal clique C in G is a node in H.
@@ -40,6 +56,22 @@ class CliqueTree(object):
 
     def initialize_tree(self, method):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         1. Moralize graph
         2. Triangulate graph
         3. Get max cliques
@@ -73,6 +105,23 @@ class CliqueTree(object):
             clique.compute_psi()
 
     def assign_factors(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         factorization = Factorization(self.BN)
         for f in factorization.f_list:
             assigned=False
@@ -84,6 +133,22 @@ class CliqueTree(object):
 
     def message_passing(self, target=None, evidence=None, downward_pass=True):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This is Message Passing (Belief Propagation) over a clique tree.
 
         It is Upward Pass as shown in Koller p.353 along with
@@ -150,6 +215,23 @@ class Clique:
     """
 
     def __init__(self, scope):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.scope=scope
         self.factors=[]
         self.psi = None # Psi should never change
@@ -158,6 +240,23 @@ class Clique:
         self.is_ready = False
 
     def send_initial_message(self, other_clique):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         psi_copy = copy.copy(self.psi)
         sepset = self.sepset(other_clique)
         sumout_vars = self.scope.difference(sepset)
@@ -170,9 +269,44 @@ class Clique:
         self.belief = copy.copy(self.psi)
 
     def sepset(self, other_clique):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+
+        """
         return self.scope.intersection(other_clique.scope)
 
     def compute_psi(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         if len(self.factors) == 0:
             print 'No factors assigned to this clique!'
             return None
@@ -185,6 +319,24 @@ class Clique:
             self.belief = copy.copy(self.psi)
 
     def send_message(self, parent):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+
+        """
         # First generate Belief = Original_Psi * all received messages
         if len(self.messages_received) > 0:
             # if there are messages received, mutliply them in to psi first
@@ -202,10 +354,43 @@ class Clique:
         parent.messages_received.append(message_to_send)
 
     def marginalize_over(self, target):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.belief.sumout_var_list(list(self.scope.difference({target})))
 
     def collect_beliefs(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         A root node (i.e. one that doesn't send a message) must run collect_beliefs
         since they are only collected at send_message()
 

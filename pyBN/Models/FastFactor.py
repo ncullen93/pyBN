@@ -1,41 +1,59 @@
 import numpy as np
 
 class FastFactor(object):
+    """
+    A FastFactor uses a flattened numpy array for the cpt
+    rather than a Pandas DataFrame. By storing the cpt in
+    this manner and taking advantage of efficient algorithms,
+    significant speedups occur.
+
+    See Koller p.359
+
+    Class for Cluster Graphs
+
+    Attributes
+    ----------
+
+    bn
+
+    var
+    
+    scope
+    
+    card
+    
+    stride
+    
+    cpt
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+    """
+            
+
 
     def __init__(self, bn, var):
         """
-        A FastFactor uses a flattened numpy array for the cpt
-        rather than a Pandas DataFrame. By storing the cpt in
-        this manner and taking advantage of efficient algorithms,
-        significant speedups occur.
+        Overview
+        --------
 
-        See Koller p.359
 
-        Class for Cluster Graphs
-
-        Attributes
+        Parameters
         ----------
 
-        bn
 
-        var
-        
-        scope
-        
-        card
-        
-        stride
-        
-        cpt
-
-
-        Methods
+        Returns
         -------
 
 
         Notes
         -----
-            
+
 
         """
         self.bn = bn
@@ -61,6 +79,23 @@ class FastFactor(object):
 
 
     def multiply_factor(self, other_factor):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         if len(self.scope)>=len(other_factor.scope):
             phi1=self
             phi2=other_factor
@@ -108,6 +143,22 @@ class FastFactor(object):
 
     def sumover_var(self, rv):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This function sums over one *rv* by keeping it constant.
 
         Thus, you end up with a factor whose scope is ONLY *rv*
@@ -135,11 +186,44 @@ class FastFactor(object):
         self.scope = [rv]
 
     def sumout_var_list(self, var_list):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         for var in var_list:
             self.sumout_var(var)
 
     def sumout_var(self, rv):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This function removes *rv* from the factor by summing
         over everything else.
         """
@@ -166,6 +250,22 @@ class FastFactor(object):
 
     def maxout_var(self, rv):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This function removes *rv* from the factor by taking the 
         maximum value of all rv instantiations over everyting else.
 
@@ -198,6 +298,22 @@ class FastFactor(object):
 
     def reduce_factor_by_list(self, evidence):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         Repeatly run self.reduce_factor() over a list of lists
         where a sublist = [rv,val]
         """
@@ -210,6 +326,22 @@ class FastFactor(object):
 
     def reduce_factor(self, rv, val):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         Condition the factor over evidence by eliminating any
         possibilities that don't align with [rv, val]
 
@@ -235,9 +367,64 @@ class FastFactor(object):
         self.scope.remove(rv)
 
     def to_log(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.cpt = np.log(self.cpt)
+
     def from_log(self):
+        """Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.cpt = np.exp(self.cpt)
 
     def normalize(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.cpt = self.cpt / float(np.sum(self.cpt))
+
+
+
+

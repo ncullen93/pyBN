@@ -90,6 +90,24 @@ class BayesNet(object):
     """
 
     def __init__(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         self.V = []
         self.E = []
         self.data = {}
@@ -98,17 +116,89 @@ class BayesNet(object):
         self.sol = None
 
     def read(self, filepath):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         reader = BNio(self)
         reader.read(filepath)
 
     def write(self, filepath):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         writer = BNio(self)
         writer.write(filepath)
 
     def marginal_inference(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         pass
 
     def map_inference(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         pass
 
     def exact_inference(self, 
@@ -117,6 +207,24 @@ class BayesNet(object):
                         order=None, 
                         operation='marginal', 
                         algorithm='clique_tree'):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        """
         inference = ExactInference(self, operation)
         
         if algorithm == 'sum_product':
@@ -131,6 +239,23 @@ class BayesNet(object):
                          operation='marginal',
                          algorithm='loopy'):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This is the wrapper function for user interaction w/ approximate inference.
 
         Methods:
@@ -151,6 +276,23 @@ class BayesNet(object):
 
     def get_cpt(self, var):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function returns the CPT (only) of a variable as a DataFrame.
 
         This is a helpful function in the intitialization of Factor objects
@@ -180,6 +322,23 @@ class BayesNet(object):
 
     def get_networkx(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function returns ONLY the network structure of the BN
         in networkx form - i.e. there is no data/probabilities associated.
         """
@@ -190,6 +349,23 @@ class BayesNet(object):
 
     def get_sp_networkx(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function returns a weighted Digraph based on a 
         topological sort of the original BN. Solving the shortest
         path on this graph is equivalent to Belief Revision
@@ -237,13 +413,25 @@ class BayesNet(object):
         return G
 
 
-
-
-
-
-
     def get_moralized_edge_list(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function creates the moral of a BN - i.e. it
         adds an edge between each of the parents of each node if
         there isn't already an edge between them.
@@ -263,6 +451,23 @@ class BayesNet(object):
 
     def get_chordal_nx(self,v=None,e=None):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         This function creates a chordal graph - i.e. one in which there
         are no cycles with more than three nodes.
 
@@ -316,6 +521,23 @@ class BayesNet(object):
 
     def is_chordal(self, edge_list=None):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
+        
         Returns true if the graph is chordal/triangulated
         """
         if not edge_list:

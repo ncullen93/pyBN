@@ -23,6 +23,23 @@ class ClusterGraph(object):
     """
 
     def __init__(self, BN, method=''):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.BN = BN
         self.V = {} # key = cluster index, value = Cluster objects
         self.E = []
@@ -31,6 +48,23 @@ class ClusterGraph(object):
         self.beliefs = {} # dict where key = cluster idx, value = belief cpt
 
     def initialize_graph(self, method):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         # generate graph structure
         self.bethe()
         # initialize beliefs
@@ -40,6 +74,23 @@ class ClusterGraph(object):
         self.initialize_messages()
 
     def bethe(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.V = {}
         self.E = []
 
@@ -78,6 +129,22 @@ class ClusterGraph(object):
 
     def initialize_messages(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         For each edge (i-j) in the ClusterGraph,
         set delta_(i-j) = 1 and
         set delta_(j-i) = 1.
@@ -90,6 +157,23 @@ class ClusterGraph(object):
 
 
     def collect_beliefs(self):
+        """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        """
         self.beliefs = {}
         for cluster in self.V:
             self.V[cluster].collect_beliefs()
@@ -99,6 +183,22 @@ class ClusterGraph(object):
 
     def loopy_belief_propagation(self, target, evidence, max_iter=100):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This is Message Passing (Loopy Belief Propagation) over a cluster graph.
 
         It is Sum-Product Belief Propagation in a cluster graph as shown in
@@ -147,6 +247,22 @@ class ClusterGraph(object):
 
     def is_calibrated(self):
         """
+        Overview
+        --------
+
+
+        Parameters
+        ----------
+
+
+        Returns
+        -------
+
+
+        Notes
+        -----
+
+        
         This function determines if the graph is calibrated, where
         calibration occurs when each pair of connected clusters in
         the cluster graph agrees on the beliefs marginalized over

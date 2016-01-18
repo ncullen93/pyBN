@@ -24,7 +24,7 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 - Clique Tree Message Passing/Belief Propagation
 
 
-<h2>Future Features (To-Do List):</h2>
+<h2>Future Features:</h2>
 
 <h3>Structure Learning</h3>
 - Grow-shrink
@@ -33,4 +33,6 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 <h3>Parameter Learning</h3>
 - Bayesian Estimation
 - Maximum Likelihood Estimation
+
+
 
