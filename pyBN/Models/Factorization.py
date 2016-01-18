@@ -9,10 +9,21 @@ from FastFactor import FastFactor
 
 class Factorization(object):
     """
+    Class for Factorization.
+
     A factorization is a product of a collection of factors.
 
-    This class should certainly be called by the user with a BN object
-    as input.
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
     """
 
     def __init__(self, BN, v_list=None):
@@ -124,9 +135,7 @@ class Factorization(object):
 
 class Factor:
     """
-    A factor has a scope and a conditional probability table.
-
-    This class should never be called by the user - it is internal only.
+    DEPRECATED -- REMOVE FROM CODE BASE ASAP & REPLACE WITH "FastFactor"
 
     """
     def __init__(self, BN, var, init_to_one=False):

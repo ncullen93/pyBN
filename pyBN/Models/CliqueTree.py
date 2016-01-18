@@ -8,6 +8,23 @@ from Factorization import *
 from FastFactor import FastFactor
 
 class CliqueTree(object):
+    """
+    Class for the Clique Tree
+
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+
+    """
 
     def __init__(self, BN, method=''):
         """
@@ -115,6 +132,22 @@ class CliqueTree(object):
         # beliefs hold the answers
         
 class Clique:
+    """
+    Class for Cliques
+
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+    """
 
     def __init__(self, scope):
         self.scope=scope

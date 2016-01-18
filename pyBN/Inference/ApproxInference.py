@@ -2,6 +2,21 @@ from pyBN.Models.ClusterGraph import *
 from .Sampler import Sampler
 
 class ApproxInference:
+    """
+    DEPRECATED - SHOULD BE SPLIT BY MAP/MARGINAL
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+    """
 
     def __init__(self, BN):
         self.BN = BN

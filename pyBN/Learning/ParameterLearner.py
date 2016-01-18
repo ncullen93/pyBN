@@ -26,7 +26,7 @@ class ParameterLearner(object):
 
 	mle : maximum likelihood estimation algorithm
 		Estimate the parameters by counting the fraction
-		of each parent-child occurance in the data
+		of each parent-self occurance in the data
 
 	bayes : Bayesian estimation
 		Estimate the parameters by assuming a Dirichlet
@@ -34,9 +34,14 @@ class ParameterLearner(object):
 		equivalent sample size, then computing the posterior
 		based on the Multinomial conjugate distribution
 
+
+	Notes
+	-----
+
+
 	"""
 	self.BN = BN
-	
+
 	self.data = data
 	if is_instance(data, 'pd.DataFrame'):
 		self.dtype = 'pandas'

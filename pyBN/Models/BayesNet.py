@@ -15,6 +15,79 @@ import pdb
 # %autoreload 2
 
 class BayesNet(object):
+    """
+    Overarching class for Bayesian Networks
+
+
+    Attributes
+    ----------
+    V : a list
+        The container for vertices (i.e. random variables)
+
+    E : a list
+        The container for edges (i.e. conditional dependencies)
+
+    data : a dictionary
+        The container for probability values
+
+        First-Level Keys:
+
+            vertex name : another dictionary
+
+            Second-Level Keys:
+
+                "numoutcomes" : an integer
+                    The number of outcomes an RV has.
+
+                "vals" : a list
+                    The list of instantiations (values) an RV has.
+
+                "parents" : a list or None
+                    The list of the parents' names
+
+                "children": a list or None
+                    The list of the childrens' names
+
+                "cprob" : a nested python list
+                    The probability values for every combination
+                    of parent(s)-self values
+
+    User Methods
+    ------------
+
+    read : read a BayesNet object from a file
+
+    write : write a BayesNet object to a file
+
+    marginal_inference : perform marginal inference (exact
+        or approx.) over a BayesNet object
+    
+    map_inference : perform maximal a posteriori inference (exact
+        or approx.) over a BayesNet object
+
+    
+    Utility Methods
+    ---------------
+
+    get_cpt : get conditional probability table
+
+    get_networkx : get networkx representation of BayesNet object
+
+    get_sp_networkx : get weighted/expanded networkx representation of
+        BayesNet object
+
+    get_moralized_edge_list : get edge list of moralized graph
+
+    get_chordal_nx : get chordal networkx representation
+
+    is_chordal : test whether a graph is chordal
+
+
+    Notes
+    -----
+
+
+    """
 
     def __init__(self):
         self.V = []
@@ -32,26 +105,18 @@ class BayesNet(object):
         writer = BNio(self)
         writer.write(filepath)
 
+    def marginal_inference(self):
+        pass
+
+    def map_inference(self):
+        pass
+
     def exact_inference(self, 
                         target=None, 
                         evidence=None, 
                         order=None, 
                         operation='marginal', 
                         algorithm='clique_tree'):
-        """
-        This is the wrapper function for user interaction w/ exact inference.
-
-        Methods:
-            1. *marginal* - computes marginal and conditional queries w/ or w/o evidence
-                Algorithms:
-                    1. *sum_product* - traditional sum-product variable elimination of factors
-                    2. *clique_tree* - Shafer-Shenoy message passing algorithm over a clique tree
-                    3. *hugin* - Hugin message passing over a clique tree - NOT IMPLEMENTED YET
-
-            2. *map* - computes MAP inference (i.e. most probable world state w/ or w/o evidence)
-                Algorithms: NOT IMPLEMENTED YET
-
-        """
         inference = ExactInference(self, operation)
         
         if algorithm == 'sum_product':

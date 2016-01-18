@@ -1,6 +1,23 @@
 import json
 
 class BNio:
+    """
+    Class for Input (reading) & Output (writing) of BayesNet objects
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+
+    Notes
+    -----
+    
+
+    """
 
     def __init__(self, BN):
         self.BN = BN

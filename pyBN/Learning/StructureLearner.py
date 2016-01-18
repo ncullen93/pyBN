@@ -21,7 +21,11 @@ class StructureLearner(object):
 		Methods
 		-------
 
-		Algorithms implemented in 'bnlearn':
+
+		Notes
+		-----
+
+		Structure Learning Algorithms in "bnlearn":
 
 			constraint-based structure learning algorithms:
 
@@ -38,7 +42,7 @@ class StructureLearner(object):
 			hybrid structure learning algorithms:
 
 				Max-Min Hill Climbing (MMHC);
-					General 2-Phase Restricted Maximization (RSMAX2);
+				General 2-Phase Restricted Maximization (RSMAX2);
 			
 			local discovery algorithms:
 
@@ -46,6 +50,23 @@ class StructureLearner(object):
 				ARACNE;
 				Max-Min Parents & Children (MMPC);
 				Semi-Interleaved Hiton-PC (SI-HITON-PC);
+
+		Conditional Independence Tests in "bnlearn"
+			
+			constraint-based tests:
+
+				mutual information (parametric, semiparametric and permutation tests);
+				shrinkage-estimator for the mutual information;
+				Pearson's X^2 (parametric, semiparametric and permutation tests);
+
+			score-based tests:
+
+				the multinomial log-likelihood;
+				the Akaike Information Criterion (AIC);
+				the Bayesian Information Criterion (BIC);
+				a score equivalent Dirichlet posterior density (BDe);
+				a modified Bayesian Dirichlet for mixtures of interventional and observational data;
+				the K2 score;
 
 		"""
 		if is_instance(data, 'pd.DataFrame'):

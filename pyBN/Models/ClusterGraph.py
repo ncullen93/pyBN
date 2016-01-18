@@ -6,6 +6,21 @@ from Factorization import *
 from CliqueTree import * 
 
 class ClusterGraph(object):
+    """
+    Class for Cluster Graphs
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+    """
 
     def __init__(self, BN, method=''):
         self.BN = BN

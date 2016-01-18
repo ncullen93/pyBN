@@ -11,13 +11,31 @@ class FastFactor(object):
 
         See Koller p.359
 
-        Attributes:
-            1. *bn*
-            2. *var*
-            3. *scope*
-            5. *card*
-            6. *stride*
-            7. *cpt*
+        Class for Cluster Graphs
+
+        Attributes
+        ----------
+
+        bn
+
+        var
+        
+        scope
+        
+        card
+        
+        stride
+        
+        cpt
+
+
+        Methods
+        -------
+
+
+        Notes
+        -----
+            
 
         """
         self.bn = bn

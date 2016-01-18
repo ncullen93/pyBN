@@ -2,6 +2,21 @@ from pyBN.Models.CliqueTree import *
 from pyBN.Models.Factorization import *
 
 class ExactInference:
+    """
+    DEPRECATED - SHOULD BE SPLIT BY MAP/MARGINAL
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+
+    Notes
+    -----
+
+    """
 
 
     def __init__(self, bn, operation=None):
