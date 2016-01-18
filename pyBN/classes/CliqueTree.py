@@ -1,3 +1,16 @@
+"""
+****************
+CliqueTree Class
+****************
+
+
+
+"""
+
+__author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
+
+
+
 import numpy as np
 import pandas as pd
 import networkx as nx

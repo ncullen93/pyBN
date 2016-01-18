@@ -1,3 +1,16 @@
+"""
+
+**************
+BayesNet Class
+**************
+
+
+"""
+
+__author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
+
+
+
 import numpy as np
 import networkx as nx
 import pandas as pd
