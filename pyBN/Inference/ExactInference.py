@@ -56,7 +56,7 @@ class ExactInference:
 
         Notes
         -----
-        
+
         """
         factorization = Factorization(self.bn)
         factorization.marginal_ve(target,evidence,order)
