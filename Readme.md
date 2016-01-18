@@ -26,6 +26,8 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 <h2>Future Features (To-Do List):</h2>
 
 <h3>Structure Learning</h3>
+- Grow-shrink
+- Hill-climbing
 
 <h3>Parameter Learning</h3>
 - Bayesian Estimation
