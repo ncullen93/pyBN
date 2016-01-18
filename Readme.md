@@ -11,6 +11,7 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 
 <h3>Reading BNs:</h3>
 - .bif format
+- json format
 
 <h3>Approx Inference:</h3>
 - loopy belief propagation
