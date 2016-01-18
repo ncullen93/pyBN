@@ -6,18 +6,9 @@ from pyBN.Models.FastFactor import FastFactor
 
 class Sampler:
     """
-    Class for Sampling from a BayesNet object
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-
-    Notes
-    -----
+    DEPRECATED -- NEEDS TO BE REMOVED &
+    METHODS NEED TO BE INTEGRATED ASAP!!!
+    
 
 
     """

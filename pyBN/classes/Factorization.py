@@ -19,20 +19,9 @@ from Factor import Factor
 
 class Factorization(object):
     """
-    Class for Factorization.
-
-    A factorization is a product of a collection of factors.
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-
-    Notes
-    -----
+    
+    DEPRECATED -- CODE NEEDS TO BE REMOVED &
+    METHODS NEED TO BE INTEGRATED ASAP!!!
 
     """
 
