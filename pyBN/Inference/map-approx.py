@@ -19,4 +19,3 @@ All above functions are implemented but not tested/documented.
 """
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
-s
