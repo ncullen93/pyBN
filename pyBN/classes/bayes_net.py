@@ -33,13 +33,13 @@ class BayesNet(object):
 
     Attributes
     ----------
-    V : a list
+    *V* : a list
         The container for vertices (i.e. random variables)
 
-    E : a list
+    *E* : a list
         The container for edges (i.e. conditional dependencies)
 
-    data : a dictionary
+    *data* : a dictionary
         The container for probability values
 
         First-Level Keys:
@@ -67,32 +67,26 @@ class BayesNet(object):
     User Methods
     ------------
 
-    read : read a BayesNet object from a file
+    *read* : read a BayesNet object from a file
 
-    write : write a BayesNet object to a file
-
-    marginal_inference : perform marginal inference (exact
-        or approx.) over a BayesNet object
-    
-    map_inference : perform maximal a posteriori inference (exact
-        or approx.) over a BayesNet object
+    *write* : write a BayesNet object to a file
 
     
     Utility Methods
     ---------------
 
-    get_cpt : get conditional probability table
+    *get_cpt* : get conditional probability table
 
-    get_networkx : get networkx representation of BayesNet object
+    *get_networkx* : get networkx representation of BayesNet object
 
-    get_sp_networkx : get weighted/expanded networkx representation of
+    *get_sp_networkx* : get weighted/expanded networkx representation of
         BayesNet object
 
-    get_moralized_edge_list : get edge list of moralized graph
+    *get_moralized_edge_list* : get edge list of moralized graph
 
-    get_chordal_nx : get chordal networkx representation
+    *get_chordal_nx* : get chordal networkx representation
 
-    is_chordal : test whether a graph is chordal
+    *is_chordal* : test whether a graph is chordal
 
 
     Notes
@@ -103,65 +97,84 @@ class BayesNet(object):
 
     def __init__(self):
         """
-        Overview
-        --------
-
+        Initialize the BayesNet class
 
         Parameters
         ----------
-
+        None
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - initializing the attributes
 
         Notes
         -----
-
+        - perhaps should add the capability of initializing with data (i.e. edge list, etc)
         
         """
         self.V = []
         self.E = []
         self.data = {}
 
-        self.factorization = None
-        self.sol = None
+        #self.factorization = None
+        #self.sol = None
 
-    def read(self, filepath):
+    ###################### USER METHODS ##############################
+
+    def read(self, path):
         """
-        Overview
-        --------
+        Read a file and create a BayesNet object from it
 
+        Currently supported extensions:
+            - .bif
+            - .bn (json format - see above)
 
         Parameters
         ----------
+        *path* : a string
+            The relative or absolute file path to the file, INCLUDING the
+            extension. 
 
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - populates self.V, self.E, self.data with info from the file
 
         Notes
         -----
-
+        - any other common extensions to read from besides .bif?
         
         """
         reader = BNio(self)
-        reader.read(filepath)
+        reader.read(path)
 
-    def write(self, filepath):
+    def write(self, path):
         """
-        Overview
-        --------
+        Write a BayesNet object to file.
+
+        Currently supported extensions:
+            - .bn (json format)
 
 
         Parameters
         ----------
-
+        *path* : a string
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - creates a new file in user's system
 
         Notes
         -----
@@ -169,147 +182,31 @@ class BayesNet(object):
         
         """
         writer = BNio(self)
-        writer.write(filepath)
+        writer.write(path)
 
-    def marginal_inference(self):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        """
-        pass
-
-    def map_inference(self):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        """
-        pass
-
-    def exact_inference(self, 
-                        target=None, 
-                        evidence=None, 
-                        order=None, 
-                        operation='marginal', 
-                        algorithm='clique_tree'):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        """
-        inference = ExactInference(self, operation)
-        
-        if algorithm == 'sum_product':
-            inference.sum_product_ve(target, evidence, order)
-        else:
-            inference.clique_tree_bp(target, evidence)
-
-    def approx_inference(self, 
-                         target=None,
-                         evidence=None,
-                         order=None,
-                         operation='marginal',
-                         algorithm='loopy'):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        
-        This is the wrapper function for user interaction w/ approximate inference.
-
-        Methods:
-            1. *marginal* - computes marginal and conditional queries w/ or w/o evidence
-                Algorithms:
-                    1. *loopy* - loopy belief propagation over cluster graph
-        """
-        inference = ApproxInference(self)
-
-        if algorithm == 'loopy':
-            inference.loopy_belief_propagation(target, evidence)
-
-    #####################################################################
-    #####################################################################
+    
     ###################### UTILITY METHODS ##############################
-    #####################################################################
-    #####################################################################
 
     def get_cpt(self, var):
         """
-        Overview
-        --------
+        DEPRECATED ??? (we use numpy arrays now, not pandas dataframe)
+
+        This function returns the CPT (only) of a variable as a DataFrame.
 
 
         Parameters
         ----------
-
+        *var* : a string
+            The random variable for which you want the cpt
 
         Returns
         -------
-
+        *cpt* : a pandas dataframe
 
         Notes
         -----
 
         
-        
-        This function returns the CPT (only) of a variable as a DataFrame.
-
-        This is a helpful function in the intitialization of Factor objects
-        because factor cpt's are stored as Pandas DataFrames 
-        (instead of flattene arrays as recommended in Koller)
         """
         data = copy.copy(self.data)
         if len(data[var]['parents']) > 0:
@@ -334,25 +231,25 @@ class BayesNet(object):
 
     def get_networkx(self):
         """
-        Overview
-        --------
+        This function returns ONLY the network structure of the BN
+        in networkx form - there is no data/probabilities associated.
 
+        This is definitely used for drawing, and should also be the case. But
+        it is also used to find the topological sort of the BN, which is completely
+        unnecessary.
 
         Parameters
         ----------
-
+        None
 
         Returns
         -------
-
+        *G* : a networkx DiGraph object
 
         Notes
         -----
 
-        
-        
-        This function returns ONLY the network structure of the BN
-        in networkx form - i.e. there is no data/probabilities associated.
+
         """
         G = nx.DiGraph()
         edge_list = self.E
@@ -361,26 +258,25 @@ class BayesNet(object):
 
     def get_sp_networkx(self):
         """
-        Overview
-        --------
-
+        This function returns ONLY the network structure of the BN
+        in networkx form -  there is no data/probabilities associated.
 
         Parameters
         ----------
-
+        None
 
         Returns
         -------
+        *G* : a networkx digraph object
 
+        Effects
+        -------
+        None
 
         Notes
         -----
+        This isn't really used anywhere.
 
-        
-        
-        This function returns a weighted Digraph based on a 
-        topological sort of the original BN. Solving the shortest
-        path on this graph is equivalent to Belief Revision
         """
         OG = self.get_networkx()
 
@@ -427,29 +323,22 @@ class BayesNet(object):
 
     def get_moralized_edge_list(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        
         This function creates the moral of a BN - i.e. it
         adds an edge between each of the parents of each node if
         there isn't already an edge between them.
 
-        Returns:
-            1. *e_list* - a list of lists (edges)
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        *e_list* : a list of lists contains the edges of moralized graph
+
+        Notes
+        -----
+        Where is this used?
+
         """
         e_list = copy.copy(self.E)
         for node in self.V:
@@ -463,34 +352,40 @@ class BayesNet(object):
 
     def get_chordal_nx(self,v=None,e=None):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        
         This function creates a chordal graph - i.e. one in which there
         are no cycles with more than three nodes.
 
-        Can supply a v list and e list for chordal graph of any random graph..
+        Can supply a v_list and e_list for chordal graph of any random graph..
 
         We start from the moral graph, so if that is already chordal then it
         will return that.
 
-        Note: 
-            -Algorithm from Cano & Moral 1990 ->
-            'Heuristic Algorithms for the Triangulation of Graphs'
+        Algorithm from Cano & Moral 1990 ->
+        'Heuristic Algorithms for the Triangulation of Graphs'
+
+
+        Parameters
+        ----------
+        *v* : a list (optional)
+            A vertex list
+
+        *e* : a list (optional)
+            An edge list
+
+
+        Returns
+        -------
+        *G* : a network Digraph object
+
+        Effects
+        -------
+        None
+
+        Notes
+        -----
+        Where is this used? Do we need to use networkx?       
+        
+        
         """
         chordal_E = self.get_moralized_edge_list() # start with moral graph
 
@@ -527,30 +422,33 @@ class BayesNet(object):
                         temp_E2.append(edge)
                 temp_E = temp_E2
 
-        g = nx.Graph()
-        g.add_edges_from(chordal_E)
-        return g
+        G = nx.Graph()
+        G.add_edges_from(chordal_E)
+        return G
 
     def is_chordal(self, edge_list=None):
         """
-        Overview
-        --------
-
+        Check if the graph is chordal/triangulated.
 
         Parameters
         ----------
-
+        *edge_list* : a list of lists (optional)
+            The edges to check (if not self.E)
 
         Returns
         -------
+        *nx.is_chordal(G)* : a boolean
+            Whether the graph is chordal or not
 
+        Effects
+        -------
+        None
 
         Notes
         -----
+        Again, do we need networkx for this? Eventually should
+        write this check on our own.
 
-        
-        
-        Returns true if the graph is chordal/triangulated
         """
         if not edge_list:
             edge_list = self.E
