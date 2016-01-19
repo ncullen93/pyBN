@@ -59,21 +59,20 @@ def mutual_information(data):
 
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 
-	Px = np.sum(Pxyz, axis = (1,2),keepdims=True) # P(X)
-	Py = np.sum(Pxyz, axis = (0,2),keepdims=True) # P(Y)
-	Pz = np.sum(Pxyz, axis = (0,1),keepdims=True) # P(Z)
-
-	Pxy = np.sum(Pxyz, axis = 2,keepdims=True) # P(X,Y)
-	Pxz = np.sum(Pxyz, axis = 1,keepdims=True) # P(X,Z)
-	Pyz = np.sum(Pxyz, axis = 0,keepdims=True) # P(Y,Z)
+	Px = np.sum(Pxyz, axis = (1,2)) # P(X)
+	Py = np.sum(Pxyz, axis = (0,2)) # P(Y)
+	Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
+	Pxy = np.sum(Pxyz, axis = 2) # P(X,Y)
+	Pxz = np.sum(Pxyz, axis = 1) # P(X,Z)
+	Pyz = np.sum(Pxyz, axis = 0) # P(Y,Z)
 	
 
 	Pxy_z = Pxyz / Pz # P(X,Y | Z) = P(X,Y,Z) / P(Z)
 	Px_z = Pxz / Pz # P(X | Z) = P(X,Z) / P(Z)	
 	Py_z = Pyz / Pz # P(Y | Z) = P(Y,Z) / P(Z)
 
-	MI = np.sum(Pxyz * np.log(Pxy_z / Px_z*Py_z))
-
+	MI = np.sum(Pxyz * np.log(Pxy_z / (Px_z*Py_z))
+	#0.017
 	return(MI)
 
 def condind(data):
@@ -86,14 +85,15 @@ def condind(data):
 		- Compute ddof
 		- Perfom one-way chisquare to test
 	"""
-	hist,_ = np.histogramdd(data,bins=(2,2,2))
+	bins = tuple(np.amax(data, axis=0))
+	hist,_ = np.histogramdd(data,bins=bins)
 
 	# calculate
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 
-	Px = np.sum(Pxyz, axis = (1,2),keepdims=True) # P(X)
-	Py = np.sum(Pxyz, axis = (0,2),keepdims=True) # P(Y)
-	Pz = np.sum(Pxyz, axis = (0,1),keepdims=True) # P(Z)
+	Px = np.sum(Pxyz, axis = (1,2)) # P(X)
+	Py = np.sum(Pxyz, axis = (0,2)) # P(Y)
+	Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
 
 	Pxy = np.sum(Pxyz, axis = 2) # P(X,Y)
 	Pxz = np.sum(Pxyz, axis = 1) # P(X,Z)
@@ -111,7 +111,8 @@ def condind(data):
 	observed = observed_dist.flatten() * len(data)
 	expected = expected_dist.flatten() * len(data)
 
-	chi2, p_val = stats.chisquare(observed,expected, ddof=data.shape[1]-1)
+	ddof = (len(Px) - 1) * (len(Py) - 1) * len(Pz)
+	chi2, p_val = stats.chisquare(observed,expected, ddof=ddof)
 
 	return chi2, p_val
 
