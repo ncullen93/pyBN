@@ -69,3 +69,4 @@ def growshrink(bn,
 	-----
 
 	"""
+	pass
