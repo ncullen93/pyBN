@@ -7,6 +7,15 @@ The package I have mostly used for BN's is "bnlearn" in the R language. It has i
 
 I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would love to collaborate on this project with anyone who has an interest in graphical models -- the class structure and syntax is easy to pick up! Shoot me an email at ncullen.th@dartmouth.edu
 
+<h2>Usage</h2>
+Getting up-and-running with this package is simple:
+
+1. Click "Download ZIP" button towards the upper right corner of the page.
+2. Unpack the ZIP file wherever you want on your local machine. You should now have a folder called "pyBN-master"
+3. In your python terminal, change directories to be IN pyBN-master. Typing "ls" should show you "data", "examples" and "pyBN" folders. Stay in the "pyBN-master" directory for now!
+4. In your python terminal, simply type "from pyBN import *". This will load all of the module's functions, classes, etc.
+5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
+
 <h2>Current features:</h2>
 
 <h3>Reading BNs:</h3>
