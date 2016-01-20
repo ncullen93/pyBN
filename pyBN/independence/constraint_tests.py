@@ -21,14 +21,47 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-def mi_test(data):
+def mi_test_marginal(data):
 	"""
+	This function performs mutual information (cross entropy)-based
+	MARGINAL independence test. Because it is marginal, it requires
+	EXACTLY TWO columns. For the conditional independence test, use
+	"mi_test_conditional".
+
+	Arguments
+	---------
+	*data* : a nested numpy array
+		The data from which to learn - must have at exactly two
+		variables.
+
+	Returns
+	-------
+	*p_val* : a float
+		The pvalue from the chi2 and ddof
+
+	Effects
+	-------
+	None
+
+	Notes
+	-----
+	"""
+	pass
+
+
+def mi_test_conditional(data):
+	"""
+	This function performs the mutual information (cross entropy)-based
+	CONDITIONAL independence test. Because it is conditional, it requires
+	at LEAST three columns. For the marginal independence test, use 
+	"mi_test_marginal".
+
 	We use the maximum likelihood estimators as probabilities. The
 	mutual information value is computed, then the 
 	chi square test is used, with degrees of freedom equal to 
 	(|X|-1)*(|Y|-1)*Pi_z\inZ(|z|).
 
-	This function works on datasets that contain more than three
+	This function works on datasets that contain MORE than three
 	columns by concatenating the extra columns into one. For that
 	reason, it is a little slower in that case.
 

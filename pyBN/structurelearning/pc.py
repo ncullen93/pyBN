@@ -20,6 +20,18 @@ Repeat:
 	i <- i + 1
 Until |Adj(X)| <= i (forall x\inX)
 
+for (each uncoupled meeting X-Z-Y)
+	if (Z not in S_xy)
+		orient X - Z - Y as X -> Z <- Y
+while (more edges can be oriented)
+	for (each uncoupled meeting X -> Z - Y)
+		orient Z - Y as Z -> Y
+	for (each X - Y such that there is a path from X to Y)
+		orient X - Y as X -> Y
+	for (each uncoupled meeting X - Z - Y such that
+		X -> W, Y -> W, and Z - W)
+		orient Z - W as Z -> W
+
 
 References
 ----------
@@ -34,9 +46,11 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import itertools
 import numpy as np
 
-from pyBN.independence.constraint_tests import mi_test
+from pyBN.independence.constraint_tests import mi_test_conditional, mi_test_marginal
+from pyBN.classes import BayesNet
+from pyBN.structurelearning.orient_edges import orient_edges
 
-def pc(bn, data, pval=0.05):
+def pc(data, pval=0.05):
 	"""
 	Path Condition algorithm for structure learning. This is a
 	good test, but has some issues with test reliability when
@@ -45,9 +59,9 @@ def pc(bn, data, pval=0.05):
 
 	Speed Test (mean -> 1000 iterations)
 	------------------------------------
-	*bnlearn* -> 1.47 milliseconds
-		gs(lizards)
-	*pyBN* -> 1.79 milliseconds
+	*bnlearn* -> 1.65 milliseconds
+		cextend(gs(lizards))
+	*pyBN* -> 1.87 milliseconds
 		pc(lizards)
 
 	Arguments
@@ -76,46 +90,56 @@ def pc(bn, data, pval=0.05):
 	Notes
 	-----
 	- Z_dict is used to orient the edges -> not implemented yet.
+	- Because edge_dict includes double the number of edges right now,
+	the number of conditional independence tests this function runs is also
+	double the sufficient amount... fix this for better speed.
 	"""
+	##### FIND EDGES #####
 	rv_card = np.amax(data, axis=0)
 	n_rv = len(rv_card)
-	#Start with a complete, undirected graph G'
+	
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
-	Z_dict = dict([(x,[]) for x in xrange(n_rv)])
+	z_dict = {}
+	witnesses = []
 	stop = False
 	i = 1
-	#Repeat:
 	while not stop:
-		#	For each x \in X:
 		for x in xrange(n_rv):
-		#		For each y in Adj(x):
 			for y in edge_dict[x]:
-		#			Test whether there exists some Z in Adj(X)-{Y}
-		#			with |Z| = i, such that I(X,Y|Z)
-				for z in itertools.combinations(edge_dict[x],i):
-					if y not in z:
-						cols = (x,y) + z
-						pval_xy_z = mi_test(data[:,cols])
-			#			If there exists such a set S:
-						if (pval_xy_z > pval):
-							#print 'Removing edge: ' , x , '-', y
-			#				Make Z_xy <- Z
-							Z_dict[x].append({y:z})
-			#				Remove X-Y link from G'
-							edge_dict[x].remove(y)
-							edge_dict[y].remove(x)
-		#	i <- i + 1
+				if i == 0:
+					pval_xy_z = mi_test_marginal(data[:,(x,y)])
+					if pval_xy_z > pval:
+						edge_dict[x].remove(y)
+						edge_dict[y].remove(x)
+				else:
+					for z in itertools.combinations(edge_dict[x],i):
+						if y not in z:
+							cols = (x,y) + z
+							pval_xy_z = mi_test_conditional(data[:,cols])
+							if pval_xy_z > pval:
+								witnesses.append([x,y,z])
+								edge_dict[x].remove(y)
+								edge_dict[y].remove(x)
 		i += 1
-	#Until |Adj(X)| <= i (forall x\inX)
 		stop = True
 		for x in xrange(n_rv):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-
-	bn.set_structure(edge_dict, rv_card)
-
-	return edge_dict
+	##### ORIENT EDGES #####
+	dedges = []
+	for k,v in edge_dict.items():
+		for vv in v:
+			if [k,vv] not in dedges and [vv,k] not in dedges:
+				dedges.append([k,vv])
+	#print dedges
+	d_edge_dict = orient_edges(dedges, witnesses)
+	#print d_edge_dict
+	# wont work correctly until edges are figured out
+	card_dict = dict(zip(range(len(rv_card)),rv_card))
+	bn=BayesNet()
+	bn.set_structure(edge_dict, card_dict)
+	return edge_dict, z_dict
 
 
 

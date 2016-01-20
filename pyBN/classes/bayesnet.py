@@ -180,7 +180,7 @@ class BayesNet(object):
         """
         pybn.readwrite.write(path)
 
-    def set_structure(edge_dict, rv_card):
+    def set_structure(self, edge_dict, card_dict):
         """
         Set the node/edge structure of this BayesNet object
         from the given edge_dict. If the current BayesNet's structure
@@ -190,7 +190,9 @@ class BayesNet(object):
 
         Arguments
         ---------
-        *edge_dict* : a dictionary where key = node, value = python list of neighbors
+        *edge_dict* : a dictionary where key = node, value = python list of its neighbors
+
+        *card_dict* : a dictionary where key = node, value = python list of its values
 
         Returns
         -------
@@ -219,13 +221,13 @@ class BayesNet(object):
                 The probability values for every combination
                 of parent(s)-self values
         """
-        sub_dict = {'numoutcomes':0,'vals':[],'parents':[],'children':[],'cprob':[]}
-        data = dict.fromkeys(edge_dict.keys(),sub_dict)
+        data = dict.fromkeys(edge_dict.keys(),
+            {'numoutcomes':0,'vals':[],'parents':[],'children':[],'cprob':[]})
 
         for rv in edge_dict.keys():
             data[rv]['children'] = edge_dict[rv]
-            data[rv]['numoutcomes'] = rv_card[rv]
-            data[rv]['vals'] = range(rv_card[rv])
+            data[rv]['numoutcomes'] = card_dict[rv]
+            data[rv]['vals'] = range(card_dict[rv])
             for child in edge_dict[rv]:
                 data[child]['parents'].append(rv)
         self.data = data
