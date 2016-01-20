@@ -16,7 +16,7 @@ import pandas as pd
 from itertools import product
 import copy
 
-import pybn.readwrite
+import pyBN.readwrite
 
 import time
 import pdb
