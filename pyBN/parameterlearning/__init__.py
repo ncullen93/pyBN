@@ -1,1 +1,1 @@
-from pybn.parameterlearning.parameterlearning import *
+from pyBN.parameterlearning.parameterlearning import *

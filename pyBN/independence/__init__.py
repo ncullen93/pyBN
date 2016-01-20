@@ -1,1 +1,1 @@
-from pybn.independence.constraint_tests import *
+from pyBN.independence.constraint_tests import *

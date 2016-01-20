@@ -1,1 +1,1 @@
-from pybn.readwrite.readwrite import *
+from pyBN.readwrite.readwrite import *
