@@ -16,13 +16,6 @@ Getting up-and-running with this package is simple:
 4. In your python terminal, simply type "from pyBN import *". This will load all of the module's functions, classes, etc.
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
-<h2>Speed Comparison</h2>
-|                          | Time    | (ms)  |
-|--------------------------|---------|-------|
-| Function                 | bnlearn | pyBN  |
-| Mutual Information Test  | 0.657   | 0.448 |
-| PC/GS Structure Learning | 1.47    | 1.79  |
-	
 
 <h2>Current features:</h2>
 
