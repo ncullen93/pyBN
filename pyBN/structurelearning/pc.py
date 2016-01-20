@@ -40,8 +40,9 @@ def pc(data):
 
 	Arguments
 	---------
-	*data* : a pandas dataframe or a nested numpy array
-		The data from which we will learn
+	*data* : a nested numpy array
+		The data from which we will learn -> will code for
+		pandas dataframe after numpy works
 
 	Returns
 	-------
@@ -54,11 +55,28 @@ def pc(data):
 
 	Notes
 	-----
-	Assuming we have a pandas dataframe for now
 	"""
+	rv_card = np.amax(data, axis=0)
+	n_rv = len(rv_card)
+	#Start with a complete, undirected graph G'
+	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
 
+	idx = 0
+	#Repeat:
+	#	For each x \in X:
+	for x in xrange(n_rv):
+	#		For each y in Adj(x):
+		for y in edge_dict[x]:
+	#			Test whether there exists some S in Adj(X)-{Y}
+	#			with |S| = i, such that I(X,Y|S)
+			pass
+	#
+	#			If there exists such a set S:
+	#				Make S_xy <- S
+	#				Remove X-Y link from G'
+	#	i <- i + 1
+	#Until |Adj(X)| <= i (forall x\inX)
 
-	adj_list = dict()
 
 
 
