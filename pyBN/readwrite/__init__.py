@@ -1,1 +1,1 @@
-from .FileIO import BNio
+from pybn.readwrite.readwrite import *

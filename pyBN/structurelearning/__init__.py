@@ -1,3 +1,3 @@
-from Models import *
-from Inference import *
-from FileIO import *
+from pybn.structurelearning.growshrink import *
+from pybn.structurelearning.pc import *
+from pybn.structurelearning.structurelearning import *

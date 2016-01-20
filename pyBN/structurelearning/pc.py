@@ -32,7 +32,7 @@ and Search."
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import itertools
-
+import numpy as np
 
 def pc(data, pval=0.05):
 	"""
@@ -63,24 +63,26 @@ def pc(data, pval=0.05):
 	n_rv = len(rv_card)
 	#Start with a complete, undirected graph G'
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
-
+	#Z_dict = {}
 	stop = False
 	i = 0
 	#Repeat:
-	while !stop:
+	while not stop:
 		#	For each x \in X:
 		for x in xrange(n_rv):
-			Z_dict[x] = {}
+			#Z_dict[x] = {}
 		#		For each y in Adj(x):
 			for y in edge_dict[x]:
 		#			Test whether there exists some Z in Adj(X)-{Y}
 		#			with |Z| = i, such that I(X,Y|Z)
 				for z in itertools.combinations(edge_dict[x],i):
-					pval_xy_z = mutual_information(data[:,[x,y,z]])
+					cols = (x,y) + tuple(z)
+					pval_xy_z = mutual_information(data[:,cols])
+					print pval_xy_z
 		#			If there exists such a set S:
 					if (pval_xy_z < pval):
 		#				Make Z_xy <- Z
-						Z_dict[x][y_idx] = z
+						#Z_dict[x][y_idx] = z
 		#				Remove X-Y link from G'
 						edge_dict[x].remove(y)
 		#	i <- i + 1
@@ -91,7 +93,7 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-
+	return edge_dict
 
 
 
