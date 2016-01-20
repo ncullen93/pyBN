@@ -1,6 +1,7 @@
 """
 ******************************
-Conditional Independence Tests
+Conditional Independence Tests 
+for Constraint-based Learning
 ******************************
 
 Implemented Constraint-based Tests
@@ -25,7 +26,11 @@ def mi_test(data):
 	We use the maximum likelihood estimators as probabilities. The
 	mutual information value is computed, then the 
 	chi square test is used, with degrees of freedom equal to 
-	(|X|-1)*(|Y|-1)*Pi_z\inZ(|z|)
+	(|X|-1)*(|Y|-1)*Pi_z\inZ(|z|).
+
+	This function works on datasets that contain more than three
+	columns by concatenating the extra columns into one. For that
+	reason, it is a little slower in that case.
 
 	Steps:
 		- Calculate the marginal/conditional probabilities
@@ -50,10 +55,6 @@ def mi_test(data):
 
 	Returns
 	-------
-	*MI* : a float
-		Mutual Information value
-	*chi2_statistic* : a float
-		Chisquare statistic
 	*p_val* : a float
 		The pvalue from the chi2 and ddof
 
@@ -63,15 +64,22 @@ def mi_test(data):
 
 	Notes
 	-----
-	- might only need to return pval ?
-	- Assuming for now that |Z| = 1... generalize later
+	- Doesn't currently work with strings... 
 	- Should generalize to let data be a Pandas DataFrame --> would
 	encourage external use.
 
 	"""
-	#data = np.array(data) # create data
-	bins = np.amax(data, axis=0) # create bins
-	hist,_ = np.histogramdd(data, bins=bins) # frequency counts
+	
+	bins = np.amax(data, axis=0) # read levels for each variable
+	# CHECK FOR > 3 COLUMNS -> concatenate Z into one column
+	if len(bins) > 3:
+		data = data.astype('str')
+		ncols = len(bins)
+		for i in xrange(len(data)):
+			data[i,2] = ''.join(data[i,2:ncols])
+		data = data.astype('int')[:,0:3]
+
+	hist,_ = np.histogramdd(data, bins=bins[0:3]) # frequency counts
 
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 	Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
@@ -93,7 +101,7 @@ def mi_test(data):
 	chi2_statistic = 2*len(data)*MI
 	ddof = (bins[0] - 1) * (bins[1] - 1) * bins[2]
 	p_val = 2*stats.chi2.pdf(chi2_statistic, ddof) # 2* for one tail
-	return MI, chi2_statistic, p_val
+	return p_val
 
 def chi2_test(data):
 	"""
@@ -138,20 +146,15 @@ def chi2_test(data):
 
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 
-	#Px = np.sum(Pxyz, axis = (1,2)) # P(X)
-	#Py = np.sum(Pxyz, axis = (0,2)) # P(Y)
 	Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
-
-	#Pxy = np.sum(Pxyz, axis = 2) # P(X,Y)
 	Pxz = np.sum(Pxyz, axis = 1) # P(X,Z)
 	Pyz = np.sum(Pxyz, axis = 0) # P(Y,Z)
 
-	#Pxy_z = Pxyz / Pz # P(X,Y | Z) = P(X,Y,Z) / P(Z)
 	Px_z = Pxz / Pz # P(X | Z) = P(X,Z) / P(Z)	
 	Py_z = Pyz / Pz # P(Y | Z) = P(Y,Z) / P(Z)
 
 	observed_dist = Pxyz # Empirical distribution
-	# Need to fix this multiplication 
+	# This isn't tested
 	expected_dist = Pz # P(Z)P(X|Z)P(Y|Z)
 	for i in xrange(bins[0]):
 		for j in xrange(bins[1]):
