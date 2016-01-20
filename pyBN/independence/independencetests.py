@@ -71,9 +71,16 @@ def mutual_information(data):
 	Px_z = Pxz / Pz # P(X | Z) = P(X,Z) / P(Z)	
 	Py_z = Pyz / Pz # P(Y | Z) = P(Y,Z) / P(Z)
 
-	MI = np.sum(Pxyz * np.log(Pxy_z / (Px_z*Py_z))
-	#0.017
-	return(MI)
+	Px_y_z = np.empty((Pxy_z.shape))
+	for i in xrange(len(Px)):
+		for j in xrange(len(Py)):
+			for k in xrange(len(Pz)):
+				Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
+	
+
+	MI = np.sum(Pxyz * np.log(Pxy_z / (Px_y_z)))
+	chi2_statistic = 2*len(data)*MI
+	return MI
 
 def condind(data):
 	"""
@@ -105,6 +112,7 @@ def condind(data):
 	Py_z = Pyz / Pz # P(Y | Z) = P(Y,Z) / P(Z)
 
 	observed_dist = Pxyz # Empirical distribution
+	# Need to fix this multiplication 
 	expected_dist = Px*(Py_z*Px_z) #  Conditionally independent null distribution
 	expected_dist /= expected_dist.sum()
 
@@ -112,6 +120,9 @@ def condind(data):
 	expected = expected_dist.flatten() * len(data)
 
 	ddof = (len(Px) - 1) * (len(Py) - 1) * len(Pz)
+	print ddof
+	print observed
+	print expected
 	chi2, p_val = stats.chisquare(observed,expected, ddof=ddof)
 
 	return chi2, p_val
