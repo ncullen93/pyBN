@@ -36,7 +36,7 @@ import numpy as np
 
 from pyBN.independence.constraint_tests import mi_test
 
-def pc(data, pval=0.05):
+def pc(bn, data, pval=0.05):
 	"""
 	Path Condition algorithm for structure learning. This is a
 	good test, but has some issues with test reliability when
@@ -52,6 +52,13 @@ def pc(data, pval=0.05):
 
 	Arguments
 	---------
+	*bn* : a BayesNet object
+		The object we wish to modify. This can be a competely
+		empty BayesNet object, in which case the structure info
+		will be set. This can be a BayesNet object with already
+		initialized structure/params, in which case the structure
+		will be overwritten and the parameters will be cleared.
+
 	*data* : a nested numpy array
 		The data from which we will learn -> will code for
 		pandas dataframe after numpy works
@@ -59,7 +66,8 @@ def pc(data, pval=0.05):
 	Returns
 	-------
 	*bn* : a BayesNet object
-		The network created from the learning procedure
+		The network created from the learning procedure, with
+		the nodes/edges initialized/changed
 
 	Effects
 	-------
@@ -104,6 +112,9 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
+
+	bn.set_structure(edge_dict, rv_card)
+
 	return edge_dict
 
 

@@ -69,6 +69,8 @@ class BayesNet(object):
 
     *write* : write a BayesNet object to a file
 
+    *set_structure* : set the BayesNet structure from an edge dictionary.
+
     
     Utility Methods
     ---------------
@@ -178,7 +180,57 @@ class BayesNet(object):
         """
         pybn.readwrite.write(path)
 
-    
+    def set_structure(edge_dict, rv_card):
+        """
+        Set the node/edge structure of this BayesNet object
+        from the given edge_dict. If the current BayesNet's structure
+        is empty, it will be initialized. If it is already initialized,
+        it will be overwritten. If there is any parameter information, 
+        it will be cleared.
+
+        Arguments
+        ---------
+        *edge_dict* : a dictionary where key = node, value = python list of neighbors
+
+        Returns
+        -------
+        None
+
+        Effects
+        -------
+        - Sets the structure information
+
+        Notes
+        -----
+        Values to set:
+            "numoutcomes" : an integer
+                        The number of outcomes an RV has.
+
+            "vals" : a list
+                The list of instantiations (values) an RV has.
+
+            "parents" : a list
+                The list of the parents' names
+
+            "children": a list
+                The list of the childrens' names
+
+            "cprob" : a nested python list
+                The probability values for every combination
+                of parent(s)-self values
+        """
+        sub_dict = {'numoutcomes':0,'vals':[],'parents':[],'children':[],'cprob':[]}
+        data = dict.fromkeys(edge_dict.keys(),sub_dict)
+
+        for rv in edge_dict.keys():
+            data[rv]['children'] = edge_dict[rv]
+            data[rv]['numoutcomes'] = rv_card[rv]
+            data[rv]['vals'] = range(rv_card[rv])
+            for child in edge_dict[rv]:
+                data[child]['parents'].append(rv)
+        self.data = data
+
+
     ###################### UTILITY METHODS ##############################
 
     def get_networkx(self):
