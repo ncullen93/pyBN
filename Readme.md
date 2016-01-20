@@ -19,7 +19,7 @@ Getting up-and-running with this package is simple:
 <h2>Speed Comparison</h2>
 <h4>Comparison to "bnlearn"</h4>
 - Independence Tests:
-	-mutual information
+	- mutual information
 		- bnlearn -> 657 milliseconds
 			-ci.test(lizards,test="mi")
 		- pyBN -> 448 milliseconds
