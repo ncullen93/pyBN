@@ -18,11 +18,11 @@ Getting up-and-running with this package is simple:
 
 <h2>Speed Comparison</h2>
 <h4>Comparison to "bnlearn"</h4>
-|                          | Time    | (ms)  |   |   |
-|--------------------------|---------|-------|---|---|
-| Function                 | bnlearn | pyBN  |   |   |
-| Mutual Information Test  | 0.657   | 0.448 |   |   |
-| PC/GS Structure Learning | 1.47    | 1.79  |   |   |
+|                          | Time    | (ms)  |
+|--------------------------|---------|-------|
+| Function                 | bnlearn | pyBN  |
+| Mutual Information Test  | 0.657   | 0.448 |
+| PC/GS Structure Learning | 1.47    | 1.79  |
 	
 
 <h2>Current features:</h2>
