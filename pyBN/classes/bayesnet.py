@@ -16,9 +16,7 @@ import pandas as pd
 from itertools import product
 import copy
 
-from pyBN.Inference import *
-from pyBN.FileIO import *
-from . import *
+import pybn.readwrite
 
 import time
 import pdb
@@ -74,8 +72,6 @@ class BayesNet(object):
     
     Utility Methods
     ---------------
-
-    *get_cpt* : get conditional probability table
 
     *get_networkx* : get networkx representation of BayesNet object
 
@@ -153,8 +149,7 @@ class BayesNet(object):
         - any other common extensions to read from besides .bif?
         
         """
-        reader = BNio(self)
-        reader.read(path)
+        pybn.readwrite.read(path)
 
     def write(self, path):
         """
@@ -181,53 +176,10 @@ class BayesNet(object):
 
         
         """
-        writer = BNio(self)
-        writer.write(path)
+        pybn.readwrite.write(path)
 
     
     ###################### UTILITY METHODS ##############################
-
-    def get_cpt(self, var):
-        """
-        DEPRECATED ??? (we use numpy arrays now, not pandas dataframe)
-
-        This function returns the CPT (only) of a variable as a DataFrame.
-
-
-        Parameters
-        ----------
-        *var* : a string
-            The random variable for which you want the cpt
-
-        Returns
-        -------
-        *cpt* : a pandas dataframe
-
-        Notes
-        -----
-
-        
-        """
-        data = copy.copy(self.data)
-        if len(data[var]['parents']) > 0:
-            val_iter = [data[p]['vals'] for p in data[var]['parents']]
-            val_iter.append(data[var]['vals'])
-            val_comb = map(list,list(product(*val_iter))) # from itertools
-            
-            prob_ravel = np.ravel(np.array(data[var]['cprob']))
-            
-            c = zip(*val_comb)
-            c.append(tuple(prob_ravel))
-            cpt = pd.DataFrame(c).T
-            
-            columns = copy.copy(data[var]['parents'])
-            columns.append(var)
-            columns.append(str('Prob-'+var))
-            cpt.columns = columns
-        else:
-            cpt = pd.DataFrame(zip(data[var]['vals'],data[var]['cprob']))
-            cpt.columns = [var, str('Prob-'+ var)]
-        return cpt
 
     def get_networkx(self):
         """

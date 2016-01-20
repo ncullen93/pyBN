@@ -13,8 +13,8 @@ import pandas as pd
 import networkx as nx
 import copy
 import json
-import BayesNet
-from Factor import Factor
+from pybn.classes.bayesnet import BayesNet
+from pybn.classes.factor import Factor
 
 
 class Factorization(object):

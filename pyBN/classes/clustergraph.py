@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 
-from Factorization import *
-from CliqueTree import * 
+from pybn.classes.factorization import Factorization
+from pybn.classes.cliquetree import CliqueTree
 
 class ClusterGraph(object):
     """

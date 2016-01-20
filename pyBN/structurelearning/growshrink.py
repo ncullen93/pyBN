@@ -3,7 +3,7 @@
 GrowShrink Algorithm
 ********************
 
-"Our approach constructs Bayesian networks by first identifying each node’s 
+"Our approach constructs Bayesian networks by first identifying each node's
 Markov blankets, then connecting nodes in a maximally consistent way. 
 In contrast to the majority of work, which typically uses hill-climbing approaches 
 that may produce dense and causally incorrect nets, our approach yields much more 

@@ -16,9 +16,9 @@ import pandas as pd
 import networkx as nx
 import copy
 
-from BayesNet import *
-from Factorization import *
-from FastFactor import FastFactor
+from pybn.classes.bayesnet import BayesNet
+from pybn.classes.factorization import Factorization
+from pybn.classes.factor import Factor
 
 class CliqueTree(object):
     """
