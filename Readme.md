@@ -17,7 +17,6 @@ Getting up-and-running with this package is simple:
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
 <h2>Speed Comparison</h2>
-<h4>Comparison to "bnlearn"</h4>
 |                          | Time    | (ms)  |
 |--------------------------|---------|-------|
 | Function                 | bnlearn | pyBN  |
