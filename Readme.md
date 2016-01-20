@@ -38,15 +38,18 @@ Getting up-and-running with this package is simple:
 - .bif format
 - json format
 
-<h4>Approx Inference:</h4>
+<h4>Approx Inference</h4>
 - loopy belief propagation
 - forward sampling
 - gibbs sampliing
 - likelihood weighted sampling
 
-<h4>Exact Inference:</h4>
+<h4>Exact Inference</h4>
 - Sum-Product Variable Elimination
 - Clique Tree Message Passing/Belief Propagation
+
+<h4>Structure Learning</h4>
+- Path Condition (PC) Algorithm
 
 
 <h2>Future Features:</h2>
