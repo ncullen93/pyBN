@@ -21,13 +21,15 @@ Getting up-and-running with this package is simple:
 - Independence Tests:
 	- mutual information
 		- bnlearn -> 657 milliseconds
-			-ci.test(lizards,test="mi")
+			- ci.test(lizards,test="mi")
 		- pyBN -> 448 milliseconds
-			-mi.test(lizards)
+			- mi.test(lizards)
 - Constraint-based Structure Learning
 	- Path Condition (pc) & Grow Shrink (gs) algorithms:
 		- bnlearn -> 1.47 milliseconds (w/out edge orientation)
+			- gs(lizards)
 		- pyBN -> 1.79 milliseconds (w/ edge orientation)
+			- pc(lizards)
 	
 
 <h2>Current features:</h2>
