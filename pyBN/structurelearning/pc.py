@@ -72,8 +72,7 @@ def pc(data, pval=0.05):
 		for x in xrange(n_rv):
 			Z_dict[x] = {}
 		#		For each y in Adj(x):
-			for y_idx in xrange(len(edge_dict[x])):
-				y = edge_dict[x][y_idx]
+			for y in edge_dict[x]:
 		#			Test whether there exists some Z in Adj(X)-{Y}
 		#			with |Z| = i, such that I(X,Y|Z)
 				for z in itertools.combinations(edge_dict[x],i):
@@ -83,7 +82,7 @@ def pc(data, pval=0.05):
 		#				Make Z_xy <- Z
 						Z_dict[x][y_idx] = z
 		#				Remove X-Y link from G'
-						del edge_dict[x][y]
+						edge_dict[x].remove(y)
 		#	i <- i + 1
 		i += 1
 	#Until |Adj(X)| <= i (forall x\inX)
