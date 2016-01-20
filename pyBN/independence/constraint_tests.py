@@ -154,7 +154,7 @@ def chi2_test(data):
 	Py_z = Pyz / Pz # P(Y | Z) = P(Y,Z) / P(Z)
 
 	observed_dist = Pxyz # Empirical distribution
-	# This isn't tested
+	#Not correct right now -> Pz is wrong dimension
 	expected_dist = Pz # P(Z)P(X|Z)P(Y|Z)
 	for i in xrange(bins[0]):
 		for j in xrange(bins[1]):

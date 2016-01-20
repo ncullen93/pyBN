@@ -31,7 +31,10 @@ and Search."
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-def pc(data):
+import itertools
+
+
+def pc(data, pval=0.05):
 	"""
 	Path Condition algorithm for structure learning. This is a
 	good test, but has some issues with test reliability when
@@ -61,21 +64,34 @@ def pc(data):
 	#Start with a complete, undirected graph G'
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
 
-	idx = 0
+	stop = False
+	i = 0
 	#Repeat:
-	#	For each x \in X:
-	for x in xrange(n_rv):
-	#		For each y in Adj(x):
-		for y in edge_dict[x]:
-	#			Test whether there exists some S in Adj(X)-{Y}
-	#			with |S| = i, such that I(X,Y|S)
-			pass
-	#
-	#			If there exists such a set S:
-	#				Make S_xy <- S
-	#				Remove X-Y link from G'
-	#	i <- i + 1
+	while !stop:
+		#	For each x \in X:
+		for x in xrange(n_rv):
+			Z_dict[x] = {}
+		#		For each y in Adj(x):
+			for y_idx in xrange(len(edge_dict[x])):
+				y = edge_dict[x][y_idx]
+		#			Test whether there exists some Z in Adj(X)-{Y}
+		#			with |Z| = i, such that I(X,Y|Z)
+				for z in itertools.combinations(edge_dict[x],i):
+					pval_xy_z = mutual_information(data[:,[x,y,z]])
+		#			If there exists such a set S:
+					if (pval_xy_z < pval):
+		#				Make Z_xy <- Z
+						Z_dict[x][y_idx] = z
+		#				Remove X-Y link from G'
+						del edge_dict[x][y]
+		#	i <- i + 1
+		i += 1
 	#Until |Adj(X)| <= i (forall x\inX)
+		stop = True
+		for x in xrange(n_rv):
+			if (len(edge_dict[x]) > i-1):
+				stop = False
+				break
 
 
 
