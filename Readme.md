@@ -16,30 +16,44 @@ Getting up-and-running with this package is simple:
 4. In your python terminal, simply type "from pyBN import *". This will load all of the module's functions, classes, etc.
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
+<h2>Speed Comparison</h2>
+<h4>Comparison to "bnlearn"</h4>
+- Independence Tests:
+	-mutual information
+		- bnlearn -> 657 milliseconds
+			-ci.test(lizards,test="mi")
+		- pyBN -> 448 milliseconds
+			-mi.test(lizards)
+- Constraint-based Structure Learning
+	- Path Condition (pc) & Grow Shrink (gs) algorithms:
+		- bnlearn -> 1.47 milliseconds (w/out edge orientation)
+		- pyBN -> 1.79 milliseconds (w/ edge orientation)
+	
+
 <h2>Current features:</h2>
 
-<h3>Reading BNs:</h3>
+<h4>Reading BNs:</h4>
 - .bif format
 - json format
 
-<h3>Approx Inference:</h3>
+<h4>Approx Inference:</h4>
 - loopy belief propagation
 - forward sampling
 - gibbs sampliing
 - likelihood weighted sampling
 
-<h3>Exact Inference:</h3>
+<h4>Exact Inference:</h4>
 - Sum-Product Variable Elimination
 - Clique Tree Message Passing/Belief Propagation
 
 
 <h2>Future Features:</h2>
 
-<h3>Structure Learning</h3>
+<h4>Structure Learning</h4>
 - Grow-shrink
 - Hill-climbing
 
-<h3>Parameter Learning</h3>
+<h4>Parameter Learning</h4>
 - Bayesian Estimation
 - Maximum Likelihood Estimation
 

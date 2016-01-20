@@ -34,12 +34,21 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import itertools
 import numpy as np
 
+from pyBN.independence.constraint_tests import mi_test
+
 def pc(data, pval=0.05):
 	"""
 	Path Condition algorithm for structure learning. This is a
 	good test, but has some issues with test reliability when
 	the size of the dataset is small. The Necessary Path
 	Condition (NPC) algorithm can solve these problems.
+
+	Speed Test (mean -> 1000 iterations)
+	------------------------------------
+	*bnlearn* -> 1.47 milliseconds
+		gs(lizards)
+	*pyBN* -> 1.79 milliseconds
+		pc(lizards)
 
 	Arguments
 	---------
@@ -58,33 +67,35 @@ def pc(data, pval=0.05):
 
 	Notes
 	-----
+	- Z_dict is used to orient the edges -> not implemented yet.
 	"""
 	rv_card = np.amax(data, axis=0)
 	n_rv = len(rv_card)
 	#Start with a complete, undirected graph G'
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
-	#Z_dict = {}
+	Z_dict = dict([(x,[]) for x in xrange(n_rv)])
 	stop = False
-	i = 0
+	i = 1
 	#Repeat:
 	while not stop:
 		#	For each x \in X:
 		for x in xrange(n_rv):
-			#Z_dict[x] = {}
 		#		For each y in Adj(x):
 			for y in edge_dict[x]:
 		#			Test whether there exists some Z in Adj(X)-{Y}
 		#			with |Z| = i, such that I(X,Y|Z)
 				for z in itertools.combinations(edge_dict[x],i):
-					cols = (x,y) + tuple(z)
-					pval_xy_z = mutual_information(data[:,cols])
-					print pval_xy_z
-		#			If there exists such a set S:
-					if (pval_xy_z < pval):
-		#				Make Z_xy <- Z
-						#Z_dict[x][y_idx] = z
-		#				Remove X-Y link from G'
-						edge_dict[x].remove(y)
+					if y not in z:
+						cols = (x,y) + z
+						pval_xy_z = mi_test(data[:,cols])
+			#			If there exists such a set S:
+						if (pval_xy_z > pval):
+							#print 'Removing edge: ' , x , '-', y
+			#				Make Z_xy <- Z
+							Z_dict[x].append({y:z})
+			#				Remove X-Y link from G'
+							edge_dict[x].remove(y)
+							edge_dict[y].remove(x)
 		#	i <- i + 1
 		i += 1
 	#Until |Adj(X)| <= i (forall x\inX)
