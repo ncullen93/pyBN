@@ -15,21 +15,26 @@ import networkx as nx
 
 def random_sample(self, n=1, evidence={}):
     """
-    Overview
-    --------
-
+    Take a random sample of "n" observations from a
+    BayesNet object.
 
     Parameters
     ----------
+    *n* : an integer
+        The number of observations to take
 
+    *evidence* : a dictionary, key=rv & value=instantiation
+        Evidence to pass in
 
     Returns
     -------
-
+    *sample* : a numpy array
+        The generated random sample
 
     Notes
     -----
-
+    - This is a prime candidate for numba.
+    - Does not currently work.
 
     """
     sample_dict = []

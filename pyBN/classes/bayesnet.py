@@ -21,8 +21,6 @@ import pandas as pd
 from itertools import product
 import copy
 
-import pyBN.readwrite
-
 import time
 import pdb
 
@@ -125,63 +123,6 @@ class BayesNet(object):
         #self.sol = None
 
     ###################### USER METHODS ##############################
-
-    def read(self, path):
-        """
-        Read a file and create a BayesNet object from it
-
-        Currently supported extensions:
-            - .bif
-            - .bn (json format - see above)
-
-        Parameters
-        ----------
-        *path* : a string
-            The relative or absolute file path to the file, INCLUDING the
-            extension. 
-
-
-        Returns
-        -------
-        None
-
-        Effects
-        -------
-        - populates self.V, self.E, self.data with info from the file
-
-        Notes
-        -----
-        - any other common extensions to read from besides .bif?
-        
-        """
-        pybn.readwrite.read(path)
-
-    def write(self, path):
-        """
-        Write a BayesNet object to file.
-
-        Currently supported extensions:
-            - .bn (json format)
-
-
-        Parameters
-        ----------
-        *path* : a string
-
-        Returns
-        -------
-        None
-
-        Effects
-        -------
-        - creates a new file in user's system
-
-        Notes
-        -----
-
-        
-        """
-        pybn.readwrite.write(path)
 
     def set_structure(self, edge_dict, card_dict):
         """
