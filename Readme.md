@@ -37,6 +37,11 @@ Getting up-and-running with this package is simple:
 - Path Condition (PC) Algorithm
 - Chow-Liu Tree Algorithm
 
+<h4>Conditional Independence Tests</h4>
+- Marginal Mutual Information (i.e. KL-Divergence)
+- Conditional Mutual Information (i.e. Cross Entropy)
+- Pearson X^2
+
 <h2>Future Features:</h2>
 
 <h4>Structure Learning</h4>
