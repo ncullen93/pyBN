@@ -26,10 +26,10 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
+from pyBN.misc.graphtheory import *
 
 
-
-def forward_sample(self, n=1000):
+def forward_sample(bn, n=1000):
 	"""
 	Overview
 	--------
@@ -47,8 +47,10 @@ def forward_sample(self, n=1000):
 	-----
 	"""
 	sample_dict = {}
-
-	G = self.BN.get_networkx()
+	
+	#adj_list = bn.get_adj_list # experimental
+	#rv_order = top_sort(adj_list) # experimental
+	G = self.get_networkx()
 	rv_order = nx.topological_sort(G)
 
 	#factor_dict = dict([(var,FastFactor(self.BN, var)) for var in self.BN.V])

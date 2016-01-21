@@ -179,7 +179,13 @@ class BayesNet(object):
 
 
     ###################### UTILITY METHODS ##############################
-
+    def get_adj_list(self):
+        adj_list = [[] for _ in bn.V]
+        vi_map = dict((bn.V[i],i) for i in range(len(bn.V)))
+        for u,v in bn.E:
+            adj_list[vi_map[u]].append(vi_map[v])
+        return adj_list
+        
     def get_networkx(self):
         """
         This function returns ONLY the network structure of the BN
