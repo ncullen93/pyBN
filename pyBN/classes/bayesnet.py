@@ -34,7 +34,7 @@ class BayesNet(object):
     *V* : a list
         The container for vertices (i.e. random variables)
 
-    *E* : a list
+    *E* : a list of tuples ?
         The container for edges (i.e. conditional dependencies)
 
     *data* : a dictionary
@@ -221,16 +221,14 @@ class BayesNet(object):
                 The probability values for every combination
                 of parent(s)-self values
         """
-        data = dict.fromkeys(edge_dict.keys(),
-            {'numoutcomes':0,'vals':[],'parents':[],'children':[],'cprob':[]})
-
-        for rv in edge_dict.keys():
-            data[rv]['children'] = edge_dict[rv]
-            data[rv]['numoutcomes'] = card_dict[rv]
-            data[rv]['vals'] = range(card_dict[rv])
-            for child in edge_dict[rv]:
-                data[child]['parents'].append(rv)
+        data = dict((rv,\
+            {'numoutcomes':card_dict[rv],
+            'vals':range(card_dict[rv]),
+            'parents':[i for i in edge_dict.keys() if rv in edge_dict[i]],
+            'children':edge_dict[rv],'cprob':[]}) for rv in edge_dict.keys())        
+        
         self.data = data
+        self.E = [(i,j) for i in edge_dict.keys() for j in edge_dict[i]]
 
 
     ###################### UTILITY METHODS ##############################

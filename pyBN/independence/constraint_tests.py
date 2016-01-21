@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-def mi_test_marginal(data):
+def mi_test_marginal(data, chi2_test=True):
 	"""
 	This function performs mutual information (cross entropy)-based
 	MARGINAL independence test. Because it is marginal, it requires
@@ -49,10 +49,29 @@ def mi_test_marginal(data):
 	Notes
 	-----
 	"""
-	pass
+	bins = np.amax(data, axis=0) # read levels for each variable
+	# CHECK FOR > 3 COLUMNS -> concatenate Z into one column
+	assert (len(bins)==2), 'Too many columns - Use "mi_test_marginal"'
+
+	hist,_ = np.histogramdd(data, bins=bins[0:2]) # frequency counts
+
+	Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
+	Px = np.sum(Pxy, axis = 1) # P(X,Z)
+	Py = np.sum(Pxy, axis = 0) # P(Y,Z)	
+
+	PxPy = np.outer(Px,Py)
+
+	MI = np.sum(Pxy * np.log(Pxy / (PxPy)))
+	if not chi2_test:
+		return MI
+	else:
+		chi2_statistic = 2*len(data)*MI
+		ddof = (bins[0] - 1) * (bins[1] - 1)
+		p_val = 2*stats.chi2.pdf(chi2_statistic, ddof)
+		return p_val
 
 
-def mi_test_conditional(data):
+def mi_test_conditional(data, chi2_test=True):
 	"""
 	This function performs the mutual information (cross entropy)-based
 	CONDITIONAL independence test. Because it is conditional, it requires
@@ -134,10 +153,13 @@ def mi_test_conditional(data):
 	
 
 	MI = np.sum(Pxyz * np.log(Pxy_z / (Px_y_z)))
-	chi2_statistic = 2*len(data)*MI
-	ddof = (bins[0] - 1) * (bins[1] - 1) * bins[2]
-	p_val = 2*stats.chi2.pdf(chi2_statistic, ddof) # 2* for one tail
-	return p_val
+	if not chi2_test:
+		return MI
+	else:
+		chi2_statistic = 2*len(data)*MI
+		ddof = (bins[0] - 1) * (bins[1] - 1) * bins[2]
+		p_val = 2*stats.chi2.pdf(chi2_statistic, ddof) # 2* for one tail
+		return p_val
 
 def chi2_test(data):
 	"""

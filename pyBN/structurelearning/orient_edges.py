@@ -60,6 +60,7 @@ def orient_edges(edge_dict, block_list):
 			for k in edge_dict[j]: # j's adacent vertex
 				# k = 2
 				if i!=k:
+					pass
 
 
 

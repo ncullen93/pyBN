@@ -35,7 +35,7 @@ Getting up-and-running with this package is simple:
 
 <h4>Structure Learning</h4>
 - Path Condition (PC) Algorithm
-
+- Chow-Liu Tree Algorithm
 
 <h2>Future Features:</h2>
 
