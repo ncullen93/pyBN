@@ -20,7 +20,10 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import numpy as np
 import pandas as pd
 from scipy import stats
+from numba import jit
 
+
+@jit
 def mi_test_marginal(data, chi2_test=True):
 	"""
 	This function performs mutual information (cross entropy)-based
@@ -51,7 +54,7 @@ def mi_test_marginal(data, chi2_test=True):
 	"""
 	bins = np.amax(data, axis=0) # read levels for each variable
 	# CHECK FOR > 3 COLUMNS -> concatenate Z into one column
-	assert (len(bins)==2), 'Too many columns - Use "mi_test_marginal"'
+	assert (len(bins)==2), 'Too many columns - Use "mi_test_conditional"'
 
 	hist,_ = np.histogramdd(data, bins=bins[0:2]) # frequency counts
 

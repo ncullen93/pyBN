@@ -191,6 +191,7 @@ class BayesNet(object):
         Arguments
         ---------
         *edge_dict* : a dictionary where key = node, value = python list of its neighbors
+            Ex: {0:[1,2],1:[3],2:[],3:[]} -> should NOT have repeat edges
 
         *card_dict* : a dictionary where key = node, value = python list of its values
 
@@ -200,7 +201,7 @@ class BayesNet(object):
 
         Effects
         -------
-        - Sets the structure information
+        - Sets the structure information (self.data, self.E, self.V)
 
         Notes
         -----
@@ -221,14 +222,16 @@ class BayesNet(object):
                 The probability values for every combination
                 of parent(s)-self values
         """
-        data = dict((rv,\
-            {'numoutcomes':card_dict[rv],
-            'vals':range(card_dict[rv]),
-            'parents':[i for i in edge_dict.keys() if rv in edge_dict[i]],
-            'children':edge_dict[rv],'cprob':[]}) for rv in edge_dict.keys())        
+        self.data = dict((rv,
+                    {'numoutcomes':card_dict[rv],
+                    'vals':range(card_dict[rv]),
+                    'parents':[i for i in edge_dict.keys() if rv in edge_dict[i]],
+                    'children':edge_dict[rv],
+                    'cprob':[]}) \
+                        for rv in edge_dict.keys())        
         
-        self.data = data
         self.E = [(i,j) for i in edge_dict.keys() for j in edge_dict[i]]
+        self.V = range(len(card_dict))
 
 
     ###################### UTILITY METHODS ##############################

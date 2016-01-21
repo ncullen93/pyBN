@@ -16,6 +16,8 @@ from pyBN.independence.constraint_tests import mi_test_marginal
 from pyBN.classes.bayesnet import BayesNet
 import operator
 import numpy as np
+from numba import jit
+
 
 def chow_liu(data):
 	"""
@@ -25,7 +27,8 @@ def chow_liu(data):
 	Speed Comparison 
 	(mean -> 1000 loops)
 	--------------------
-	bnlearn -> 777 microseconds
+	bnlearn -> 777 microseconds (without numba JIT)
+
 
 	Arguments
 	---------
@@ -67,8 +70,6 @@ def chow_liu(data):
 	bn=BayesNet()
 	bn.set_structure(mst,rv_card)
 	return bn
-
-
 
 
 
