@@ -27,10 +27,10 @@ __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 
 
-def marginal_var_elim(bn, 
-					target=None, 
-					evidence=None, 
-					order=None):
+def marginal_ve_e(bn, 
+				target=None, 
+				evidence=None, 
+				order=None):
 	"""
 	Perform Sum-Product Variable Elimination on
 	a Discrete Bayesian Network.
@@ -53,12 +53,12 @@ def marginal_var_elim(bn,
 	This function is fully implemented, but not tested
 
 	"""
-	self.temp_f_list = [Factor(self.BN,var) for var in self.BN.V]
+	temp_f_list = [Factor(bn,var) for var in bn.V]
 	map_list = []
 
 	#### ORDER HANDLING ####
 	if not order:
-		order = copy.copy(self.BN.V)
+		order = copy.copy(bn.V)
 		if isinstance(target,list):
 			for t in target:
 				order.remove(t)
@@ -78,18 +78,18 @@ def marginal_var_elim(bn,
 		assert isinstance(evidence, dict), 'Evidence must be Dictionary'
 		temp=[]
 		for obs in evidence.items():
-			for f in self.temp_f_list:
+			for f in temp_f_list:
 				if len(f.scope)>1 or obs[0] not in f.scope:
 					temp.append(f)
 				if obs[0] in f.scope:
 					f.reduce_factor(obs[0],obs[1])
 			order.remove(obs[0])
-		self.temp_f_list=temp
+		temp_f_list=temp
 
 	#### ALGORITHM ####
 	for var in order:
-		relevant_factors = [f for f in self.temp_f_list if var in f.scope]
-		irrelevant_factors = [f for f in self.temp_f_list if var not in f.scope]
+		relevant_factors = [f for f in temp_f_list if var in f.scope]
+		irrelevant_factors = [f for f in temp_f_list if var not in f.scope]
 
 		# mutliply all relevant factors
 		fmerge = relevant_factors[0]
@@ -103,21 +103,24 @@ def marginal_var_elim(bn,
 			fmerge.sumout_var(var) # remove var from factor
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
-		self.temp_f_list = irrelevant_factors
+		temp_f_list = irrelevant_factors
 
 	
 	
-	marginal = self.temp_f_list[0]
+	marginal = temp_f_list[0]
 	# multiply final factors in factor_list
-	if len(self.temp_f_list) > 1:
-		for i in range(1,len(self.temp_f_list)):
-			marginal.multiply_factor(self.temp_f_list[i])
+	if len(temp_f_list) > 1:
+		for i in range(1,len(temp_f_list)):
+			marginal.multiply_factor(temp_f_list[i])
 	marginal.normalize()
 
-	self.sol=marginal.cpt
+	return marginal.cpt
 
 
-def ct_belief_prop(bn, target=None, evidence=None, downward_pass=True):
+def marginal_bp_e(bn, 
+					target=None, 
+					evidence=None, 
+					downward_pass=True):
 	"""
 	Perform Message Passing (Belief Propagation) over a clique tree.
 
@@ -144,8 +147,8 @@ def ct_belief_prop(bn, target=None, evidence=None, downward_pass=True):
 	# 4: Propagation of probabilities using message passing
 
 	# creates clique tree and assigns factors, thus satisfying steps 1-3
-	ctree = copy.copy(self)
-	G = ctree.G
+	ctree = CliqueTree(bn) # might not be initialized?
+	G = ctree.G # ugh
 	#cliques = copy.copy(ctree.V)
 
 	# select a clique as root where target is in scope of root
@@ -176,7 +179,7 @@ def ct_belief_prop(bn, target=None, evidence=None, downward_pass=True):
 			if len(tree_graph.successors(j)) == 0:                    
 				ctree.V[j].collect_beliefs()
 
-	self.BN.ctree = self
+	return ctree.beliefs
 
 	# beliefs hold the answers
 

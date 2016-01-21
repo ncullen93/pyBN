@@ -26,39 +26,55 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
-from pyBN.misc.graphtheory import *
+from pyBN.classes.bayesnet import BayesNet
+from pyBN.classes.factor import Factor 
 
 
-def forward_sample(bn, n=1000):
+def marginal_fs_a(bn,
+				n=1000):
 	"""
-	Overview
-	--------
+	Approximate marginal probabilities from
+	forward sampling algorithm on a BayesNet object.
 
+	This algorithm works by
+	repeatedly sampling from the BN and taking
+	the ratio of observations as their marginal probabilities.
 
-	Parameters
-	----------
+	One sample is done by first sampling from any prior random
+	variables, then moving down the network in topological sort
+	order - sampling from each successive random variable by
+	conditioning on its parents (which have already been sampled
+	higher up the network).
 
+	Note that there is no evidence to include in this algorithm - 
+	the comparative algorithm which includes evidence is the 
+	likelihood weighted algorithm (see "lw_sample" function).
+
+	Arguments
+	---------
+	*bn* : a BayesNet object
+
+	*n* : an integer
+		The number of samples to take
 
 	Returns
 	-------
-
+	*sample_dict* : a dictionary, where key = rv, value = another dict
+					where key = instance, value = its probability value
 
 	Notes
 	-----
+	- Evidence is not currently implemented.
 	"""
-	sample_dict = {}
 	
-	#adj_list = bn.get_adj_list # experimental
-	#rv_order = top_sort(adj_list) # experimental
-	G = self.get_networkx()
-	rv_order = nx.topological_sort(G)
+	rv_order = copy(bn.V) # assumes bn.V is in topological sort order
 
-	#factor_dict = dict([(var,FastFactor(self.BN, var)) for var in self.BN.V])
-	parent_dict = dict([(var, G.predecessors(var)) for var in self.BN.V])
+	parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
 
-	for var in self.BN.V:
+	sample_dict = {}
+	for var in bn.V:
 	    sample_dict[var] = {}
-	    for val in self.BN.data[var]['vals']:
+	    for val in bn.data[var]['vals']:
 	        sample_dict[var][val] = 0
 
 	for i in range(n):
@@ -66,10 +82,10 @@ def forward_sample(bn, n=1000):
 	        print 'Sample: ' , i
 	    new_sample = {}
 	    for rv in rv_order:
-	        f = FastFactor(self.BN,rv)
+	        f = Factor(bn,rv)
 	        for p in parent_dict[rv]:
 	            f.reduce_factor(p,new_sample[p])
-	        choice_vals = self.BN.data[rv]['vals']
+	        choice_vals = bn.data[rv]['vals']
 	        choice_probs = f.cpt
 	        chosen_val = np.random.choice(choice_vals, p=choice_probs)
 
@@ -79,12 +95,14 @@ def forward_sample(bn, n=1000):
 	for rv in sample_dict:
 	    for val in sample_dict[rv]:
 	        sample_dict[rv][val] = int(sample_dict[rv][val]) / float(n)
-	self.forward_counter=sample_dict
+	
+	return sample_dict
 
-def lw_sample(self, n=1000, evidence={}):
+def marginal_lws_a(n=1000, evidence={}):
 	"""
-	Overview
-	--------
+	Approximate Marginal probabilities from
+	likelihood weighted sample algorithm on
+	a BayesNet object.
 
 
 	Parameters
@@ -101,15 +119,14 @@ def lw_sample(self, n=1000, evidence={}):
 	sample_dict = {}
 	weight_list = np.ones(n)
 
-	G = self.BN.get_networkx()
-	rv_order = nx.topological_sort(G)
+	rv_order = copy(bn.V)
 
-	#factor_dict = dict([(var,FastFactor(self.BN, var)) for var in self.BN.V])
-	parent_dict = dict([(var, G.predecessors(var)) for var in self.BN.V])
+	#factor_dict = dict([(var,Factor(bn, var)) for var in bn.V])
+	parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
 
-	for var in self.BN.V:
+	for var in bn.V:
 	    sample_dict[var] = {}
-	    for val in self.BN.data[var]['vals']:
+	    for val in bn.data[var]['vals']:
 	        sample_dict[var][val] = 0
 
 	for i in range(n):
@@ -117,17 +134,17 @@ def lw_sample(self, n=1000, evidence={}):
 	        print 'Sample: ' , i
 	    new_sample = {}
 	    for rv in rv_order:
-	        f = FastFactor(self.BN,rv)
+	        f = Factor(bn,rv)
 	        # reduce_factor by parent samples
 	        for p in parent_dict[rv]:
 	            f.reduce_factor(p,new_sample[p])
 	        # if rv in evidence, choose that value and weight
 	        if rv in evidence.keys():
 	            chosen_val = evidence[rv]
-	            weight_list[i] *= f.cpt[self.BN.data[rv]['vals'].index(evidence[rv])]
+	            weight_list[i] *= f.cpt[bn.data[rv]['vals'].index(evidence[rv])]
 	        # if rv not in evidence, sample as usual
 	        else:
-	            choice_vals = self.BN.data[rv]['vals']
+	            choice_vals = bn.data[rv]['vals']
 	            choice_probs = f.cpt
 	            chosen_val = np.random.choice(choice_vals, p=choice_probs)
 	            
@@ -142,13 +159,15 @@ def lw_sample(self, n=1000, evidence={}):
 	    for val in sample_dict[rv]:
 	        sample_dict[rv][val] /= weight_sum
 	        sample_dict[rv][val] = round(sample_dict[rv][val],4)
-	self.lw_counter=sample_dict
+	
+	return sample_dict
 
 
-def gibbs_sample(self, n=1000):
+def marginal_gs_a(bn,
+					n=1000):
 	"""
-	Overview
-	--------
+	Approximate Marginal probabilities from Gibbs Sampling
+	over a BayesNet object.
 
 
 	Parameters
@@ -162,13 +181,12 @@ def gibbs_sample(self, n=1000):
 	Notes
 	-----
 	"""
-	G=self.BN.get_networkx()
-	bn=self.BN
-	counter={}
+
+	sample_dict ={}
 	for rv in bn.V:
-	    counter[rv]={}
+	    sample_dict[rv]={}
 	    for val in bn.data[rv]['vals']:
-	        counter[rv][val] = 0
+	        sample_dict[rv][val] = 0
 
 	state = {}
 	for rv in bn.V:
@@ -179,14 +197,14 @@ def gibbs_sample(self, n=1000):
 	        print 'Sample: ' , i
 	    for rv in bn.V:
 	        # get possible values conditioned on everything else
-	        parents = G.predecessors(rv)
+	        parents = bn.data[rv]['parents']
 	        # no parents - prior
 	        if len(parents) == 0:
 	            choice_vals = bn.data[rv]['vals']
 	            choice_probs = bn.data[rv]['cprob']
 	        # has parent - filter cpt
 	        else:
-	            f = FastFactor(bn,rv)
+	            f = Factor(bn,rv)
 	            for p in parents:
 	                f.reduce_factor(p,state[p])
 	            choice_vals = bn.data[rv]['vals']
@@ -194,19 +212,19 @@ def gibbs_sample(self, n=1000):
 	        # sample over remaining possibilities
 	        chosen_val = np.random.choice(choice_vals,p=choice_probs)
 	        state[rv]=chosen_val
-	    # update counter dictionary
+	    # update sample_dict dictionary
 	    if i > burn:
 	        for rv,val in state.items():
-	            counter[rv][val] +=1
+	            sample_dict[rv][val] +=1
 
-	for rv in counter:
-	    for val in counter[rv]:
-	        counter[rv][val] = round(int(counter[rv][val]) / float(n-burn),4)
-	self.gibbs_counter=counter
+	for rv in sample_dict:
+	    for val in sample_dict[rv]:
+	        sample_dict[rv][val] = round(int(sample_dict[rv][val]) / float(n-burn),4)
+	
+	return sample_dict
 
 
-def loopy_bp(self, 
-			target=None, 
+def marginal_lbp_a(target=None, 
 			evidence=None,
 			max_iter=100):
 	"""
@@ -233,12 +251,12 @@ def loopy_bp(self,
 	- Need to check the scope w.r.t. messages.. all clusters should not
 	be accumulating rv's in their scope over the course of the algorithm.
 	"""
-	def collect_beliefs(self):
-		self.beliefs = {}
+	def collect_beliefs(cgraph):
+		cgraph.beliefs = {}
 		for cluster in self.V:
-			self.V[cluster].collect_beliefs()
+			cgraph.V[cluster].collect_beliefs()
 			#print 'Belief ' , cluster , ' : \n', self.V[cluster].belief.cpt
-			self.beliefs[cluster] = self.V[cluster].belief
+			cgraph.beliefs[cluster] = cgraph.V[cluster].belief
 
 	# 1: Moralize the graph
 	# 2: Triangluate
@@ -246,8 +264,7 @@ def loopy_bp(self,
 	# 4: Propagation of probabilities using message passing
 
 	# creates clique tree and assigns factors, thus satisfying steps 1-3
-	cgraph = copy.copy(self)
-	G = cgraph.G
+	cgraph = ClusterGraph(bn)
 
 	edge_visit_dict = dict([(i,0) for i in cgraph.E])
 
@@ -272,8 +289,8 @@ def loopy_bp(self,
 
 		iteration += 1
 	print 'Now Collecting Beliefs..'
-	self.collect_beliefs()
-	self.BN.ctree = self
+	collect_beliefs(cgraph)
+	#bn.ctree = self
 
 
 

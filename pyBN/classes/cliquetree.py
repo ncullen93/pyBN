@@ -44,7 +44,7 @@ class CliqueTree(object):
 
     """
 
-    def __init__(self, BN, method=''):
+    def __init__(self, bn, method=''):
         """
         Overview
         --------
