@@ -99,8 +99,7 @@ def pc(data, pval=0.05):
 	n_rv = len(rv_card)
 	
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
-	z_dict = {}
-	witnesses = []
+	block_dict = dict.fromkeys(range(n_rv),[])
 	stop = False
 	i = 1
 	while not stop:
@@ -117,7 +116,7 @@ def pc(data, pval=0.05):
 							cols = (x,y) + z
 							pval_xy_z = mi_test_conditional(data[:,cols])
 							if pval_xy_z > pval:
-								witnesses.append([x,y,z])
+								block_dict[x] = {y:z}
 								edge_dict[x].remove(y)
 								edge_dict[y].remove(x)
 		i += 1
@@ -126,20 +125,16 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
+	print edge_dict
+	print block_dict
 	##### ORIENT EDGES #####
-	dedges = []
-	for k,v in edge_dict.items():
-		for vv in v:
-			if [k,vv] not in dedges and [vv,k] not in dedges:
-				dedges.append([k,vv])
-	#print dedges
-	d_edge_dict = orient_edges(dedges, witnesses)
-	#print d_edge_dict
-	# wont work correctly until edges are figured out
+	#d_edge_dict = orient_edges(edge_dict, block_list)
+
+	# wont work correctly until edge orientation is figured out
 	card_dict = dict(zip(range(len(rv_card)),rv_card))
 	bn=BayesNet()
 	bn.set_structure(edge_dict, card_dict)
-	return edge_dict, z_dict
+	return bn
 
 
 

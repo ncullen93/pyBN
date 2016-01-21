@@ -28,6 +28,9 @@ def mi_test_marginal(data):
 	EXACTLY TWO columns. For the conditional independence test, use
 	"mi_test_conditional".
 
+	This is the same as calculated the KL Divergence, i.e.
+	I(X,Y) = Sigma p(x,y)* log p(x,y) *( p(x)/p(y) )
+
 	Arguments
 	---------
 	*data* : a nested numpy array
