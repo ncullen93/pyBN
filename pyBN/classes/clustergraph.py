@@ -173,23 +173,6 @@ class ClusterGraph(object):
 
 
     def collect_beliefs(self):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        """
         self.beliefs = {}
         for cluster in self.V:
             self.V[cluster].collect_beliefs()
@@ -261,43 +244,5 @@ class ClusterGraph(object):
         self.BN.ctree = self
 
 
-    def is_calibrated(self):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        This function determines if the graph is calibrated, where
-        calibration occurs when each pair of connected clusters in
-        the cluster graph agrees on the beliefs marginalized over
-        their sepset
-
-        edge_list = self.E
-
-        for edge in edge_list:
-            # get the two clusters
-            cluster1 = self.V[edge[0]]
-            cluster2 = self.V[edge[1]]
-
-            # get their sepset and sepset compliment
-            sepset = cluster1.sepset(cluster2)
-            sepset_compliment1 = cluster1.scope.difference(sepset)
-            sepset_compliment2 = cluster2.scope.difference(sepset)
-
-            # marginalize out the sepset compliments
-            cluster1_cpt = cluster1
-        """
-        
+    def is_calibrated(self):        
         return False

@@ -23,7 +23,7 @@ from scipy import stats
 from numba import jit
 
 
-@jit
+
 def mi_test_marginal(data, chi2_test=True):
 	"""
 	This function performs mutual information (cross entropy)-based
