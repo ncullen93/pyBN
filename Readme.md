@@ -31,7 +31,8 @@ Getting up-and-running with this package is simple:
 
 <h4>Exact Inference</h4>
 - Sum-Product Variable Elimination
-- Clique Tree Message Passing/Belief Propagation
+- Max-Sum Variable Elimination
+- Clique Tree Message Passing
 
 <h4>Structure Learning</h4>
 - Path Condition (PC) Algorithm
