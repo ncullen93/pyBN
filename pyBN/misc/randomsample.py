@@ -10,6 +10,8 @@ with or without evidence.
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
+from pyBN.classes.factor import Factor
+import networkx as nx
 
 def random_sample(self, n=1, evidence={}):
     """
@@ -45,7 +47,7 @@ def random_sample(self, n=1, evidence={}):
                 print 'Sample: ' , i
         new_sample = {}
         for rv in rv_order:
-            f = FastFactor(self.BN,rv)
+            f = Factor(self.BN,rv)
             # reduce_factor by parent samples
             for p in parent_dict[rv]:
                 f.reduce_factor(p,new_sample[p])

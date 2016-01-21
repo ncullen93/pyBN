@@ -6,6 +6,10 @@ Approximate Marginal Inference
 Perform approx. marginal inference over a BayesNet object,
 with or without evidence.
 
+Eventually, there will be a wrapper function "marginal_approx"
+for all of the algorithms, and users can choose their method as
+an argument to that function.
+
 Approximate Marginal Inference Algorithms
 -----------------------------------------
 	
@@ -14,9 +18,9 @@ Approximate Marginal Inference Algorithms
 	- Gibbs (MCMC) Sampling
 	- Loopy Belief Propagation
 
-Notes
------
-All above functions are here, but they are not tested/documented.
+References
+----------
+[1] Koller, Friedman (2009). "Probabilistic Graphical Models."
 
 """
 

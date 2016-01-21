@@ -1,7 +1,12 @@
 """
-******************
+************
 Clique Class
-******************
+************
+
+This is a class for creating/manipulating Cliques.
+
+It is a great candidate for Numba JIT compilation w.r.t
+functions and the class structure as a whole.
 
 See CliqueTree class
 

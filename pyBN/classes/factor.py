@@ -3,6 +3,22 @@
 Factor Class
 ************
 
+This class holds a Conditional Probability Table structure
+-- i.e. a factor. The benefit of this class structure is that
+all factor manipulation happens in a centralized location,
+thereby making it easier to write fast and readable code.
+
+The Joint Probability Distribution of a Bayesian Network is
+simply a product of its factors. Much of the functionality
+is derived from algorithms presented in [1].
+
+This class is a great candidate for using Numba JIT compilation
+for manipulation and Numba's JIT functionality for the 
+class itself.
+
+References
+----------
+Koller, Friedman (2009). "Probabilistic Graphical Models."
 
 """
 
@@ -17,10 +33,6 @@ class Factor(object):
     rather than a Pandas DataFrame. By storing the cpt in
     this manner and taking advantage of efficient algorithms,
     significant speedups occur.
-
-    See Koller p.359
-
-    Class for Cluster Graphs
 
     Attributes
     ----------
@@ -379,59 +391,21 @@ class Factor(object):
 
     def to_log(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Delete this function it's superfluous.
 
         """
         self.cpt = np.log(self.cpt)
 
     def from_log(self):
-        """Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        """
+        Delete this function it's superfluous.
 
         """
         self.cpt = np.exp(self.cpt)
 
     def normalize(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Delete this function it's superfluous.
 
         """
         self.cpt = self.cpt / float(np.sum(self.cpt))

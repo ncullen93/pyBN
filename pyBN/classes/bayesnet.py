@@ -3,6 +3,11 @@
 BayesNet Class
 **************
 
+This is a class for creating/manipulating Bayesian Networks.
+Currently, we only support Discrete Bayesian Networks.
+
+It is a great candidate for Numba JIT compilation w.r.t
+functions and the class structure as a whole.
 
 """
 
@@ -21,8 +26,6 @@ import pyBN.readwrite
 import time
 import pdb
 
-# %load_ext autoreload
-# %autoreload 2
 
 class BayesNet(object):
     """
@@ -429,6 +432,7 @@ class BayesNet(object):
                         temp_E2.append(edge)
                 temp_E = temp_E2
 
+        # use set_structure instead ?
         G = nx.Graph()
         G.add_edges_from(chordal_E)
         return G
