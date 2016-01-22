@@ -16,6 +16,12 @@ Getting up-and-running with this package is simple:
 4. In your python terminal, simply type "from pyBN import *". This will load all of the module's functions, classes, etc.
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
+<h2>Examples</h2>
+This package includes a number of examples to help users get acquainted with the intuitive syntax and functionality of pyBN. For an updated list of examples, check out the collection of ipython notebooks in the "examples" folder located in the master directory.
+
+Here is a list of current examples:
+- ReadWrite : an introduction to reading (writing) BayesNet object from (to) files, along with an overview of the attributes and data structures inherit to BayesNet objects.
+
 
 <h2>Current features:</h2>
 
@@ -53,5 +59,6 @@ Getting up-and-running with this package is simple:
 - Bayesian Estimation
 - Maximum Likelihood Estimation
 
-
+<h4>Drawing Bayesian Networks</h4>
+- GraphViz
 
