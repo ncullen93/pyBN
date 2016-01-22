@@ -57,7 +57,6 @@ Here is a list of current examples:
 <h2>Future Features:</h2>
 
 <h4>Structure Learning</h4>
-- Grow-shrink
 - Hill-climbing
 
 <h4>Parameter Learning</h4>
