@@ -37,7 +37,8 @@ def draw_bn(bn, save=False, **kwargs):
 	"""
 	g = bn.get_networkx()
 	pos = nx.graphviz_layout(g,'dot')
-	nx.draw_networkx(g,pos=pos,node_size=600,node_color='w',with_labels=False, **kwargs)
+	#node_size=600,node_color='w',with_labels=False
+	nx.draw_networkx(g,pos=pos, **kwargs)
 	plt.axis('off')
 	plt.show()
 		
