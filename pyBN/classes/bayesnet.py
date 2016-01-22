@@ -137,7 +137,7 @@ class BayesNet(object):
         *edge_dict* : a dictionary where key = node, value = python list of its neighbors
             Ex: {0:[1,2],1:[3],2:[],3:[]} -> should NOT have repeat edges
 
-        *card_dict* : a dictionary where key = node, value = python list of its values
+        *card_dict* : a dictionary where key = node, value = its cardinality
 
         Returns
         -------
@@ -180,9 +180,14 @@ class BayesNet(object):
 
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):
-        adj_list = [[] for _ in bn.V]
-        vi_map = dict((bn.V[i],i) for i in range(len(bn.V)))
-        for u,v in bn.E:
+        """
+        Returns adjacency list of lists, where
+        each list element is a vertex, and each sub-list is
+        a list of that vertex's neighbors.
+        """
+        adj_list = [[] for _ in self.V]
+        vi_map = dict((self.V[i],i) for i in range(len(self.V)))
+        for u,v in self.E:
             adj_list[vi_map[u]].append(vi_map[v])
         return adj_list
         
