@@ -3,8 +3,6 @@
 <h2>Overview</h2>
 This module provides a convenient and intuitive interface for reading/writing Discrete Bayesian Networks and performing fast inference over them. There seems to be a lack of many high-quality options for BNs in Python, so I hope this project will be a useful addition.
 
-The package I have mostly used for BN's is "bnlearn" in the R language. It has incredible implementations of so many structure learning algorithms. However, its support and syntax for both Marginal and MAP inference is quite weak. This package takes care of that, at least.
-
 I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would love to collaborate on this project with anyone who has an interest in graphical models -- the class structure and syntax is easy to pick up! Shoot me an email at ncullen.th@dartmouth.edu
 
 <h2>Usage</h2>
@@ -30,21 +28,25 @@ Here is a list of current examples:
 - json format
 
 <h4>Drawing BNs</h4>
-- Graphviz & networkx
+- Graphviz Engine
+- Networkx (matplotlib/pylab) Engine
 
-<h4>Approx Inference</h4>
+<h4>Approximate Marginal Inference</h4>
 - loopy belief propagation
 - forward sampling
 - gibbs sampliing
 - likelihood weighted sampling
 
-<h4>Exact Inference</h4>
+<h4>Exact Marginal Inference</h4>
 - Sum-Product Variable Elimination
-- Max-Sum Variable Elimination
 - Clique Tree Message Passing
+
+<h4>Exact MAP Inference</h4>
+- Max-Sum Variable Elimination
 
 <h4>Structure Learning</h4>
 - Path Condition (PC) Algorithm
+- Grow Shrink (GS) Algorithm
 - Chow-Liu Tree Algorithm
 
 <h4>Conditional Independence Tests</h4>
