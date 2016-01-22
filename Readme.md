@@ -21,7 +21,7 @@ This package includes a number of examples to help users get acquainted with the
 
 Here is a list of current examples:
 - ReadWrite : an introduction to reading (writing) BayesNet object from (to) files, along with an overview of the attributes and data structures inherit to BayesNet objects.
-
+- Drawing : an introduction to the drawing/plotting capabilities of pyBN with both small and large Bayesian networks.
 
 <h2>Current features:</h2>
 
