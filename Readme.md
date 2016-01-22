@@ -25,9 +25,12 @@ Here is a list of current examples:
 
 <h2>Current features:</h2>
 
-<h4>Reading BNs:</h4>
+<h4>Reading BNs</h4>
 - .bif format
 - json format
+
+<h4>Drawing BNs</h4>
+- Graphviz & networkx
 
 <h4>Approx Inference</h4>
 - loopy belief propagation
