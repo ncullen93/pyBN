@@ -51,16 +51,10 @@ def orient_edges(edge_dict, block_list):
 
 	"""
 	#{0:[1,2],1:[0],2:[0]}
+	#[[0,1],[0,2]]
 	#{0:[],1:{2:(0,)}, 2:[]}
 	# STEP 1 -> check for V-structures
-	for i in edge_dict.keys(): # vertex
-		# i = 1
-		for j in edge_dict[u]: # i's adjacent vertex
-			# j = 0
-			for k in edge_dict[j]: # j's adacent vertex
-				# k = 2
-				if i!=k:
-					pass
+	# see Margaritis pg 22
 
 
 

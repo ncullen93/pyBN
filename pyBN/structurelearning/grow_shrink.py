@@ -13,22 +13,16 @@ assumptions, our approach requires time polynomial in the size of the data and t
 of nodes. A randomized variant, also presented here, yields comparable results at
 much higher speeds" [1].
 
-This algorithm relies on the "Markov Blanket", which is for a given random variables
+This algorithm relies on the "Markov Blanket", which is for a given random variable
 the set of other random variables which render the given RV conditionally independent
 from the rest of the network. That is, if you observe any of the variables in a given
 RV's markov blanket, then observing the values of any OTHER variables in the network
-will note change your beliefs about the given random variable.
+will not change your beliefs about the given random variable.
 
 The Markov blanket of a node X is easily identifiable from the graph: 
 it consists of X's parents, X's children, and the parents of all of X's children.
 
 The runtime of this algorithm is O(|V|) [1].
-
-Condition Indpendence Tests
----------------------------
-- mutual information (parametric, semiparametric and permutation tests);
-- shrinkage-estimator for the mutual information;
-- Pearson's X^2 (parametric, semiparametric and permutation tests);
 
 References
 ----------
@@ -42,8 +36,8 @@ NIPS 2000.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
-def growshrink(bn, 
-				data):
+def gs(bn, 
+		data):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
@@ -57,16 +51,40 @@ def growshrink(bn,
 
 	Returns
 	-------
-	None
+	*bn* : a BayesNet object
 
 	Effects
 	-------
-	- Modifies bn.V & bn.E based on learned structure
-	- Modifies bn.data to reflect parent-child relationships
-	but does not modify the "CPT" portion (i.e. the parameters)
+	None
 
 	Notes
 	-----
 
 	"""
-	pass
+	S = []
+
+	grow_condition = True
+	while grow_condition:
+		pass
+
+
+
+	shrink_condition = True
+	while shrink_condition:
+		pass
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
