@@ -35,12 +35,22 @@ NIPS 2000.
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
+from pyBN.independence.constraint_tests import mi_test
 
-def gs(bn, 
-		data):
+def gs(data,
+		alpha=0.05):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
+
+	STEPS
+	-----
+	1. Compute Markov Blanket
+	2. Compute Graph Structure
+	3. Orient Edges
+	4. Remove Cycles
+	5. Reverse Edges
+	6. Propagate Directions
 
 	Arguments
 	---------
@@ -61,19 +71,66 @@ def gs(bn,
 	-----
 
 	"""
-	S = []
+	n_rv = len(np.amax(data, axis=0))
 
-	grow_condition = True
-	while grow_condition:
-		pass
+	# STEP 1 : COMPUTE MARKOV BLANKETS
+	B = dict([(rv,[]) for rv in bn.V])
 
+	for X in range(n_rv):
+		S = []
 
+		grow_condition = True
+		while grow_condition:
 
-	shrink_condition = True
-	while shrink_condition:
-		pass
-	
+			grow_conditon=False
+			for Y in range(n_rv):
+				if X!=Y:
+					# if there exists some Y such that Y is dependent on X given S,
+					# add Y to S
+					pval = mi_test(data[:,(X,Y,S)])
+					if pval < alpha: # dependent
+						grow_condition=True # dependent -> continue searching
+						S.append(Y)
 
+		shrink_condition = True
+		while shrink_condition:
+
+			shrink_condition=False
+			for Y in S:
+				S.remove(Y) # condition on S-{Y}
+				# if X independent of Y given S-{Y}, leave Y out
+				# if X dependent of Y given S-{Y}, keep it in
+				pval = mi_test(data[:,(X,Y,S)])
+				if pval < alpha: # dependent
+					S.append(Y)
+				else: # independent -> condition searching
+					shrink_condition=True
+		B[X] = S
+
+	# STEP 2: COMPUTE GRAPH STRUCTURE
+	edge_dict = dict([(rv,[]) for rv in range(n_rv)])
+	for X in range(n_rv):
+		for Y in B[X]:
+			# X and Y are direct neighbors if X and Y are dependent
+			# given S for all S in T, where T is the smaller of
+			# B(X)-{Y} and B(Y)-{X}
+			if len(B[X]) < len(B[Y]):
+				T = copy(B[X])
+				T.remove(Y)
+			else:
+				T = copy(B[Y])
+				T.remove(X)
+
+			direct_neighbors=True
+			for S in T:
+				pval = mi_test(data[:,(X,Y,S)])
+				if pval > alpha:
+					direct_neighbors=False
+			if direct_neighbors:
+				edge_dict[X].append(Y)
+				edge_dict[Y].append(X)
+
+	return edge_dict
 
 
 
