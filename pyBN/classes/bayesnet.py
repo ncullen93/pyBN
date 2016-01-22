@@ -90,7 +90,9 @@ class BayesNet(object):
 
     Notes
     -----
-
+    Examples
+    --------
+    >>>
 
     """
 

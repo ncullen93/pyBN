@@ -47,7 +47,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import itertools
 import numpy as np
 
-from pyBN.independence.constraint_tests import mi_test_conditional, mi_test_marginal
+from pyBN.independence.constraint_tests import mi_test
 from pyBN.classes import BayesNet
 from pyBN.structurelearning.orient_edges import orient_edges
 from numba import jit
@@ -109,7 +109,7 @@ def pc(data, pval=0.05):
 		for x in xrange(n_rv):
 			for y in edge_dict[x]:
 				if i == 0:
-					pval_xy_z = mi_test_marginal(data[:,(x,y)])
+					pval_xy_z = mi_test(data[:,(x,y)])
 					if pval_xy_z > pval:
 						edge_dict[x].remove(y)
 						edge_dict[y].remove(x)
@@ -117,7 +117,7 @@ def pc(data, pval=0.05):
 					for z in itertools.combinations(edge_dict[x],i):
 						if y not in z:
 							cols = (x,y) + z
-							pval_xy_z = mi_test_conditional(data[:,cols])
+							pval_xy_z = mi_test(data[:,cols])
 							if pval_xy_z > pval:
 								block_dict[x] = {y:z}
 								edge_dict[x].remove(y)

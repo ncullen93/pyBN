@@ -36,12 +36,20 @@ NIPS 2000.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.independence.constraint_tests import mi_test
+from pyBN.structurelearning.orient_edges import orient_edges
+
+from copy import copy
+import numpy as np
+import itertools
 
 def gs(data,
 		alpha=0.05):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
+
+	This algorithm is clearly a good candidate for
+	numba JIT compilation...
 
 	STEPS
 	-----
@@ -54,10 +62,11 @@ def gs(data,
 
 	Arguments
 	---------
-	*bn* : a BayesNet object
-		BayesNet object you wish to modify
-	*data* : pandas dataframe or nested numpy array
+	*data* : a nested numpy array
 		Data from which you wish to learn structure
+
+	*alpha* : a float
+		Type II error rate for independence test
 
 	Returns
 	-------
@@ -74,7 +83,7 @@ def gs(data,
 	n_rv = len(np.amax(data, axis=0))
 
 	# STEP 1 : COMPUTE MARKOV BLANKETS
-	B = dict([(rv,[]) for rv in bn.V])
+	B = dict([(rv,[]) for rv in range(n_rv)])
 
 	for X in range(n_rv):
 		S = []
@@ -82,31 +91,36 @@ def gs(data,
 		grow_condition = True
 		while grow_condition:
 
-			grow_conditon=False
+			grow_condition=False
 			for Y in range(n_rv):
-				if X!=Y:
+				if X!=Y and Y not in S:
 					# if there exists some Y such that Y is dependent on X given S,
 					# add Y to S
-					pval = mi_test(data[:,(X,Y,S)])
+					cols = (X,Y) + tuple(S)
+					pval = mi_test(data[:,cols])
 					if pval < alpha: # dependent
 						grow_condition=True # dependent -> continue searching
 						S.append(Y)
-
+		
 		shrink_condition = True
 		while shrink_condition:
 
+			TEMP_S = []
 			shrink_condition=False
 			for Y in S:
-				S.remove(Y) # condition on S-{Y}
+				s_copy = copy(S)
+				s_copy.remove(Y) # condition on S-{Y}
 				# if X independent of Y given S-{Y}, leave Y out
 				# if X dependent of Y given S-{Y}, keep it in
-				pval = mi_test(data[:,(X,Y,S)])
+				cols = (X,Y) + tuple(s_copy)
+				pval = mi_test(data[:,cols])
 				if pval < alpha: # dependent
-					S.append(Y)
+					TEMP_S.append(Y)
 				else: # independent -> condition searching
 					shrink_condition=True
-		B[X] = S
-
+		
+		B[X] = TEMP_S
+		
 	# STEP 2: COMPUTE GRAPH STRUCTURE
 	edge_dict = dict([(rv,[]) for rv in range(n_rv)])
 	for X in range(n_rv):
@@ -115,21 +129,30 @@ def gs(data,
 			# given S for all S in T, where T is the smaller of
 			# B(X)-{Y} and B(Y)-{X}
 			if len(B[X]) < len(B[Y]):
-				T = copy(B[X])
-				T.remove(Y)
+				T = copy(B[X]) # shallow copy is sufficient
+				if Y in T:
+					T.remove(Y)
 			else:
-				T = copy(B[Y])
-				T.remove(X)
+				T = copy(B[Y]) # shallow copy is sufficient
+				if X in T:
+					T.remove(X)
 
+			# X and Y must be dependent conditioned upon
+			# EVERY POSSIBLE COMBINATION of T
 			direct_neighbors=True
-			for S in T:
-				pval = mi_test(data[:,(X,Y,S)])
-				if pval > alpha:
-					direct_neighbors=False
+			for i in range(len(T)):
+				for S in itertools.combinations(T,i):
+					cols = (X,Y) + tuple(S)
+					pval = mi_test(data[:,cols])
+					if pval > alpha:
+						direct_neighbors=False
 			if direct_neighbors:
-				edge_dict[X].append(Y)
-				edge_dict[Y].append(X)
-
+				if Y not in edge_dict[X]:
+					edge_dict[X].append(Y)
+				if X not in edge_dict[Y]:
+					edge_dict[Y].append(X)
+	# STEP 3: ORIENT EDGES
+	#oriented_edge_dict = orient_edges(edge_dict)
 	return edge_dict
 
 

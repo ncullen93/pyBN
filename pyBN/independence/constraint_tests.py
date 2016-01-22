@@ -104,12 +104,12 @@ def mi_test(data, chi2_test=True):
 
 		MI = np.sum(Pxy * np.log(Pxy / (PxPy)))
 		if not chi2_test:
-			return MI
+			return round(MI,4)
 		else:
 			chi2_statistic = 2*len(data)*MI
 			ddof = (bins[0] - 1) * (bins[1] - 1)
 			p_val = 2*stats.chi2.pdf(chi2_statistic, ddof)
-			return p_val
+			return round(p_val,4)
 	else:
 		# CHECK FOR > 3 COLUMNS -> concatenate Z into one column
 		if len(bins) > 3:
@@ -139,12 +139,12 @@ def mi_test(data, chi2_test=True):
 
 		MI = np.sum(Pxyz * np.log(Pxy_z / (Px_y_z)))
 		if not chi2_test:
-			return MI
+			return round(MI,4)
 		else:
 			chi2_statistic = 2*len(data)*MI
 			ddof = (bins[0] - 1) * (bins[1] - 1) * bins[2]
 			p_val = 2*stats.chi2.pdf(chi2_statistic, ddof) # 2* for one tail
-			return p_val
+			return round(p_val,4)
 
 def chi2_test(data):
 	"""

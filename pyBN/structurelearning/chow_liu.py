@@ -4,7 +4,7 @@ Chow-Liu Tree
 *************
 
 Calculate the KL divergence (i.e. run
-mi_test_marginal) between every pair of nodes,
+mi_test) between every pair of nodes,
 then select the maximum spanning tree from that
 connected graph. This is the Chow-Liu tree.
 
@@ -12,7 +12,7 @@ connected graph. This is the Chow-Liu tree.
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-from pyBN.independence.constraint_tests import mi_test_marginal
+from pyBN.independence.constraint_tests import mi_test
 from pyBN.classes.bayesnet import BayesNet
 import operator
 import numpy as np
@@ -52,7 +52,7 @@ def chow_liu(data):
 	n_rv = data.shape[1]
 	rv_card = np.amax(data, axis=0)
 
-	edge_list = [(i,j,mi_test_marginal(data[:,(i,j)],chi2_test=False)) \
+	edge_list = [(i,j,mi_test(data[:,(i,j)],chi2_test=False)) \
 					for i in xrange(n_rv) for j in xrange(i+1,n_rv)]
 	
 	edge_list.sort(key=operator.itemgetter(2), reverse=True) # sort by weight
