@@ -61,7 +61,3 @@ Here is a list of current examples:
 <h4>Parameter Learning</h4>
 - Bayesian Estimation
 - Maximum Likelihood Estimation
-
-<h4>Drawing Bayesian Networks</h4>
-- GraphViz
-
