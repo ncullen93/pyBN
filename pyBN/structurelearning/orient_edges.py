@@ -11,30 +11,26 @@ http://www.jmlr.org/papers/volume2/chickering02a/chickering02a.pdf
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-def orient_edges(edge_dict, block_list):
+def orient_edges(edge_dict, blanket_dict):
 	"""
-	Orient edges based on the well-established
-	rules in the literature.
+	Orient edges based on the rules presented
+	in Margaritis' Thesis pg. 35
 
-	See Koller pg. 89
-
-	Step 1:
-	For every triple of nodes X,Y,Z such that there is an edge
-	from X - Z and Z - Y, if Y is NOT the third index in blocklist[X,Y],
-	then add edge X->Z , Y->Z.
+	# if there exists a variable Z in N(X)-N(Y)-{Y}
+	# such that Y and Z are dependent given S+{X} for
+	# all S subset of T, where
+	# T is smaller of B(Y)-{X,Z} and B(Z)-{X,Y}
 
 	Arguments
 	---------
-	*edge_dict* : a dictionary
-		Dictionary of undirected edges, so 
-		there are duplicates
+	*edge_dict* : a dictionary, where
+		key = node and value = list
+		of neighbors for key. Note: there
+		ARE duplicates in edge_dict.
 
-	*block_list* : a list of nested 3-tuples
-		Each tuples represents a structure such that
-		tuple[0] is independent of tuple[1] given tuple[2],
-		where tuple[2] is another tuple.
-		Clearly, then, there cannot be a V-structure between
-		these three+ nodes.
+	*blanket_dict* : a dictionary, where
+		key = node and value = list of
+		nodes in the markov blanket of node
 
 	Returns
 	-------
@@ -50,12 +46,23 @@ def orient_edges(edge_dict, block_list):
 	-----
 
 	"""
-	pass
-	#{0:[1,2],1:[0],2:[0]}
-	#[[0,1],[0,2]]
-	#{0:[],1:{2:(0,)}, 2:[]}
-	# STEP 1 -> check for V-structures
-	# see Margaritis pg 22
+	for X in edge_dict.keys():
+		for Y in edge_dict[X]:
+			# orient it Y->X if
+			# there exists a variable Z in N(X)-N(Y)-{Y}
+			# such that Y and Z are dependent given S+{X} for
+			# all S subset of T, where
+			# T is smaller of B(Y)-{X,Z} and B(Z)-{X,Y}
+			nxy = set(edge_dict[X]) - set(edge_dict[Y]) - set(Y)
+
+			for Z in nxy:
+				T = 
+
+				cols = (Y,Z) + tuple(S)+X
+				pval = mi_test(data[:,cols])
+				if pval < alpha:
+
+
 
 
 

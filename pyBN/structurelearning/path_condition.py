@@ -128,7 +128,7 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	#print edge_dict
+	print edge_dict
 	#print block_dict
 	##### ORIENT EDGES #####
 	#d_edge_dict = orient_edges(edge_dict, block_list)
