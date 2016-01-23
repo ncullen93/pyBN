@@ -176,8 +176,8 @@ class BayesNet(object):
                     'cprob':[]}) \
                         for rv in edge_dict.keys())        
         
-        self.E = [(i,j) for i in edge_dict.keys() for j in edge_dict[i]]
-        self.V = range(len(card_dict))
+        self.E = [(str(i),str(j)) for i in edge_dict.keys() for j in edge_dict[i]]
+        self.V = [str(v) for v in range(len(card_dict))]
 
 
     ###################### UTILITY METHODS ##############################
