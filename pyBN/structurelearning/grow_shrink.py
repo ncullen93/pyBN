@@ -36,7 +36,8 @@ NIPS 2000.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.independence.constraint_tests import mi_test
-from pyBN.structurelearning.orient_edges import orient_edges
+from pyBN.structurelearning.orient_edges import orient_edges_gs
+from pyBN.classes.bayesnet import BayesNet
 
 from copy import copy
 import numpy as np
@@ -80,7 +81,8 @@ def gs(data,
 	-----
 
 	"""
-	n_rv = len(np.amax(data, axis=0))
+	rv_card = np.amax(data,axis=0)
+	n_rv = len(rv_card)
 
 	# STEP 1 : COMPUTE MARKOV BLANKETS
 	B = dict([(rv,[]) for rv in range(n_rv)])
@@ -147,13 +149,20 @@ def gs(data,
 					if pval > alpha:
 						direct_neighbors=False
 			if direct_neighbors:
-				if Y not in edge_dict[X]:
+				if Y not in edge_dict[X] and X not in edge_dict[Y]:
 					edge_dict[X].append(Y)
 				if X not in edge_dict[Y]:
 					edge_dict[Y].append(X)
+	
 	# STEP 3: ORIENT EDGES
-	#oriented_edge_dict = orient_edges(edge_dict)
-	return edge_dict
+	oriented_edge_dict = orient_edges_gs(edge_dict,B,data,alpha)
+	
+	# Create BayesNet object from dictionary
+	card_dict = dict(zip(range(len(rv_card)),rv_card))
+	bn=BayesNet()
+	bn.set_structure(oriented_edge_dict, card_dict)
+	
+	return bn
 
 
 

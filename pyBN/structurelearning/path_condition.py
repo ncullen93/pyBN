@@ -49,7 +49,7 @@ import numpy as np
 
 from pyBN.independence.constraint_tests import mi_test
 from pyBN.classes import BayesNet
-from pyBN.structurelearning.orient_edges import orient_edges
+#from pyBN.structurelearning.orient_edges import orient_edges
 from numba import jit
 
 
@@ -128,8 +128,7 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	print edge_dict
-	#print block_dict
+	
 	##### ORIENT EDGES #####
 	#d_edge_dict = orient_edges(edge_dict, block_list)
 
