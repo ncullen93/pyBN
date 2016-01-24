@@ -158,17 +158,19 @@ class Factor(object):
         self.cpt = np.array(bn.data[var]['cprob']).flatten()
 
     def __str__(self):
-        s = 'Scope\n'
-        s +='-----\n'
+        s = ' Scope\n'
+        s +=' -----\n '
         s += str(self.scope[0]) + ' | ' + ', '.join(self.scope[1:])
         s += '\n\n'
-        s += 'Conditional Probability Table\n'
-        s += '-----------------------------\n'
-        s += '| '+str(self.scope[0]) + ' | ' + ' | '.join(self.scope[1:]) + ' | ' + 'Prob |\n'
+        s += ' Conditional Probability Table\n'
+        s += ' -----------------------------\n'
+        s += ' | '+str(self.scope[0]) + ' | ' + ' | '.join(self.scope[1:]) + ' | ' + 'Prob |\n'
         n = [range(c) for c in self.card.values()]
         for i in list(itertools.product(*n)):
-            nn = [self.bn.data[self.scope[x]]['vals'][j] for x,j in enumerate(reversed(i))]
-            s += '| ' + ' | '.join(nn) + ' | '
+            nn = [j for j in reversed(i)]
+            for v, n_idx in enumerate(nn):
+                s += ' | ' + self.bn.data[self.scope[v]]['vals'][n_idx]
+            s += ' | '
             val = 0.3 # get the correct probability value
             s += str(val) + ' |\n'
         return s
