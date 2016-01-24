@@ -515,8 +515,9 @@ class Factor(object):
         """
         Make relevant collections of probabilities sum to one.
 
-        This function is ALWAYS going to normalize
-        over self.var and only works if self.var has Stride = 1.
+        This function is ALWAYS going to normalize the variable
+        for which the stride = 1, because it's assumed that's the
+        main/child variable.
 
         Effects
         -------
@@ -526,13 +527,13 @@ class Factor(object):
         -----
 
         """
-        # the main var should have stride = 1
-        assert (self.stride[self.var]==1), "RV should have stride = 1"
-
-        for i in range(0,len(self.cpt),self.card[self.var]):
-            temp_sum = float(np.sum(self.cpt[i:(i+self.card[self.var])]))
-            for j in range(self.card[self.var]):
-                self.cpt[j] /= temp_sum
+        var = [k for k,v in self.stride.items() if v==1][0]
+        
+        for i in range(0,len(self.cpt),self.card[var]):
+            temp_sum = float(np.sum(self.cpt[i:(i+self.card[var])]))
+            for j in range(self.card[var]):
+                self.cpt[i+j] /= temp_sum
+                self.cpt[i+j] = round(self.cpt[i+j],5)
 
 
 

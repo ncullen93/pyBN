@@ -39,6 +39,7 @@ from os.path import dirname
 import numpy as np
 
 from pyBN.classes.factor import Factor
+from pyBN.readwrite.read import read_bn
 
 
 class FactorTestCase(unittest.TestCase):
@@ -52,28 +53,28 @@ class FactorTestCase(unittest.TestCase):
 
 	# Factor Creation Tests
 	def test_factor_init(self):
-		assertIsInstance(self.f,Factor)
+		self.assertIsInstance(self.f,Factor)
 
 	def test_factor_bn(self):
-		assertListEqual(self.f.bn.V,
+		self.assertListEqual(self.f.bn.V,
 			['Burglary', 'Earthquake', 'Alarm', 'JohnCalls', 'MaryCalls'])
 
 	def test_factor_var(self):
-		assertEqual(self.f.var, 'Alarm')
+		self.assertEqual(self.f.var, 'Alarm')
 	
 	def test_factor_scope(self):
-		assertListEqual(self.f.scope,['Alarm','Burglary','Earthquake'])
+		self.assertListEqual(self.f.scope,['Alarm','Burglary','Earthquake'])
 	
 	def test_factor_card(self):
-		assertDictEqual(self.f.card,
+		self.assertDictEqual(self.f.card,
 			{'Alarm':2, 'Burglary':2, 'Earthquake':2})
 	
 	def test_factor_stride(self):
-		assertDictEqual(self.f.stride,
+		self.assertDictEqual(self.f.stride,
 			{'Alarm':1, 'Burglary':2, 'Earthquake':4})
 	
 	def test_factor_cpt(self):
-		assertListEqual(self.f.cpt,
+		self.assertListEqual(list(self.f.cpt),
 			[ 0.999,  0.001,  0.71 ,  0.29 ,  0.06 ,  0.94 ,  0.05 ,  0.95 ])
 	
 	# Factor Operations Tests
@@ -105,7 +106,13 @@ class FactorTestCase(unittest.TestCase):
 		pass
 
 	def test_normalize(self):
-		pass
+		self.f.cpt[0]=20
+		self.f.cpt[1]=20
+		self.f.cpt[4]=0.94
+		self.f.cpt[7]=0.15
+		self.f.normalize()
+		self.assertListEqual(list(self.f.cpt),
+			[0.500,0.500,0.710,0.290,0.5,0.5,0.25,0.75])
     
 if __name__ == '__main__':
 	unittest.main(exit=False)
