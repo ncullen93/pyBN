@@ -46,9 +46,7 @@ class BayesNetTestCase(unittest.TestCase):
 
 	def setUp(self):
 		self.bn = BayesNet()
-		path = dirname(dirname(dirname(dirname(__file__))))
-		self.path = os.path.join(path,'data/cancer.bif')
-		
+		self.data_path = os.path.join(dirname(dirname(dirname(dirname(__file__)))),'data')		
 
 	def tearDown(self):
 		pass
@@ -65,7 +63,7 @@ class BayesNetTestCase(unittest.TestCase):
 		self.assertListEqual(self.bn.E,[(0,1),(0,2),(1,3)])
 
 	def test_get_adj_list(self):
-		bn = read_bn(self.path)
+		bn = read_bn(os.path.join(self.data_path,'data/cancer.bif'))
 		adj_list = bn.get_adj_list()
 		self.assertListEqual(adj_list,[[2],[2],[3,4],[],[]])
 

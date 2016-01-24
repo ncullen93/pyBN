@@ -152,6 +152,8 @@ class Factor(object):
             self.stride[v]=s
             s*=self.card[v]
 
+        assert (self.stride[self.var]==1), "Main Var should have stride = 1"
+
         if len(self.scope) == 1:
             self.cpt = np.array(bn.data[var]['cprob'])
         else:
@@ -278,6 +280,9 @@ class Factor(object):
         self.card = {rv:rv_card}
         self.stride = {rv:1}
         self.scope = [rv]
+        self.var = rv
+
+        self.normalize()
 
     def sumout_var_list(self, var_list):
         """
@@ -350,6 +355,8 @@ class Factor(object):
         self.stride.update((k,v/rv_card) for k,v in self.stride.items() if v > rv_stride)
         del self.stride[rv]
         self.scope.remove(rv)
+
+        #self.normalize()
 
     def maxout_var(self, rv):
         """
@@ -508,8 +515,24 @@ class Factor(object):
         """
         Make relevant collections of probabilities sum to one.
 
+        This function is ALWAYS going to normalize
+        over self.var and only works if self.var has Stride = 1.
+
+        Effects
+        -------
+        - alters self.cpt
+
+        Notes
+        -----
+
         """
-        self.cpt = self.cpt / float(np.sum(self.cpt))
+        # the main var should have stride = 1
+        assert (self.stride[self.var]==1), "RV should have stride = 1"
+
+        for i in range(0,len(self.cpt),self.card[self.var]):
+            temp_sum = float(np.sum(self.cpt[i:(i+self.card[self.var])]))
+            for j in range(self.card[self.var]):
+                self.cpt[j] /= temp_sum
 
 
 
