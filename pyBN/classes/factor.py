@@ -18,6 +18,11 @@ class itself.
 
 The tests for this class are found in "test_factor.py".
 
+For accessing the flattened array based on RV values/indices
+and respective strides, use this formula:
+sum( value_index[i]*stride[i] for i = all variables in the scope )
+
+
 References
 ----------
 [1] Koller, Friedman (2009). "Probabilistic Graphical Models."
@@ -171,7 +176,8 @@ class Factor(object):
             for v, n_idx in enumerate(nn):
                 s += ' | ' + self.bn.data[self.scope[v]]['vals'][n_idx]
             s += ' | '
-            val = 0.3 # get the correct probability value
+            val_idx = np.sum([n*self.stride[self.scope[v]] for v,n in enumerate(nn)]) # get the correct probability value
+            val = self.cpt[val_idx]
             s += str(val) + ' |\n'
         return s
 
