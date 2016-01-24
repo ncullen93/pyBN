@@ -36,7 +36,7 @@ NIPS 2000.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.independence.constraint_tests import mi_test
-from pyBN.structurelearning.orient_edges import orient_edges_gs
+from pyBN.structure_learn.orient_edges import orient_edges_gs
 from pyBN.classes.bayesnet import BayesNet
 
 from copy import copy
