@@ -187,6 +187,8 @@ class Factor(object):
 
         Notes
         -----
+        - What is done about normalization here? I guess
+        assume it's already normalized
 
         """
         if len(self.scope)>=len(other_factor.scope):
@@ -210,7 +212,7 @@ class Factor(object):
         psi = np.zeros(np.product(phi1.card.values()))
 
         for i in range(len(psi)):
-            psi[i] = phi1.cpt[j]*phi2.cpt[k]
+            psi[i] = round(phi1.cpt[j]*phi2.cpt[k],3)
             for rv in rv_order:
                 assignment[rv] += 1
                 if assignment[rv] == phi1.card[rv]:
@@ -233,6 +235,7 @@ class Factor(object):
         for v in rv_order:
             self.stride[v]=s
             s*=phi1.card[v]
+
 
     def sumover_var(self, rv):
         """

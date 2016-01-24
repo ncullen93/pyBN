@@ -79,10 +79,19 @@ class FactorTestCase(unittest.TestCase):
 	
 	# Factor Operations Tests
 	def test_multiply_factor(self):
-		pass
+		f1 = Factor(self.bn,'Alarm')
+		f2 = Factor(self.bn,'Burglary')
+		f1.multiply_factor(f2)
+
+		f3 = Factor(self.bn,'Burglary')
+		f4 = Factor(self.bn,'Alarm')
+		f3.multiply_factor(f4)
+
+		self.assertListEqual(list(f1.cpt),list(f3.cpt))
 	
 	def test_sumover_var(self):
-		pass
+		self.f.sumover_var('Burglary')
+		self.assertListEqual(list(self.f.cpt),[0.5,0.5])
 
 	def test_sumout_var_list(self):
 		pass
