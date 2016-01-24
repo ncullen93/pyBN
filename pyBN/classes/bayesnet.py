@@ -124,6 +124,19 @@ class BayesNet(object):
         #self.factorization = None
         #self.sol = None
 
+    def __str__(self):
+        #return conditional probabilities
+        s = 'Conditional Dependencies \n'
+        s +='------------------------\n'
+        for rv in self.V:
+            s += str(rv)
+            if len(self.data[rv]['parents']) > 0:
+                s += ' | '
+                s += ','.join(self.data[rv]['parents'])
+            else:
+                s += ' (Prior)'
+            s += '\n'
+        return s
     ###################### USER METHODS ##############################
 
     def set_structure(self, edge_dict, card_dict):

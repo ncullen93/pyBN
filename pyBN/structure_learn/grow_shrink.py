@@ -43,8 +43,7 @@ from copy import copy
 import numpy as np
 import itertools
 
-def gs(data,
-		alpha=0.05):
+def gs(data, alpha=0.05):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.

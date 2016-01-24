@@ -10,7 +10,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import numpy as np
 
 
-def bayes_estimator(data, sample_size, prior_dict=None):
+def bayes_estimator(bn, data, sample_size, prior_dict=None):
 	"""
 	Bayesian Estimation method of parameter learning.
 	This method proceeds by either 1) assuming a uniform prior
@@ -21,6 +21,15 @@ def bayes_estimator(data, sample_size, prior_dict=None):
 	updated from observations in the data based on the
 	Multinomial distribution - for which the Dirichlet
 	is a "conjugate prior."
+
+	Note that the Bayesian and MLE estimators essentially converge
+	to the same set of values as the size of the dataset increases.
+
+	Also note that, unlike the structure learning algorithms, the
+	parameter learning functions REQUIRE a passed-in BayesNet object
+	because there MUST be some pre-determined structure for which
+	we can actually learn the parameters. You can't learn parameters
+	without structure - so structure must always be there first!
 
 	Arguments
 	---------
@@ -38,11 +47,11 @@ def bayes_estimator(data, sample_size, prior_dict=None):
 	
 	Returns
 	-------
-	Not sure yet
+	None
 
 	Effects
 	-------
-	Not sure yet
+	- modifies/sets bn.data to the learned parameters
 
 	Notes
 	-----

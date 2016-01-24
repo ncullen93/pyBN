@@ -20,21 +20,20 @@ The tests for this class are found in "test_factor.py".
 
 References
 ----------
-Koller, Friedman (2009). "Probabilistic Graphical Models."
+[1] Koller, Friedman (2009). "Probabilistic Graphical Models."
 
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-
+import itertools
 import numpy as np
 
 class Factor(object):
     """
-    A Factor uses a flattened numpy array for the cpt
-    rather than a Pandas DataFrame. By storing the cpt in
-    this manner and taking advantage of efficient algorithms,
-    significant speedups occur.
+    A Factor uses a flattened numpy array for the cpt.
+    By storing the cpt in this manner and taking advantage 
+    of efficient algorithms, significant speedups occur.
 
     Attributes
     ----------
@@ -156,11 +155,24 @@ class Factor(object):
 
         assert (self.stride[self.var]==1), "Main Var should have stride = 1"
 
-        if len(self.scope) == 1:
-            self.cpt = np.array(bn.data[var]['cprob'])
-        else:
-            self.cpt = np.array([item for sublist in bn.data[var]['cprob'] for item in sublist])
-        
+        self.cpt = np.array(bn.data[var]['cprob']).flatten()
+
+    def __str__(self):
+        s = 'Scope\n'
+        s +='-----\n'
+        s += str(self.scope[0]) + ' | ' + ', '.join(self.scope[1:])
+        s += '\n\n'
+        s += 'Conditional Probability Table\n'
+        s += '-----------------------------\n'
+        s += '| '+str(self.scope[0]) + ' | ' + ' | '.join(self.scope[1:]) + ' | ' + 'Prob |\n'
+        n = [range(c) for c in self.card.values()]
+        for i in list(itertools.product(*n)):
+            nn = [self.bn.data[self.scope[x]]['vals'][j] for x,j in enumerate(reversed(i))]
+            s += '| ' + ' | '.join(nn) + ' | '
+            val = 0.3 # get the correct probability value
+            s += str(val) + ' |\n'
+        return s
+
 
 
     def multiply_factor(self, other_factor):
