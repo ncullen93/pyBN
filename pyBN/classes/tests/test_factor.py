@@ -94,25 +94,53 @@ class FactorTestCase(unittest.TestCase):
 		self.assertListEqual(list(self.f.cpt),[0.5,0.5])
 
 	def test_sumout_var_list(self):
-		pass
+		f = Factor(self.bn,'Alarm')
+		f.sumout_var_list(['Burglary','Earthquake'])
+		self.assertListEqual(f.scope,['Alarm'])
+		self.assertDictEqual(f.stride,{'Alarm':1})
+		self.assertListEqual(list(f.cpt),[0.45475,0.54525])
 
 	def test_sumout_var(self):
-		pass
+		f = Factor(self.bn,'Alarm')
+		f.sumout_var('Earthquake')
+		self.assertListEqual(f.scope,['Alarm','Burglary'])
+		self.assertDictEqual(f.stride,
+			{'Alarm':1,'Burglary':2})
+		self.assertListEqual(list(f.cpt),
+			[ 0.5295,  0.4705,  0.38  ,  0.62  ])
 
 	def test_maxout_var(self):
-		pass
+		f = Factor(self.bn,'Alarm')
+		f.maxout_var('Burglary')
+		self.assertListEqual(list(f.cpt),
+			[ 0.77501,  0.22499,  0.05942,  0.94058])
+		self.assertListEqual(f.scope,['Alarm','Earthquake'])
+		self.assertDictEqual(f.stride,
+			{'Alarm':1,'Earthquake':2})
 
 	def test_reduce_factor_by_list(self):
-		pass
+		f = Factor(self.bn, 'Alarm')
+		f.reduce_factor_by_list([['Burglary','Yes'],['Earthquake','Yes']])
+		self.assertListEqual(list(f.cpt),[0.05,0.95])
+		self.assertListEqual(f.scope,['Alarm'])
+		self.assertDictEqual(f.stride,{'Alarm':1})
 
 	def test_reduce_factor(self):
-		pass
+		f = Factor(self.bn, 'Alarm')
+		f.reduce_factor('Burglary','Yes')
+		self.assertListEqual(list(f.cpt),
+			[ 0.71,  0.29,  0.05,  0.95])
 
 	def test_to_log(self):
-		pass
+		f = Factor(self.bn,'Earthquake')
+		f.to_log()
+		self.assertEqual(round(sum(f.cpt),4),-6.2166)
 
 	def test_from_log(self):
-		pass
+		f = Factor(self.bn, 'Earthquake')
+		f.to_log()
+		f.from_log()
+		self.assertListEqual(list(f.cpt),[0.998,0.002])
 
 	def test_normalize(self):
 		self.f.cpt[0]=20

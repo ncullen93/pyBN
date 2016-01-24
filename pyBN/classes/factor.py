@@ -16,6 +16,8 @@ This class is a great candidate for using Numba JIT compilation
 for manipulation and Numba's JIT functionality for the 
 class itself.
 
+The tests for this class are found in "test_factor.py".
+
 References
 ----------
 Koller, Friedman (2009). "Probabilistic Graphical Models."
@@ -212,7 +214,7 @@ class Factor(object):
         psi = np.zeros(np.product(phi1.card.values()))
 
         for i in range(len(psi)):
-            psi[i] = round(phi1.cpt[j]*phi2.cpt[k],3)
+            psi[i] = round(phi1.cpt[j]*phi2.cpt[k],4)
             for rv in rv_order:
                 assignment[rv] += 1
                 if assignment[rv] == phi1.card[rv]:
@@ -359,7 +361,7 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        #self.normalize()
+        self.normalize()
 
     def maxout_var(self, rv):
         """
@@ -413,6 +415,8 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
+        self.normalize()
+
     def reduce_factor_by_list(self, evidence):
         """
         Reduce the factor by numerous sets of
@@ -450,7 +454,15 @@ class Factor(object):
     def reduce_factor(self, rv, val):
         """
         Condition the factor over evidence by eliminating any
-        sets of values that don't align with [rv, val]
+        sets of values that don't align with [rv, val].
+
+        This is different from "sumover_var" because "reduce_factor"
+        is not summing over anything, it is simply removing any 
+        parent-child instantiations which are not consistent with
+        the evidence. Moreover, there should not be any need for
+        normalization because the CPT should already be normalized
+        over the rv-val evidence (but we do it anyways because of
+        rounding)
 
         Note, this will completely eliminate "rv" from the factor,
         including from the scope and cpt.
@@ -481,15 +493,18 @@ class Factor(object):
 
         """
         exp_len = len(self.cpt)/float(self.card[rv])
-        new_cpt=[]
+        new_cpt = np.zeros((exp_len,))
 
         val_idx = self.bn.data[rv]['vals'].index(val)
         rv_card = self.card[rv]
         rv_stride = self.stride[rv]
 
+        add_idx=0
         idx = val_idx*rv_stride
-        while len(new_cpt) < exp_len:
-            new_cpt.extend(self.cpt[idx:(idx+rv_stride)])
+        while add_idx < exp_len:
+            for j in self.cpt[idx:(idx+rv_stride)]:
+                new_cpt[add_idx] = j
+                add_idx+=1
             idx+=rv_card*rv_stride
 
         self.cpt=new_cpt
@@ -498,13 +513,15 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
+        self.normalize()
+
     def to_log(self):
         """
         Convert probabilities to log space from
         normal space.
 
         """
-        self.cpt = np.log(self.cpt)
+        self.cpt = np.round(np.log(self.cpt),5)
 
     def from_log(self):
         """
@@ -512,7 +529,7 @@ class Factor(object):
         normal space.
 
         """
-        self.cpt = np.exp(self.cpt)
+        self.cpt = np.round(np.exp(self.cpt),5)
 
     def normalize(self):
         """
