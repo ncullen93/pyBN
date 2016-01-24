@@ -37,21 +37,70 @@ class Factor(object):
     Attributes
     ----------
 
-    bn
+    *self.bn* : a BayesNet object
 
-    var
+    *self.var* : a string
+        The random variable to which this Factor belongs
     
-    scope
+    *self.scope* : a list
+        The RV, and its parents (the RVs involved in the
+        conditional probability table)
     
-    card
+    *self.card* : a dictionary, where
+        key = an RV in self.scope, and
+        val = integer cardinality of the key (i.e. how
+            many possible values it has)
     
-    stride
+    *self.stride* : a dictionary, where
+        key = an RV in self.scope, and
+        val = integer stride (i.e. how many rows in the 
+            CPT until the NEXT value of RV is reached)
     
-    cpt
-
+    *self.cpt* : a nested numpy array
+        The probability values for self.var conditioned
+        on its parents
+    
 
     Methods
     -------
+    *multiply_factor*
+
+    *sumover_var* :
+        Sum over one *rv* by keeping it constant. Thus, you 
+        end up with a 1-D factor whose scope is ONLY *rv*
+        and whose length = cardinality of rv. 
+
+    *sumout_var_list* :
+        Remove a collection of rv's from the factor
+        by summing out (i.e. calling sumout_var) over
+        each rv.
+
+    *sumout_var* :
+        Remove passed-in *rv* from the factor by summing
+        over everything else.
+
+    *maxout_var* :
+        Remove *rv* from the factor by taking the maximum value 
+        of all rv instantiations over everyting else.
+
+    *reduce_factor_by_list* :
+        Reduce the factor by numerous sets of
+        [rv,val]
+
+    *reduce_factor* :
+        Condition the factor by eliminating any sets of
+        values that don't align with a given [rv, val]
+
+    *to_log* :
+        Convert probabilities to log space from
+        normal space.
+
+    *from_log* :
+        Convert probabilities from log space to
+        normal space.
+
+    *normalize* :
+        Make relevant collections of probabilities sum to one.
 
 
     Notes
@@ -62,21 +111,27 @@ class Factor(object):
 
     def __init__(self, bn, var):
         """
-        Overview
-        --------
+        Initialize a Factor from a BayesNet object
+        for a given random variable
 
+        Arguments
+        ---------
+        *bn* : a BayesNet object
 
-        Parameters
-        ----------
+        *var* : a string
+            The RV for which the Factor will be extracted.
 
-
-        Returns
+        Effects
         -------
-
+        - sets *self.bn*
+        - sets *self.var*
+        - sets *self.scope*
+        - sets *self.card*
+        - sets *self.stride*
+        - sets *self.cpt*
 
         Notes
         -----
-
 
         """
         self.bn = bn
@@ -103,17 +158,27 @@ class Factor(object):
 
     def multiply_factor(self, other_factor):
         """
-        Overview
-        --------
+        Multiply two factors together. The factor
+        multiplication algorithm used here is adapted
+        from Koller and Friedman (PGMs) textbook.
 
+        In essence, the scope of the merged factor is the
+        union of the two scopes.
 
-        Parameters
-        ----------
-
+        Arguments
+        ---------
+        *other_factor* : a different Factor object
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - alters self.cpt
+        - alters self.stride
+        - alters self.card
+        - alters self.scope
 
         Notes
         -----
@@ -130,7 +195,7 @@ class Factor(object):
         scope_set=set(phi1.scope).union(set(phi2.scope))
 
         ########### HAD TO ADD THESE FOR V/E TO WORK... #################
-        ## I think it is only necessary when phi2 has vars not in phi1 ##
+        ## I think this is necessary when phi2 has vars not in phi1 ##
         rv_order.extend(list(set(phi2.scope).difference(set(phi1.scope))))
         phi1.card.update(phi2.card)
         #################################################################
@@ -166,30 +231,33 @@ class Factor(object):
 
     def sumover_var(self, rv):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
-        This function sums over one *rv* by keeping it constant.
-
-        Thus, you end up with a factor whose scope is ONLY *rv*
+        Sum over one *rv* by keeping it constant. Thus, you 
+        end up with a factor whose scope is ONLY *rv*
         and whose length = cardinality of rv. 
 
         This is equivalent to calling self.sumout_var() over
         EVERY other variable in the scope and is thus faster
         when you want to do just that.
+
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable to sum over.
+
+        Returns
+        -------
+        None
+
+        Effects
+        -------
+        - alters self.cpt
+        - alters self.stride
+        - alters self.card
+        - alters self.scope
+
+        Notes
+        -----
+
         """
         exp_len = self.card[rv]
         new_cpt= np.zeros(exp_len)
@@ -210,17 +278,22 @@ class Factor(object):
 
     def sumout_var_list(self, var_list):
         """
-        Overview
-        --------
+        Remove a collection of rv's from the factor
+        by summing out (i.e. calling sumout_var) over
+        each rv.
 
-
-        Parameters
-        ----------
-
+        Arguments
+        ---------
+        *var_list* : a list
+            The list of rv's to sum out.
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - see "self.sumout_var"
 
         Notes
         -----
@@ -231,24 +304,28 @@ class Factor(object):
 
     def sumout_var(self, rv):
         """
-        Overview
-        --------
+        Remove passed-in *rv* from the factor by summing
+        over everything else.
 
-
-        Parameters
-        ----------
-
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable to sum out
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - alters self.cpt
+        - alters self.stride
+        - alters self.card
+        - alters self.scope
 
         Notes
-        -----
-
+        -----     
         
-        This function removes *rv* from the factor by summing
-        over everything else.
         """
         exp_len = len(self.cpt)/self.card[rv]
         new_cpt = np.zeros(exp_len)
@@ -273,26 +350,30 @@ class Factor(object):
 
     def maxout_var(self, rv):
         """
-        Overview
-        --------
+        Remove *rv* from the factor by taking the maximum value 
+        of all instantiations of the passed-in rv
 
+        Used in MAP inference (i.e. Algorithm 13.1 in Koller p.557)
 
-        Parameters
-        ----------
-
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - alters self.cpt
+        - alters self.stride
+        - alters self.card
+        - alters self.scope
 
         Notes
-        -----
-
+        -----        
         
-        This function removes *rv* from the factor by taking the 
-        maximum value of all rv instantiations over everyting else.
-
-        Used in MAP inference (i.e. Algorithm 13.1 in Koller p.557)
         """
         self.cpt += 0.00002
         exp_len = len(self.cpt)/self.card[rv]
@@ -321,24 +402,30 @@ class Factor(object):
 
     def reduce_factor_by_list(self, evidence):
         """
-        Overview
-        --------
+        Reduce the factor by numerous sets of
+        [rv,val] -- this is done by running
+        self.reduce_factor over the list of
+        lists (*evidence*)
 
-
-        Parameters
-        ----------
+        Arguments
+        ---------
+        *evidence* : a list of lists/tuples
+            The collection of rv-val pairs to
+            remove from (condition upon) the factor
 
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - see "self.reduce_factor"
 
         Notes
         -----
-
-        
-        Repeatly run self.reduce_factor() over a list of lists
-        where a sublist = [rv,val]
+        - Again, might be good to check that each
+            rv-val pair is actually in the factor
         """
         if isinstance(evidence, list):
             for rv,val in evidence:
@@ -349,27 +436,36 @@ class Factor(object):
 
     def reduce_factor(self, rv, val):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
         Condition the factor over evidence by eliminating any
-        possibilities that don't align with [rv, val]
+        sets of values that don't align with [rv, val]
 
         Note, this will completely eliminate "rv" from the factor,
         including from the scope and cpt.
+
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable to eliminate/condition upon.
+
+        *val* : a string
+            The value of RV
+
+        Returns
+        -------
+        None
+
+        Effects
+        -------
+        - alters self.cpt
+        - alters self.scope
+        - alters self.card
+        - alters self.stride
+
+        Notes
+        -----
+        - There are no fail-safes here to make sure the
+            rv-val pair is actually in the factor..
+
         """
         exp_len = len(self.cpt)/float(self.card[rv])
         new_cpt=[]
@@ -391,21 +487,23 @@ class Factor(object):
 
     def to_log(self):
         """
-        Delete this function it's superfluous.
+        Convert probabilities to log space from
+        normal space.
 
         """
         self.cpt = np.log(self.cpt)
 
     def from_log(self):
         """
-        Delete this function it's superfluous.
+        Convert probabilities from log space to
+        normal space.
 
         """
         self.cpt = np.exp(self.cpt)
 
     def normalize(self):
         """
-        Delete this function it's superfluous.
+        Make relevant collections of probabilities sum to one.
 
         """
         self.cpt = self.cpt / float(np.sum(self.cpt))
