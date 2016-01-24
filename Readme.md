@@ -20,6 +20,9 @@ This package includes a number of examples to help users get acquainted with the
 Here is a list of current examples:
 - ReadWrite : an introduction to reading (writing) BayesNet object from (to) files, along with an overview of the attributes and data structures inherit to BayesNet objects.
 - Drawing : an introduction to the drawing/plotting capabilities of pyBN with both small and large Bayesian networks.
+- FactorOperations : an introduction to the Factor class, an exploration of the numerous attributes belonging to a Factor in
+pyBN, an overview of every Factor operation function at the users' hands, and a short discussion of what makes Factor operations
+so fast and efficient in pyBN.
 
 <h2>Current features:</h2>
 
