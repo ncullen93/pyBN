@@ -64,6 +64,9 @@ class Factor(object):
     Methods
     -------
     *multiply_factor*
+        Multiply two factors together. The factor
+        multiplication algorithm used here is adapted
+        from Koller and Friedman (PGMs) textbook.
 
     *sumover_var* :
         Sum over one *rv* by keeping it constant. Thus, you 

@@ -31,6 +31,12 @@ Here is a list of current examples:
 - Graphviz Engine
 - Networkx (matplotlib/pylab) Engine
 
+<h4>Fast Factor Operations</h4>
+- Factor multiplication
+- Factor reduction (sum out variables)
+- Convert to/from log space
+- Normalize
+
 <h4>Approximate Marginal Inference</h4>
 - loopy belief propagation
 - forward sampling
