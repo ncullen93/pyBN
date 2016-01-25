@@ -95,12 +95,8 @@ def marginal_ve_e(bn,
 		fmerge = relevant_factors[0]
 		for i in range(1,len(relevant_factors)):
 			fmerge.multiply_factor(relevant_factors[i])
-		## only difference between marginal and map
-		if marginal==False:
-			map_list.append(copy.deepcopy(fmerge))
-			fmerge.maxout_var(var)
-		else:
-			fmerge.sumout_var(var) # remove var from factor
+		
+		fmerge.sumout_var(var) # remove var from factor
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
 		temp_f_list = irrelevant_factors

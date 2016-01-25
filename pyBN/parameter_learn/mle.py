@@ -58,11 +58,9 @@ def mle_estimator(bn, data):
 	    "children": a list or None
 	    "cprob" : a nested python list
 
+	- Do not want to alter bn.data directly!
+
 	"""
-	# map edge_list with strings to edge_idx with integer columns of each vertex
-	# these are the parent-child combinations to check in each data observation
-	# we could leave these as strings if the data was in a pandas dataframe
-	edge_idx = [([bn.V.index(p) for p in bn.data[rv]['parents']],bn.V.index(rv)) for rv in bn.V]
 	# set empty conditional probability table for each RV
 	for rv in bn.V:
 		p_idx = int(np.prod([len(bn.data[p]['vals']) for p in bn.data[rv]['parents']]))
@@ -70,20 +68,23 @@ def mle_estimator(bn, data):
 
 	# loop through each row of data
 	for row in data:
-		# loop through each edge in edge_idx
-		for parents,rv in edge_idx:
-			obs = np.empty((len(parent)+1,))
-			# observe the instantiation of parents and rv
-			obs[0] = bn.data[rv]['vals'].index(row[rv]) # get rv instance
-			idx = 1
-			for p in parents:
-				obs[idx] = bn.data[p]['vals'].index(row[p]) # get parent instance
-				idx+=1
-			# cprob is always a 2D array if num parents > 0
-			# figure out which idx combination of parents it is
-			# need to use cardinalities and strides..
+		obs_dict = dict([(rv,row[bn.node_idx(rv)]) for rv in bn.nodes()]) # key=node, val=row value
+
+		# loop through each RV and increment its observed parent-self value
+		for rv in bn.nodes():
+
+			value_indices = np.empty(bn.scope_size(rv))
+			value_indices[0] = bn.value_idx(rv, obs_dict[rv])
+
+			strides = np.empty(bn.scope_size(rv))
+			stride[0] = bn.stride(rv,rv)
+
+			for i,p in enumerate(bn.parents(rv)):
+				value_indices[i+1] = bn.value_idx(p,obs_dict[p])
+				strides[i+1] = bn.stride(rv, p)
 			
-			bn.data[rv]['cprob'][obs[0]][parent_idx] += 1
+			offset = np.sum(np.prod(value_indices,strides)) # get cprob offset
+			bn.data[rv]['cprob'][offset] += 1
 
 	
 

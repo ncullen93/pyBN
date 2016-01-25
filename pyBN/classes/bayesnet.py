@@ -6,9 +6,6 @@ BayesNet Class
 This is a class for creating/manipulating Bayesian Networks.
 Currently, we only support Discrete Bayesian Networks.
 
-It is a great candidate for Numba JIT compilation w.r.t
-functions and the class structure as a whole.
-
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
@@ -137,7 +134,121 @@ class BayesNet(object):
                 s += ' (Prior)'
             s += '\n'
         return s
-    ###################### USER METHODS ##############################
+
+    ######### EXPERIMENTING FUNCTIONS ##########
+    ## NOT INTEGRATED/USED YET ##
+    def __iter__(self):
+        return iter(self.data)
+
+    def __contains__(self, rv):
+        return rv in self.V
+
+    def __len__(self):
+        return len(self.V)
+
+    def __getitem__(self, rv):
+        return self.data[rv]
+
+    def add_node(self, rv, factor=None):
+        pass
+
+    def add_nodes_from(self, nodes, factors=None):
+        pass
+
+    def remove_node(self, rv):
+        pass
+
+    def remove_nodes_from(self, nodes):
+        pass
+
+    def nodes(self):
+        """
+        Return iterator
+        """
+        return iter(self.V)
+
+    def node_idx(self, rv):
+        """
+        Return integer index of a node string
+        from self.V
+        """
+        return self.V.index(rv)
+
+    def value_idx(self, rv, val):
+        """
+        Return integer index of a value of
+        a given node from self.data[rv]['vals']
+        """
+        return self.data[rv]['vals'].index(val)
+
+    def edges(self):
+        """
+        Return iterator
+        """
+        pass
+
+    def stride(self, rv, n):
+        """
+        This is terribly inefficient...
+        Need to make stride part of self.data
+
+        After self.data design change,
+        this will be self.factors[rv]['stride'][rv]
+        """
+        f = Factor(self, rv)
+        return f.stride[n]
+
+    def scope_size(self, rv):
+        """
+        Return number of variables in the
+        scope of rv's Factor
+
+        After self.data design change,
+        this will be len(self.factors[rv]['scope'])
+        """
+        f = Factor(self, rv)
+        return len(f.scope)
+
+    def add_edge(self, u, v):
+        pass
+
+    def add_edges_from(self, ebunch):
+        pass
+
+    def remove_edge(self, u, v):
+        pass
+
+    def has_edge(self, u, v):
+        pass
+
+    def parents(self, rv):
+        """
+        Return iterator
+        """
+        return iter(self.data[rv]['parents'])
+
+    def children(self, rv):
+        """
+        Return iterator
+        """
+        pass
+
+    def clear(self):
+        pass
+
+    def copy(self, with_data=True):
+        pass
+
+    def subgraph(self, nbunch):
+        pass
+
+    def set_factor(self, rv, factor):
+        pass
+
+    def set_parameters(self, factor_dict):
+        pass
+    
+    ###################### EXISTING METHODS ##############################
 
     def set_structure(self, edge_dict, card_dict):
         """
@@ -232,7 +343,7 @@ class BayesNet(object):
         edge_list = self.E
         G.add_edges_from(edge_list)
         return G
-
+        
     def get_sp_networkx(self):
         """
         This function returns ONLY the network structure of the BN
