@@ -29,36 +29,30 @@ class BayesNet(object):
 
     Attributes
     ----------
-    *V* : a list
-        The container for vertices (i.e. random variables)
 
-    *E* : a list of tuples ?
-        The container for edges (i.e. conditional dependencies)
+    *factors* : a dictionary where key = rv, value =  Factor() object
 
-    *data* : a dictionary
-        The container for probability values
+        Factor structure:
 
-        First-Level Keys:
+                *self.var* : a string
+                    The random variable to which this Factor belongs
+                
+                *self.scope* : a list
+                    The RV, and its parents (the RVs involved in the
+                    conditional probability table)
+                
+                *self.stride* : a dictionary, where
+                    key = an RV in self.scope, and
+                    val = integer stride (i.e. how many rows in the 
+                        CPT until the NEXT value of RV is reached)
+                
+                *self.cpt* : a nested numpy array
+                    The probability values for self.var conditioned
+                    on its parents
 
-            vertex name : another dictionary
-
-            Second-Level Keys:
-
-                "numoutcomes" : an integer
-                    The number of outcomes an RV has.
-
-                "vals" : a list
-                    The list of instantiations (values) an RV has.
-
-                "parents" : a list or None
-                    The list of the parents' names
-
-                "children": a list or None
-                    The list of the childrens' names
-
-                "cprob" : a nested python list
-                    The probability values for every combination
-                    of parent(s)-self values
+                *self.vals* : a dictionary,
+                    where key = an rv in self.scope and
+                    value = a list of the values the rv can take
 
     User Methods
     ------------
@@ -111,21 +105,16 @@ class BayesNet(object):
 
         Notes
         -----
-        - perhaps should add the capability of initializing with data (i.e. edge list, etc)
+        - REMOVED self.E & self.data
         
         """
-        self.V = []
-        self.E = []
-        self.data = {}
-
-        #self.factorization = None
-        #self.sol = None
+        self.factors = dict
 
     def __str__(self):
         #return conditional probabilities
         s = 'Conditional Dependencies \n'
         s +='------------------------\n'
-        for rv in self.V:
+        for rv in self.nodes():
             s += str(rv)
             if len(self.data[rv]['parents']) > 0:
                 s += ' | '
@@ -141,13 +130,22 @@ class BayesNet(object):
         return iter(self.data)
 
     def __contains__(self, rv):
-        return rv in self.V
+        return rv in self.V()
 
     def __len__(self):
-        return len(self.V)
+        return len(self.V())
 
     def __getitem__(self, rv):
         return self.data[rv]
+
+    def V(self):
+        """
+        List of nodes.
+
+        Use this when you need properties, otherwise
+        use self.nodes() for iteration, etc.
+        """
+        return self.factors.keys()
 
     def add_node(self, rv, factor=None):
         pass
@@ -165,14 +163,14 @@ class BayesNet(object):
         """
         Return iterator
         """
-        return iter(self.V)
+        return iter(self.V())
 
     def node_idx(self, rv):
         """
         Return integer index of a node string
         from self.V
         """
-        return self.V.index(rv)
+        return self.V().index(rv)
 
     def value_idx(self, rv, val):
         """
@@ -247,7 +245,7 @@ class BayesNet(object):
 
     def set_parameters(self, factor_dict):
         pass
-    
+
     ###################### EXISTING METHODS ##############################
 
     def set_structure(self, edge_dict, card_dict):
@@ -300,7 +298,7 @@ class BayesNet(object):
                     'cprob':[]}) \
                         for rv in edge_dict.keys())        
         
-        self.E = [(str(i),str(j)) for i in edge_dict.keys() for j in edge_dict[i]]
+        #self.E = [(str(i),str(j)) for i in edge_dict.keys() for j in edge_dict[i]]
         self.V = [str(v) for v in range(len(card_dict))]
 
 
@@ -313,7 +311,7 @@ class BayesNet(object):
         """
         adj_list = [[] for _ in self.V]
         vi_map = dict((self.V[i],i) for i in range(len(self.V)))
-        for u,v in self.E:
+        for u,v in self.edges():
             adj_list[vi_map[u]].append(vi_map[v])
         return adj_list
         
@@ -340,7 +338,7 @@ class BayesNet(object):
 
         """
         G = nx.DiGraph()
-        edge_list = self.E
+        edge_list = list(self.edges())
         G.add_edges_from(edge_list)
         return G
         
@@ -428,7 +426,7 @@ class BayesNet(object):
         Where is this used?
 
         """
-        e_list = copy.copy(self.E)
+        e_list = copy.copy(list(self.edges()))
         for node in self.V:
             parents = self.data[node]['parents']
             for p1 in parents:
@@ -540,7 +538,7 @@ class BayesNet(object):
 
         """
         if not edge_list:
-            edge_list = self.E
+            edge_list = list(self.edges())
         G = nx.Graph()
         G.add_edges_from(edge_list)
         return nx.is_chordal(G)

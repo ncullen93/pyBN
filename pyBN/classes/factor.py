@@ -43,19 +43,12 @@ class Factor(object):
     Attributes
     ----------
 
-    *self.bn* : a BayesNet object
-
     *self.var* : a string
         The random variable to which this Factor belongs
     
     *self.scope* : a list
         The RV, and its parents (the RVs involved in the
         conditional probability table)
-    
-    *self.card* : a dictionary, where
-        key = an RV in self.scope, and
-        val = integer cardinality of the key (i.e. how
-            many possible values it has)
     
     *self.stride* : a dictionary, where
         key = an RV in self.scope, and
@@ -65,6 +58,10 @@ class Factor(object):
     *self.cpt* : a nested numpy array
         The probability values for self.var conditioned
         on its parents
+
+    *self.vals* : a dictionary,
+        where key = an rv in self.scope and
+        value = a list of the values the rv can take
     
 
     Methods
@@ -118,49 +115,80 @@ class Factor(object):
             
 
 
-    def __init__(self, bn, var):
+    def __init__(self, 
+                scope,
+                cpt,
+                vals):
         """
         Initialize a Factor from a BayesNet object
-        for a given random variable
+        for a given random variable.
+
+        Note, it's assumed that the FIRST variable
+        of *scope* is the main variable (i.e. NOT a
+        parent).
 
         Arguments
         ---------
-        *bn* : a BayesNet object
 
         *var* : a string
             The RV for which the Factor will be extracted.
 
         Effects
         -------
-        - sets *self.bn*
         - sets *self.var*
         - sets *self.scope*
-        - sets *self.card*
         - sets *self.stride*
         - sets *self.cpt*
+        - sets *self.vals*
 
         Notes
         -----
+        - self.card is no longer an attribute, but is now a function
+        - self.bn is no longer an attribute
 
         """
-        self.bn = bn
-        self.var = var
+        assert (isinstance(scope), list), 'Var must be a string'
+        assert (isinstance(cpt), np.ndarray), 'CPT must be a numpy array'
+        assert (isinstance(vals), dict), 'Vals must be a dict'
+        
+        ## self.var ##
+        self.var = scope[0]
+
+        ## self.scope ##
         self.scope=[var]
-        self.scope.extend(bn.data[var]['parents'])
+        self.scope.extend(parents)
 
-        self.card = {} # key=rv, val=cardinality of the var
-        for v in self.scope:
-            self.card[v] = len(bn.data[v]['vals'])
+        ## self.vals ##
+        self.vals = vals
 
-        self.stride = {} # key=rv, val=stride of the var
-        s=1
-        for v in self.scope:
+        ## self.stride ##
+        self.stride = {var:1}
+        s=self.card(var)
+        for v in self.parents():
             self.stride[v]=s
-            s*=self.card[v]
+            s*=self.card(v)
 
-        assert (self.stride[self.var]==1), "Main Var should have stride = 1"
+        ## self.cpt ##
+        self.cpt = cpt
 
-        self.cpt = np.array(bn.data[var]['cprob']).flatten()
+    def copy(self):
+        """
+        Return a copy of the factor
+        """
+        pass
+
+    def card(self, rv):
+        """
+        Return the cardinality of RV
+        """
+        return len(self.vals[rv])
+
+    def parents(self):
+        """
+        Return parents of self.var ...
+        Should make this an iterator
+        """
+        return [rv for rv in self.scope if rv!=self.var]
 
     def __str__(self):
         s = ' Scope\n'

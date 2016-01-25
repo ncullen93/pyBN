@@ -69,12 +69,19 @@ def read_bif(path):
 
     Notes
     -----
+    Arguments for a factor:
+        scope (list)
+        cpt (list)
+        vals (dict, key=rv, val=list of values)
 
     """
     bn = BayesNet()
     V = []
     E = []
     data = {}
+    _scope = {} # key = vertex
+    _cpt = {} # 
+    _val = {}
 
     with open(path, 'r') as f:
         while True:
@@ -115,9 +122,16 @@ def read_bif(path):
             if line == '':
                 break
 
-    bn.V = V
-    bn.E = E
-    bn.data = data
+    #bn.V = V
+    #bn.E = E
+    #bn.data = data
+
+    # ADDDED
+    factors = {}
+    for rv in V:
+        f = Factor(_scope[rv],_cpt[rv],_val[rv])
+        factors[rv] = f
+    bn.factors = factors
 
     return bn
 
