@@ -18,7 +18,6 @@ import pandas as pd
 from itertools import product
 import copy
 import numba
-
 import time
 import pdb
 
@@ -34,6 +33,34 @@ class BayesNet(object):
     *factors* : a dictionary where key = rv, value =  Factor() object
 
         Factor structure:
+        
+                *self.var* : a string
+                    The random variable to which this Factor belongs
+                
+                *self.scope* : a list
+                    The RV, and its parents (the RVs involved in the
+                    conditional probability table)
+                
+                *self.stride* : a dictionary, where
+                    key = an RV in self.scope, and
+                    val = integer stride (i.e. how many rows in the 
+                        CPT until the NEXT value of RV is reached)
+                
+                *self.cpt* : a 1D numpy array
+                    The probability values for self.var conditioned
+                    on its parents
+
+                *self.vals* : a dictionary,
+                    where key = an rv in self.scope and
+                    value = a list of the values the rv can take
+
+    *V* : a list of strings
+        The Random Variables of the graph in topological sort order
+
+    *E* : a list of tuples
+        The edges of the graph in topological sort order
+
+    *vals* : a dictionary where key = rv, value = list of rv's possible values
 
     GETTER Methods
     --------------
@@ -64,25 +91,34 @@ class BayesNet(object):
 
     """
 
-    def __init__(self,factors=None):
+    def __init__(self,factors=None,vals=None):
         """
-        Initialize the BayesNet class
+        Initialize the BayesNet class.
+
+        Note that if this class is intialized w/ *factors* argument,
+        self.V and self.E will be topsorted.
 
         Arguments
         ----------
         *factors* : a dictionary (OPTIONAL)
+        *vals* : a dictionary (OPTIONAL)
 
         Notes
         -----
         
         """
+
         if factors:
             self.factors = factors
+            self.V = self.topsort_nodes() # nodes are top sorted
+            self.E = [(rv1,rv2) for rv1 in self.nodes() for rv2 in self.children(rv1)] # edges are topsorted
+            self.vals = vals
         else:
             self.factors = dict
+            self.V = []
+            self.E = []
+            self.vals = dict
 
-        self.V = self.topsort_nodes() # ensure that the nodes are top sorted
-        self
 
     def __getitem__(self, rv):
         """
@@ -214,11 +250,11 @@ class BayesNet(object):
         Generator over edges as tuples
         """
         if topdown:
-            for node in self.nodes():
-                yield self.children(node)
+            for e in self.E:
+                yield e
         else:
-            for node in reversed(self.nodes()):
-                yield self.parents(node)
+            for e in reversed(self.E):
+                yield e
 
     def parents(self, rv):
         """
@@ -241,7 +277,11 @@ class BayesNet(object):
             if rv in self.factors[node].parents():
                 yield node
 
-    ######
+    def num_children(self, rv):
+        count = 0
+        for child in self.children(rv):
+            count+=1
+        return count
 
     def num_nodes(self):
         """
@@ -249,10 +289,12 @@ class BayesNet(object):
         """
         return len(self.V)
 
-    def rv_idx(self, rv):
+    ######
+    def node_idx(self, rv):
         """
         Return integer index of a node string
-        from self.V
+        from self.V - this is a topological sort
+        index as well.
 
         Example
         -------
@@ -261,81 +303,39 @@ class BayesNet(object):
         """
         return self.V.index(rv)
 
-    def values(self, rv):
-        """
-        Generator over values of RV
-        """
-        for val in self.factors[rv].vals[rv]:
-            yield val
-
-    def val_idx(self, rv, val):
+    def value_idx(self, rv, val):
         """
         Return integer index of a value of
         a given node from self.data[rv]['vals']
         """
-        return self.data[rv]['vals'].index(val)
+        return self.vals[rv].index(val)
 
-    def add_node(self, rv, factor=None):
-        pass
-    def add_nodes_from(self, nodes, factors=None):
-        pass
-    def remove_node(self, rv):
-        pass
-    def remove_nodes_from(self, nodes):
-        pass
+    def values(self, rv):
+        """
+        Generator over values of RV
+        """
+        for val in self.vals[rv]:
+            yield val
+
+    def card(self, rv):
+        """
+        Get the cardinality of variable *rv*
+        """
+        return len(self.vals[rv])
 
     def stride(self, rv, n):
         """
         Get the stride of a variable "n" IN the
         factor of variable "rv".
         """
-        return self.factors[rv]['stride'][rv]
+        return self.factors[rv].stride[n]
 
     def scope_size(self, rv):
         """
         Return number of variables in the
         scope of rv's Factor
-
-        After self.data design change,
-        this will be len(self.factors[rv]['scope'])
         """
-        f = Factor(self, rv)
-        return len(f.scope)
-
-    def add_edge(self, u, v):
-        pass
-
-    def add_edges_from(self, ebunch):
-        pass
-
-    def remove_edge(self, u, v):
-        pass
-
-    def has_edge(self, u, v):
-        pass
-
-    
-
-    def clear(self):
-        pass
-
-    def factor(self, rv):
-        if isinstance(rv, int):
-            return self.factors[self.V()[rv]]
-        else:
-            return self.factors[rv]
-
-    def copy(self, with_data=True):
-        pass
-
-    def subgraph(self, nbunch):
-        pass
-
-    def set_factor(self, rv, factor):
-        pass
-
-    def set_parameters(self, factor_dict):
-        pass
+        return len(self.factors[rv].scope)
 
 
 

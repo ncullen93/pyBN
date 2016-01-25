@@ -81,7 +81,7 @@ def read_bif(path):
     """
     _scope = {} # key = vertex, value = list of vertices in the scope (includind itself)
     _cpt = {} # key = vertex, value = list (then numpy array)
-    _vals = {} # key = vertex, value = dict where key=vertex, val=list of values
+    _vals = {} # key=vertex, val=list of its possible values
 
     with open(path, 'r') as f:
         while True:
@@ -91,7 +91,7 @@ def read_bif(path):
 
                 _scope[new_vertex] = [new_vertex]
                 _cpt[new_vertex] = []
-                _vals[new_vertex] = []
+                #_vals[new_vertex] = []
 
                 new_line = f.readline()
                 new_vals = new_line.replace(',', ' ').split()[6:-1] # list of vals
@@ -123,10 +123,9 @@ def read_bif(path):
     factors = {}
     for rv in _scope.keys():
         _scopevals = {k:v for (k,v) in _vals.items() if k in _scope[rv]}
-
-        f = Factor(rv, np.round(np.array(_cpt[rv]).flatten(),5),_scopevals)
+        f = Factor(var=rv, cpt=np.round(np.array(_cpt[rv]).flatten(),5),vals=_scopevals)
         factors[rv] = f
-    bn = BayesNet(factors)
+    bn = BayesNet(factors=factors,vals=_vals)
 
     return bn
 

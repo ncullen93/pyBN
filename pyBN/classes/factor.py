@@ -147,15 +147,11 @@ class Factor(object):
         - self.bn is no longer an attribute
 
         """
-        assert (isinstance(cpt, np.ndarray)), 'CPT must be a numpy array'
-        assert (isinstance(vals, dict)), 'Vals must be a dict'
-
         self.var = var
-
-        ## self.vals ##
         self.vals = vals
 
-        self.scope = self.vals.keys()
+        self.scope = [var]
+        self.scope[1:] = [v for v in self.vals.keys() if v!=var]
 
         ## self.stride ##
         self.stride = {self.var:1}
@@ -209,24 +205,24 @@ class Factor(object):
         }
         return f_dict
 
+    def card(self, rv):
+        return len(self.vals[rv])
+
     def copy(self):
         """
         Return a copy of the factor
         """
         pass
 
-    def card(self, rv):
-        """
-        Return the cardinality of RV
-        """
-        return len(self.vals[rv])
 
     def parents(self):
         """
         Return parents of self.var ...
         Should make this an iterator
         """
-        return [rv for rv in self.scope if rv!=self.var]
+        for rv in self.scope:
+            if rv != self.var:
+                yield rv
 
 
     def multiply_factor(self, other_factor):
