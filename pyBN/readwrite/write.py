@@ -71,10 +71,8 @@ def write_json(bn, path):
 
     
     """
-    total_dump = {"Vdata":bn.data, "V": bn.V, "E": bn.E}
     with open(path, 'w') as outfile:
-        json.dump(total_dump, outfile,indent=2)
-    del total_dump
+        json.dump(bn.as_dict(), outfile,indent=2)
 
 
 

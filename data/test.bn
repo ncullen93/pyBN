@@ -1,0 +1,107 @@
+{
+  "Xray": {
+    "vals": {
+      "Xray": [
+        "positive", 
+        "negative"
+      ], 
+      "Cancer": [
+        "True", 
+        "False"
+      ]
+    }, 
+    "stride": {
+      "Xray": 1, 
+      "Cancer": 2
+    }, 
+    "cpt": [
+      0.9, 
+      0.1, 
+      0.2, 
+      0.8
+    ]
+  }, 
+  "Dyspnoea": {
+    "vals": {
+      "Dyspnoea": [
+        "True", 
+        "False"
+      ], 
+      "Cancer": [
+        "True", 
+        "False"
+      ]
+    }, 
+    "stride": {
+      "Dyspnoea": 1, 
+      "Cancer": 2
+    }, 
+    "cpt": [
+      0.65, 
+      0.35, 
+      0.3, 
+      0.7
+    ]
+  }, 
+  "Smoker": {
+    "vals": {
+      "Smoker": [
+        "True", 
+        "False"
+      ]
+    }, 
+    "stride": {
+      "Smoker": 1
+    }, 
+    "cpt": [
+      0.3, 
+      0.7
+    ]
+  }, 
+  "Cancer": {
+    "vals": {
+      "Smoker": [
+        "True", 
+        "False"
+      ], 
+      "Cancer": [
+        "True", 
+        "False"
+      ], 
+      "Pollution": [
+        "low", 
+        "high"
+      ]
+    }, 
+    "stride": {
+      "Smoker": 2, 
+      "Cancer": 1, 
+      "Pollution": 4
+    }, 
+    "cpt": [
+      0.03, 
+      0.97, 
+      0.05, 
+      0.95, 
+      0.001, 
+      0.999, 
+      0.02, 
+      0.98
+    ]
+  }, 
+  "Pollution": {
+    "vals": {
+      "Pollution": [
+        "low", 
+        "high"
+      ]
+    }, 
+    "stride": {
+      "Pollution": 1
+    }, 
+    "cpt": [
+      0.9, 
+      0.1
+    ]
+  }
+}

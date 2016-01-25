@@ -17,6 +17,7 @@ import networkx as nx
 import pandas as pd
 from itertools import product
 import copy
+import numba
 
 import time
 import pdb
@@ -34,34 +35,13 @@ class BayesNet(object):
 
         Factor structure:
 
-                *self.var* : a string
-                    The random variable to which this Factor belongs
-                
-                *self.scope* : a list
-                    The RV, and its parents (the RVs involved in the
-                    conditional probability table)
-                
-                *self.stride* : a dictionary, where
-                    key = an RV in self.scope, and
-                    val = integer stride (i.e. how many rows in the 
-                        CPT until the NEXT value of RV is reached)
-                
-                *self.cpt* : a nested numpy array
-                    The probability values for self.var conditioned
-                    on its parents
+    GETTER Methods
+    --------------
 
-                *self.vals* : a dictionary,
-                    where key = an rv in self.scope and
-                    value = a list of the values the rv can take
 
-    User Methods
-    ------------
+    SETTER Methods
+    --------------
 
-    *read* : read a BayesNet object from a file
-
-    *write* : write a BayesNet object to a file
-
-    *set_structure* : set the BayesNet structure from an edge dictionary.
 
     
     Utility Methods
@@ -81,9 +61,6 @@ class BayesNet(object):
 
     Notes
     -----
-    Examples
-    --------
-    >>>
 
     """
 
@@ -91,21 +68,12 @@ class BayesNet(object):
         """
         Initialize the BayesNet class
 
-        Parameters
+        Arguments
         ----------
-        None
-
-        Returns
-        -------
-        None
-
-        Effects
-        -------
-        - initializing the attributes
+        *factors* : a dictionary (OPTIONAL)
 
         Notes
         -----
-        - REMOVED self.E & self.data
         
         """
         if factors:
@@ -113,8 +81,56 @@ class BayesNet(object):
         else:
             self.factors = dict
 
+        self.V = self.topsort_nodes() # ensure that the nodes are top sorted
+        self
+
+    def __getitem__(self, rv):
+        """
+        Return the factor of a given Random Variable
+
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable
+        """
+        return self.factors[rv]
+
+    def __iter__(self):
+        """
+        An iterator over the BayesNet object,
+        where each iteration yields a tuple with the
+        first element being the random variable name and 
+        the second element being its Factor object
+
+        for i,j in bn:
+            print i
+            print j.cpt
+        """
+        return iter(self.factors.items())
+
+    def __contains__(self, rv):
+        """
+        Boolean - whether a given Random Variable
+        exists in the Bayesian network
+
+        Arguments
+        ---------
+        *rv* : a string
+            The random variable to check.
+        """
+        return rv in self.V
+
+    def __len__(self):
+        """
+        The number of nodes in the graph
+        """
+        return len(self.nodes)
+
     def __str__(self):
-        #return conditional probabilities
+        """
+        What's printed to the console when the user
+        types "print bn"
+        """
         s = 'Conditional Dependencies \n'
         s +='------------------------\n'
         for rv in self.nodes():
@@ -128,93 +144,152 @@ class BayesNet(object):
         return s
 
     def __repr__(self):
+        """
+        The representation of the BayesNet object:
+        what's printed to the screen when the user
+        types only "bn". For "print bn" see __str__.
+        """
         s = '\n Conditional Dependencies \n'
         s +=' ------------------------\n'
         for rv in self.nodes():
             s += ' ' + str(rv)
-            if len(self.parents(rv)) > 0:
+            if len(list(self.parents(rv))) > 0:
                 s += ' | '
-                s += ','.join(self.parents(rv))
+                s += ','.join(list(self.parents(rv)))
             else:
                 s += ' (Prior)'
             s += '\n'
         return s
 
-
-    ######### EXPERIMENTING FUNCTIONS ##########
-    ## NOT INTEGRATED/USED YET ##
-    def __iter__(self):
-        return iter(self.data)
-
-    def __contains__(self, rv):
-        return rv in self.V()
-
-    def __len__(self):
-        return len(self.V())
-
-    def __getitem__(self, rv):
-        return self.data[rv]
-
-    def V(self, idx=None):
+    def as_dict(self):
         """
-        List of nodes.
+        Convert BayesNet object to a pure dictionary
+        where key = rv and value = rv's factor which
+        has also been converted into a dictionary.
 
-        Use this when you need properties, otherwise
-        use self.nodes() for iteration, etc.
+        This is essentially how the BayesNet object
+        gets written to file.
+
+        Format
+        ------
+        'RV_NAME': {
+                    'cpt' : list
+                    'stride' : dictionary
+                    'vals' : dictionary
+        }
+
+        Notes
+        -----
+
         """
-        if idx:
-            return self.factors.keys()[n]
-        else:
-            return self.factors.keys()
+        bn_dict = dict((v,self.factors[v].as_dict()) for v in self.nodes())
+        return bn_dict
 
-    def add_node(self, rv, factor=None):
-        pass
+    def topsort_nodes(self):
+        """
+        Return list of nodes in topological sort order.
+        """
+        queue = [rv for rv in self.factors.keys() if self.num_parents(rv)==0]
+        visited = []
+        while queue:
+            vertex = queue.pop(0)
+            if vertex not in visited:
+                visited.append(vertex)
+                for node in self.factors.keys():
+                    if vertex in self.factors[node].parents():
+                        queue.append(node)
+        return visited
 
-    def add_nodes_from(self, nodes, factors=None):
-        pass
-
-    def remove_node(self, rv):
-        pass
-
-    def remove_nodes_from(self, nodes):
-        pass
+    #### STRUCTURE ITERATORS ####
 
     def nodes(self):
         """
+        Generator over nodes
+        """
+        for node in self.V:
+            yield node
+
+    def edges(self,topdown=True):
+        """
+        Generator over edges as tuples
+        """
+        if topdown:
+            for node in self.nodes():
+                yield self.children(node)
+        else:
+            for node in reversed(self.nodes()):
+                yield self.parents(node)
+
+    def parents(self, rv):
+        """
         Return iterator
         """
-        return iter(self.factors.keys())
+        for parent in self.factors[rv].parents():
+            yield parent
 
-    def node_idx(self, rv):
+    def num_parents(self, rv):
+        count = 0
+        for parent in self.parents(rv):
+            count +=1
+        return count
+
+    def children(self, rv):
+        """
+        Generator/iterator
+        """
+        for node in self.nodes():
+            if rv in self.factors[node].parents():
+                yield node
+
+    ######
+
+    def num_nodes(self):
+        """
+        The number of nodes in the graph
+        """
+        return len(self.V)
+
+    def rv_idx(self, rv):
         """
         Return integer index of a node string
         from self.V
-        """
-        return self.V().index(rv)
 
-    def value_idx(self, rv, val):
+        Example
+        -------
+        if V = ['X','Y','Z']
+        then bn.node_idx('Y') = 1
+        """
+        return self.V.index(rv)
+
+    def values(self, rv):
+        """
+        Generator over values of RV
+        """
+        for val in self.factors[rv].vals[rv]:
+            yield val
+
+    def val_idx(self, rv, val):
         """
         Return integer index of a value of
         a given node from self.data[rv]['vals']
         """
         return self.data[rv]['vals'].index(val)
 
-    def edges(self):
-        """
-        Return iterator
-        """
+    def add_node(self, rv, factor=None):
+        pass
+    def add_nodes_from(self, nodes, factors=None):
+        pass
+    def remove_node(self, rv):
+        pass
+    def remove_nodes_from(self, nodes):
         pass
 
     def stride(self, rv, n):
         """
-        This is terribly inefficient...
-        Need to make stride part of self.data
-
-        After self.data design change,
-        this will be self.factors[rv]['stride'][rv]
+        Get the stride of a variable "n" IN the
+        factor of variable "rv".
         """
-        f = Factor(self, rv)
-        return f.stride[n]
+        return self.factors[rv]['stride'][rv]
 
     def scope_size(self, rv):
         """
@@ -239,24 +314,14 @@ class BayesNet(object):
     def has_edge(self, u, v):
         pass
 
-    def parents(self, rv):
-        """
-        Return iterator
-        """
-        return self.factors[rv].parents() 
-
-    def children(self, rv):
-        """
-        Return iterator
-        """
-        pass
+    
 
     def clear(self):
         pass
 
     def factor(self, rv):
         if isinstance(rv, int):
-            return self.factors[self.V(rv)]
+            return self.factors[self.V()[rv]]
         else:
             return self.factors[rv]
 
@@ -272,7 +337,9 @@ class BayesNet(object):
     def set_parameters(self, factor_dict):
         pass
 
-    ###################### EXISTING METHODS ##############################
+
+
+    ###################### UTILITY METHODS ##############################
 
     def set_structure(self, edge_dict, card_dict):
         """

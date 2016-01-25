@@ -14,6 +14,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartouth.edu>"""
 
 import json
 import numpy as np
+import copy
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
@@ -121,11 +122,11 @@ def read_bif(path):
     # CREATE FACTORS
     factors = {}
     for rv in _scope.keys():
-        _scopevals = dict((rv,vals) for rv, vals in _vals.items() if rv in _scope[rv])
-        f = Factor(_scope[rv],np.array(_cpt[rv]),_scopevals)
+        _scopevals = {k:v for (k,v) in _vals.items() if k in _scope[rv]}
+
+        f = Factor(rv, np.round(np.array(_cpt[rv]).flatten(),5),_scopevals)
         factors[rv] = f
     bn = BayesNet(factors)
-    #bn.factors = factors
 
     return bn
 

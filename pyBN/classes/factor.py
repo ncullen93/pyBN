@@ -115,8 +115,8 @@ class Factor(object):
             
 
 
-    def __init__(self, 
-                scope,
+    def __init__(self,
+                var,
                 cpt,
                 vals):
         """
@@ -147,18 +147,15 @@ class Factor(object):
         - self.bn is no longer an attribute
 
         """
-        assert (isinstance(scope, list)), 'Var must be a string'
         assert (isinstance(cpt, np.ndarray)), 'CPT must be a numpy array'
         assert (isinstance(vals, dict)), 'Vals must be a dict'
-        
-        ## self.var ##
-        self.var = scope[0]
 
-        ## self.scope ##
-        self.scope = scope
+        self.var = var
 
         ## self.vals ##
         self.vals = vals
+
+        self.scope = self.vals.keys()
 
         ## self.stride ##
         self.stride = {self.var:1}
@@ -176,6 +173,7 @@ class Factor(object):
         return s
 
     def __str__(self):
+        """
         s = ' Scope\n'
         s +=' -----\n '
         s += str(self.scope[0]) + ' | ' + ', '.join(self.scope[1:])
@@ -192,7 +190,24 @@ class Factor(object):
             val_idx = np.sum([n*self.stride[self.scope[v]] for v,n in enumerate(nn)]) # get the correct probability value
             val = self.cpt[val_idx]
             s += str(val) + ' |\n'
+        """
+        s = self.var + ' | '
+        s += ', '.join(self.parents())
         return s
+
+    def as_dict(self):
+        """
+        Return the factor as a pure dictionary.
+        This is mostly used for writing to file as
+        json format.
+        """
+        f_dict = {
+                'vals':self.vals,
+                'cpt':[round(elem,4) for elem in self.cpt],
+                #'cpt':list(self.cpt),
+                'stride':self.stride
+        }
+        return f_dict
 
     def copy(self):
         """
