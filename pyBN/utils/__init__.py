@@ -1,1 +1,1 @@
-from pyBN.misc.random_sample import *
+from pyBN.utils.random_sample import *

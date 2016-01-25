@@ -55,7 +55,7 @@ class Factor(object):
         val = integer stride (i.e. how many rows in the 
             CPT until the NEXT value of RV is reached)
     
-    *self.cpt* : a nested numpy array
+    *self.cpt* : a 1D numpy array
         The probability values for self.var conditioned
         on its parents
 
@@ -147,23 +147,22 @@ class Factor(object):
         - self.bn is no longer an attribute
 
         """
-        assert (isinstance(scope), list), 'Var must be a string'
-        assert (isinstance(cpt), np.ndarray), 'CPT must be a numpy array'
-        assert (isinstance(vals), dict), 'Vals must be a dict'
+        assert (isinstance(scope, list)), 'Var must be a string'
+        assert (isinstance(cpt, np.ndarray)), 'CPT must be a numpy array'
+        assert (isinstance(vals, dict)), 'Vals must be a dict'
         
         ## self.var ##
         self.var = scope[0]
 
         ## self.scope ##
-        self.scope=[var]
-        self.scope.extend(parents)
+        self.scope = scope
 
         ## self.vals ##
         self.vals = vals
 
         ## self.stride ##
-        self.stride = {var:1}
-        s=self.card(var)
+        self.stride = {self.var:1}
+        s=self.card(self.var)
         for v in self.parents():
             self.stride[v]=s
             s*=self.card(v)
@@ -171,24 +170,10 @@ class Factor(object):
         ## self.cpt ##
         self.cpt = cpt
 
-    def copy(self):
-        """
-        Return a copy of the factor
-        """
-        pass
-
-    def card(self, rv):
-        """
-        Return the cardinality of RV
-        """
-        return len(self.vals[rv])
-
-    def parents(self):
-        """
-        Return parents of self.var ...
-        Should make this an iterator
-        """
-        return [rv for rv in self.scope if rv!=self.var]
+    def __repr__(self):
+        s = self.var + ' | '
+        s += ', '.join(self.parents())
+        return s
 
     def __str__(self):
         s = ' Scope\n'
@@ -209,6 +194,24 @@ class Factor(object):
             s += str(val) + ' |\n'
         return s
 
+    def copy(self):
+        """
+        Return a copy of the factor
+        """
+        pass
+
+    def card(self, rv):
+        """
+        Return the cardinality of RV
+        """
+        return len(self.vals[rv])
+
+    def parents(self):
+        """
+        Return parents of self.var ...
+        Should make this an iterator
+        """
+        return [rv for rv in self.scope if rv!=self.var]
 
 
     def multiply_factor(self, other_factor):

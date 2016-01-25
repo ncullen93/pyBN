@@ -87,7 +87,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self):
+    def __init__(self,factors=None):
         """
         Initialize the BayesNet class
 
@@ -108,7 +108,10 @@ class BayesNet(object):
         - REMOVED self.E & self.data
         
         """
-        self.factors = dict
+        if factors:
+            self.factors = factors
+        else:
+            self.factors = dict
 
     def __str__(self):
         #return conditional probabilities
@@ -124,6 +127,20 @@ class BayesNet(object):
             s += '\n'
         return s
 
+    def __repr__(self):
+        s = '\n Conditional Dependencies \n'
+        s +=' ------------------------\n'
+        for rv in self.nodes():
+            s += ' ' + str(rv)
+            if len(self.parents(rv)) > 0:
+                s += ' | '
+                s += ','.join(self.parents(rv))
+            else:
+                s += ' (Prior)'
+            s += '\n'
+        return s
+
+
     ######### EXPERIMENTING FUNCTIONS ##########
     ## NOT INTEGRATED/USED YET ##
     def __iter__(self):
@@ -138,14 +155,17 @@ class BayesNet(object):
     def __getitem__(self, rv):
         return self.data[rv]
 
-    def V(self):
+    def V(self, idx=None):
         """
         List of nodes.
 
         Use this when you need properties, otherwise
         use self.nodes() for iteration, etc.
         """
-        return self.factors.keys()
+        if idx:
+            return self.factors.keys()[n]
+        else:
+            return self.factors.keys()
 
     def add_node(self, rv, factor=None):
         pass
@@ -163,7 +183,7 @@ class BayesNet(object):
         """
         Return iterator
         """
-        return iter(self.V())
+        return iter(self.factors.keys())
 
     def node_idx(self, rv):
         """
@@ -223,7 +243,7 @@ class BayesNet(object):
         """
         Return iterator
         """
-        return iter(self.data[rv]['parents'])
+        return self.factors[rv].parents() 
 
     def children(self, rv):
         """
@@ -233,6 +253,12 @@ class BayesNet(object):
 
     def clear(self):
         pass
+
+    def factor(self, rv):
+        if isinstance(rv, int):
+            return self.factors[self.V(rv)]
+        else:
+            return self.factors[rv]
 
     def copy(self, with_data=True):
         pass

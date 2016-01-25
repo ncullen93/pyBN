@@ -13,7 +13,10 @@ for more formats should be added in the future.
 __author__ = """Nicholas Cullen <ncullen.th@dartouth.edu>"""
 
 import json
+import numpy as np
+
 from pyBN.classes.bayesnet import BayesNet
+from pyBN.classes.factor import Factor
 
 
 def read_bn(path):
@@ -75,84 +78,78 @@ def read_bif(path):
         vals (dict, key=rv, val=list of values)
 
     """
-    bn = BayesNet()
-    V = []
-    E = []
-    data = {}
-    _scope = {} # key = vertex
-    _cpt = {} # 
-    _val = {}
+    _scope = {} # key = vertex, value = list of vertices in the scope (includind itself)
+    _cpt = {} # key = vertex, value = list (then numpy array)
+    _vals = {} # key = vertex, value = dict where key=vertex, val=list of values
 
     with open(path, 'r') as f:
         while True:
             line = f.readline()
             if 'variable' in line:
                 new_vertex = line.split()[1]
-                V.append(new_vertex) # add to bn.V
-                data[new_vertex] = {} # add empty dict to bn.data
+
+                _scope[new_vertex] = [new_vertex]
+                _cpt[new_vertex] = []
+                _vals[new_vertex] = []
+
                 new_line = f.readline()
                 new_vals = new_line.replace(',', ' ').split()[6:-1] # list of vals
-                data[new_vertex]['vals'] = new_vals # add vals to bn.data dict
-                data[new_vertex]['numoutcomes'] = len(new_vals)
-                data[new_vertex]['children'] = []
-                data[new_vertex]['cprob'] = []
+                _vals[new_vertex] = new_vals
+                num_outcomes = len(new_vals)
             elif 'probability' in line:
                 line = line.replace(',', ' ')
                 child_rv = line.split()[2]
                 parent_rvs = line.split()[4:-2]
-                num_tail = len(parent_rvs)
-                if num_tail == 0: # prior
-                    data[child_rv]['parents'] = []
+
+                if len(parent_rvs) == 0: # prior
                     new_line = f.readline().replace(';', ' ').replace(',',' ').split()
                     prob_values = new_line[1:]
-                    data[child_rv]['cprob'] = map(float,prob_values)
+                    _cpt[child_rv] = map(float,prob_values)
                 else: # not a prior
-                    data[child_rv]['parents'] = list(parent_rvs)
-                    for parent in parent_rvs:
-                        E.append([parent,child_rv])
-                        data[parent]['children'].append(child_rv)
+                    _scope[child_rv].extend(list(parent_rvs))
                     while True:
                         new_line = f.readline()
                         if '}' in new_line:
                             break
                         new_line = new_line.replace(',',' ').replace(';',' ').replace('(', ' ').replace(')', ' ').split()
-                        prob_values = new_line[-(data[new_vertex]['numoutcomes']):]
+                        prob_values = new_line[-(len(_vals[new_vertex])):]
                         prob_values = map(float,prob_values)
-                        data[child_rv]['cprob'].append(prob_values)
+                        _cpt[child_rv].append(prob_values)
             if line == '':
                 break
 
-    #bn.V = V
-    #bn.E = E
-    #bn.data = data
-
-    # ADDDED
+    # CREATE FACTORS
     factors = {}
-    for rv in V:
-        f = Factor(_scope[rv],_cpt[rv],_val[rv])
+    for rv in _scope.keys():
+        _scopevals = dict((rv,vals) for rv, vals in _vals.items() if rv in _scope[rv])
+        f = Factor(_scope[rv],np.array(_cpt[rv]),_scopevals)
         factors[rv] = f
-    bn.factors = factors
+    bn = BayesNet(factors)
+    #bn.factors = factors
 
     return bn
 
 def read_json(path):
     """
-    Overview
-    --------
+    Read a BayesNet object from the json format. This
+    format has the ".bn" extension and is completely
+    unique to pyBN.
 
-
-    Parameters
-    ----------
-
+    Arguments
+    ---------
+    *path* : a string
+        The file path
 
     Returns
     -------
+    None
 
+    Effects
+    -------
+    - Instantiates and sets a new BayesNet object
 
     Notes
     -----
-
-    
     
     This function reads in a libpgm-style format into a bn object
 
