@@ -138,7 +138,6 @@ def mi_test(data, chi2_test=True):
 					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 		
 		MI = np.nansum(Pxyz * np.log(Pxy_z / (Px_y_z)))
-		print MI
 		if not chi2_test:
 			return round(MI,4)
 		else:
