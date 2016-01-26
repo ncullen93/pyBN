@@ -34,7 +34,6 @@ assertDictEqual(a, b)	dicts
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import unittest
-
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.readwrite.read import read_bn
 
@@ -46,7 +45,8 @@ class BayesNetTestCase(unittest.TestCase):
 
 	def setUp(self):
 		self.bn = BayesNet()
-		self.data_path = os.path.join(dirname(dirname(dirname(dirname(__file__)))),'data')		
+		self.dpath = os.path.join(dirname(dirname(dirname(dirname(__file__)))),'data')	
+		bn_bif = read_bn(os.path.join(self.dpath,'cancer.bif'))
 
 	def tearDown(self):
 		pass
@@ -54,18 +54,8 @@ class BayesNetTestCase(unittest.TestCase):
 	def test_isinstance(self):
 		self.assertIsInstance(self.bn,BayesNet)
 
-	def test_set_structure(self):
-		edge_dict = {0:[1,2],1:[3],2:[],3:[]}
-		card_dict = {0:2,1:2,2:2,3:2}
-		self.bn.set_structure(edge_dict,card_dict)
-
-		self.assertListEqual(self.bn.V,[0,1,2,3])
-		self.assertListEqual(self.bn.E,[(0,1),(0,2),(1,3)])
-
-	def test_get_adj_list(self):
-		bn = read_bn(os.path.join(self.data_path,'data/cancer.bif'))
-		adj_list = bn.get_adj_list()
-		self.assertListEqual(adj_list,[[2],[2],[3,4],[],[]])
+	def test_V_bif(self):
+		self.assertListEqual(bn_bif.V,[''])
 
 
 
