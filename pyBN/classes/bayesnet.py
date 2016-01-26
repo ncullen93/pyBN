@@ -3,9 +3,31 @@
 BayesNet Class
 **************
 
-This is a class for creating/manipulating Bayesian Networks.
-Currently, we only support Discrete Bayesian Networks.
+Overarching class for Discrete Bayesian Networks.
 
+
+Design Specs
+------------
+
+- Bayesian Network -
+
+    - Factorization -
+
+        - Factors -
+
+            - main variable -
+            - scope -
+            - conditional probability table -
+            - stride -
+
+    - Vertices : values -
+
+    - Edges -
+
+Notes
+-----
+- Edges can be inferred from Factorization, but Vertex values 
+    must be specified.
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
@@ -20,6 +42,7 @@ import copy
 import numba
 import time
 import pdb
+from collections import OrderedDict
 
 
 class BayesNet(object):
@@ -30,86 +53,32 @@ class BayesNet(object):
     Attributes
     ----------
 
-    *factors* : a dictionary where key = rv, value =  Factor() object
-
-        Factor structure:
-        
-                *self.var* : a string
-                    The random variable to which this Factor belongs
-                
-                *self.scope* : a list
-                    The RV, and its parents (the RVs involved in the
-                    conditional probability table)
-                
-                *self.stride* : a dictionary, where
-                    key = an RV in self.scope, and
-                    val = integer stride (i.e. how many rows in the 
-                        CPT until the NEXT value of RV is reached)
-                
-                *self.cpt* : a 1D numpy array
-                    The probability values for self.var conditioned
-                    on its parents
-
-                *self.vals* : a dictionary,
-                    where key = an rv in self.scope and
-                    value = a list of the values the rv can take
-
-    *V* : a list of strings
-        The Random Variables of the graph in topological sort order
-
-    *E* : a list of tuples
-        The edges of the graph in topological sort order
-
-    *vals* : a dictionary where key = rv, value = list of rv's possible values
-
-    GETTER Methods
-    --------------
-
-
-    SETTER Methods
-    --------------
-
-
-    
-    Utility Methods
-    ---------------
-
-    *get_networkx* : get networkx representation of BayesNet object
-
-    *get_sp_networkx* : get weighted/expanded networkx representation of
-        BayesNet object
-
-    *get_moralized_edge_list* : get edge list of moralized graph
-
-    *get_chordal_nx* : get chordal networkx representation
-
-    *is_chordal* : test whether a graph is chordal
-
 
     Notes
     -----
 
     """
 
-    def __init__(self,factors=None,vals=None):
+    def __init__(self,F=None, V=None):
         """
         Initialize the BayesNet class.
 
-        Note that if this class is intialized w/ *factors* argument,
-        self.V and self.E will be topsorted.
-
         Arguments
         ----------
-        *factors* : a dictionary (OPTIONAL)
-        *vals* : a dictionary (OPTIONAL)
+        
 
         Notes
         -----
         
         """
 
+        self.F = dict
+        self.V = dict
+        self.E = dict
+
+
         if factors:
-            self.factors = factors
+            self.F = F
             self.V = self.topsort_nodes() # nodes are top sorted
             self.E = [(rv1,rv2) for rv1 in self.nodes() for rv2 in self.children(rv1)] # edges are topsorted
             self.vals = vals
@@ -119,6 +88,12 @@ class BayesNet(object):
             self.E = []
             self.vals = dict
 
+    def set_F(self, F):
+        self.F = F
+    def set_V(self, V):
+        self.V = V
+    def set_E(self, E):
+        self.E = E
 
     def __getitem__(self, rv):
         """
@@ -220,21 +195,6 @@ class BayesNet(object):
         """
         bn_dict = dict((v,self.factors[v].as_dict()) for v in self.nodes())
         return bn_dict
-
-    def topsort_nodes(self):
-        """
-        Return list of nodes in topological sort order.
-        """
-        queue = [rv for rv in self.factors.keys() if self.num_parents(rv)==0]
-        visited = []
-        while queue:
-            vertex = queue.pop(0)
-            if vertex not in visited:
-                visited.append(vertex)
-                for node in self.factors.keys():
-                    if vertex in self.factors[node].parents():
-                        queue.append(node)
-        return visited
 
     #### STRUCTURE ITERATORS ####
 

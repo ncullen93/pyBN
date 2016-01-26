@@ -58,10 +58,6 @@ class Factor(object):
     *self.cpt* : a 1D numpy array
         The probability values for self.var conditioned
         on its parents
-
-    *self.vals* : a dictionary,
-        where key = an rv in self.scope and
-        value = a list of the values the rv can take
     
 
     Methods
@@ -111,14 +107,13 @@ class Factor(object):
 
     Notes
     -----
-    """
-            
+    """            
 
 
     def __init__(self,
                 var,
-                cpt,
-                vals):
+                scope,
+                cpt):
         """
         Initialize a Factor from a BayesNet object
         for a given random variable.
@@ -139,7 +134,6 @@ class Factor(object):
         - sets *self.scope*
         - sets *self.stride*
         - sets *self.cpt*
-        - sets *self.vals*
 
         Notes
         -----
@@ -148,20 +142,16 @@ class Factor(object):
 
         """
         self.var = var
-        self.vals = vals
+        self.scope = scope
+        self.cpt = cpt
 
-        self.scope = [var]
-        self.scope[1:] = [v for v in self.vals.keys() if v!=var]
-
-        ## self.stride ##
+        # SET STRIDE
         self.stride = {self.var:1}
         s=self.card(self.var)
         for v in self.parents():
             self.stride[v]=s
             s*=self.card(v)
 
-        ## self.cpt ##
-        self.cpt = cpt
 
     def __repr__(self):
         s = self.var + ' | '
@@ -169,24 +159,6 @@ class Factor(object):
         return s
 
     def __str__(self):
-        """
-        s = ' Scope\n'
-        s +=' -----\n '
-        s += str(self.scope[0]) + ' | ' + ', '.join(self.scope[1:])
-        s += '\n\n'
-        s += ' Conditional Probability Table\n'
-        s += ' -----------------------------\n'
-        s += ' | '+str(self.scope[0]) + ' | ' + ' | '.join(self.scope[1:]) + ' | ' + 'Prob |\n'
-        n = [range(c) for c in self.card.values()]
-        for i in list(itertools.product(*n)):
-            nn = [j for j in reversed(i)]
-            for v, n_idx in enumerate(nn):
-                s += ' | ' + self.bn.data[self.scope[v]]['vals'][n_idx]
-            s += ' | '
-            val_idx = np.sum([n*self.stride[self.scope[v]] for v,n in enumerate(nn)]) # get the correct probability value
-            val = self.cpt[val_idx]
-            s += str(val) + ' |\n'
-        """
         s = self.var + ' | '
         s += ', '.join(self.parents())
         return s
@@ -224,6 +196,13 @@ class Factor(object):
             if rv != self.var:
                 yield rv
 
+    def num_parents(self):
+        """
+        Number of parents the main variable has
+        """
+        return len(self.scope)-1
+
+    ##### FACTOR OPERATIONS #####
 
     def multiply_factor(self, other_factor):
         """
