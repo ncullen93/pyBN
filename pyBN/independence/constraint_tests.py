@@ -119,7 +119,8 @@ def mi_test(data, chi2_test=True):
 				data[i,2] = ''.join(data[i,2:ncols])
 			data = data.astype('int')[:,0:3]
 
-		hist,_ = np.histogramdd(data, bins=bins[0:3]) # frequency counts
+		bins = np.amax(data,axis=0)
+		hist,_ = np.histogramdd(data, bins=bins) # frequency counts
 
 		Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 		Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
@@ -136,8 +137,8 @@ def mi_test(data, chi2_test=True):
 				for k in xrange(bins[2]):
 					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 		
-
-		MI = np.sum(Pxyz * np.log(Pxy_z / (Px_y_z)))
+		MI = np.nansum(Pxyz * np.log(Pxy_z / (Px_y_z)))
+		print MI
 		if not chi2_test:
 			return round(MI,4)
 		else:

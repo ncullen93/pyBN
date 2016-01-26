@@ -25,14 +25,30 @@ class ConstraintTestsTestCase(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def test_mi_two_vars(self):
-		pass
+	def test_mi_two_vars_value_a(self):
+		self.assertEqual(mi_test(data[:,(0,1)]),0.0004)
 
-	def test_mi_three_vars(self):
-		pass
+	def test_mi_two_vars_value_b(self):
+		self.assertEqual(mi_test(data[:,(0,2)]),0.0014)
 
-	def test_mi_four_vars(self):
-		pass
+	def test_mi_two_vars_symmetry(self):
+		self.assertEqual(mi_test(data[:,(1,0)]),mi_test(data[:,(0,1)]))
+
+	def test_mi_three_vars_value_a(self):
+		self.assertEqual(mi_test(data),0.0009)
+
+	def test_mi_three_vars_symmetry(self):
+		self.assertEqual(mi_test(data[:,(0,1,2)]),mi_test(data[:,(1,0,2)]))
+
+	def test_mi_random_three(self):
+		np.random.seed(3636)
+		data = np.random.randint(1,10,size=((10000,3)))
+		self.assertEqual(mi_test(data),0.0211)
+
+	def test_mi_random_four(self):
+		np.random.seed(3636)
+		data = np.random.randint(1,10,size=((10000,4)))
+		self.assertEqual(mi_test(data),0.0071)
 
 	def test_chi2(self):
 		pass
