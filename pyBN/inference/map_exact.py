@@ -25,10 +25,10 @@ References
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 
-def map_var_elim(bn,
-				target=None,
-				evidence=None, 
-				order=None):
+def map_ve_e(bn,
+			target=None,
+			evidence=None, 
+			order=None):
 	"""
 	Perform Max-Sum Variable Elimination over a BayesNet object
 	for exact maximum a posteriori inference.
