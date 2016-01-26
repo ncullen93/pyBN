@@ -112,8 +112,8 @@ class Factor(object):
 
     def __init__(self,
                 var,
-                scope,
-                cpt):
+                cpt,
+                card):
         """
         Initialize a Factor from a BayesNet object
         for a given random variable.
@@ -142,15 +142,17 @@ class Factor(object):
 
         """
         self.var = var
-        self.scope = scope
         self.cpt = cpt
+        self.card = card
 
+        # SET SCOPE
+        self.scope = self.card.keys()
         # SET STRIDE
         self.stride = {self.var:1}
-        s=self.card(self.var)
+        s=self.card[self.var]
         for v in self.parents():
             self.stride[v]=s
-            s*=self.card(v)
+            s*=self.card[v]
 
 
     def __repr__(self):
@@ -176,9 +178,6 @@ class Factor(object):
                 'stride':self.stride
         }
         return f_dict
-
-    def card(self, rv):
-        return len(self.vals[rv])
 
     def copy(self):
         """

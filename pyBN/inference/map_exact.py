@@ -61,12 +61,14 @@ def map_var_elim(bn,
     self.sol = None # most recent solution
 
 	"""
-	self.temp_f_list = [Factor(self.BN,var) for var in self.BN.V]
+	#self.temp_f_list = [Factor(self.BN,var) for var in self.BN.V]
+	self.temp_F = copy(bn.F)
 	map_list = []
 
 	#### ORDER HANDLING ####
 	if not order:
-		order = copy.copy(self.BN.V)
+		#order = copy.copy(self.BN.V)
+		order = copy.copy(list(self.nodes()))
 		if isinstance(target,list):
 			for t in target:
 				order.remove(t)
@@ -86,44 +88,42 @@ def map_var_elim(bn,
 		assert isinstance(evidence, dict), 'Evidence must be Dictionary'
 		temp=[]
 		for obs in evidence.items():
-			for f in self.temp_f_list:
+			for f in bn.factors():
 				if len(f.scope)>1 or obs[0] not in f.scope:
 					temp.append(f)
 				if obs[0] in f.scope:
 					f.reduce_factor(obs[0],obs[1])
 			order.remove(obs[0])
-		self.temp_f_list=temp
+		temp_F=temp
 
 	#### ALGORITHM ####
 	for var in order:
-		relevant_factors = [f for f in self.temp_f_list if var in f.scope]
-		irrelevant_factors = [f for f in self.temp_f_list if var not in f.scope]
+		relevant_factors = [f for f in temp_F if var in f.scope]
+		irrelevant_factors = [f for f in temp_F if var not in f.scope]
 
 		# mutliply all relevant factors
 		fmerge = relevant_factors[0]
 		for i in range(1,len(relevant_factors)):
 			fmerge.multiply_factor(relevant_factors[i])
-		## only difference between marginal and map
-		if marginal==False:
-			map_list.append(copy.deepcopy(fmerge))
-			fmerge.maxout_var(var)
-		else:
-			fmerge.sumout_var(var) # remove var from factor
+		
+		map_list.append(copy.deepcopy(fmerge))
+		fmerge.maxout_var(var)
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
-		self.temp_f_list = irrelevant_factors
+		temp_F = irrelevant_factors
 
 	# Traceback MAP
 	assignment={}
 	for m in reversed(map_list):
 		var = list(set(m.scope) - set(assignment.keys()))[0]
 		m.reduce_factor_by_list([[k,v] for k,v in assignment.items() if k in m.scope and k!=var])
-		assignment[var] = self.BN.data[var]['vals'][(np.argmax(m.cpt) / m.stride[var]) % m.card[var]]
+		assignment[var] = bn.V[var][(np.argmax(m.cpt) / m.stride[var]) % m.card[var]]
 	
-	self.sol = assignment
-	self.sol.update(evidence)
-	print json.dumps(self.sol,indent=2)
-	self.val=round(self.temp_f_list[0].cpt[0],4)
+	sol = assignment
+	sol.update(evidence)
+	print json.dumps(sol,indent=2)
+	val=round(self.temp_f_list[0].cpt[0],4)
+	return sol, val
 
 
 

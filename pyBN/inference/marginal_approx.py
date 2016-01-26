@@ -28,6 +28,7 @@ __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor 
+from pyBN.utils.topsort import topsort
 
 
 def marginal_fs_a(bn,
@@ -67,25 +68,23 @@ def marginal_fs_a(bn,
 	- Evidence is not currently implemented.
 	"""
 	
-	rv_order = copy(bn.V) # assumes bn.V is in topological sort order
-
-	parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
+	#rv_order = topsort(bn) # rvs in topological sort order
 
 	sample_dict = {}
 	for var in bn.V:
 	    sample_dict[var] = {}
-	    for val in bn.data[var]['vals']:
+	    for val in bn.values(var):
 	        sample_dict[var][val] = 0
 
 	for i in range(n):
 	    if i % (n/float(10)) == 0:
 	        print 'Sample: ' , i
 	    new_sample = {}
-	    for rv in rv_order:
-	        f = Factor(bn,rv)
-	        for p in parent_dict[rv]:
+	    for rv in topsort(bn):
+	        f = bn[rv]
+	        for p in bn.parents(rv):
 	            f.reduce_factor(p,new_sample[p])
-	        choice_vals = bn.data[rv]['vals']
+	        choice_vals = bn.values(rv)
 	        choice_probs = f.cpt
 	        chosen_val = np.random.choice(choice_vals, p=choice_probs)
 

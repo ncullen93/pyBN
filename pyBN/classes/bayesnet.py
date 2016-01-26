@@ -11,14 +11,12 @@ Design Specs
 
 - Bayesian Network -
 
-    - Factorization -
+    - F -
 
-        - Factors -
-
-            - main variable -
-            - scope -
-            - conditional probability table -
-            - stride -
+        - main variable -
+        - scope -
+        - conditional probability table -
+        - stride -
 
     - Vertices : values -
 
@@ -59,34 +57,24 @@ class BayesNet(object):
 
     """
 
-    def __init__(self,F=None, V=None):
+    def __init__(self, F, V):
         """
         Initialize the BayesNet class.
 
         Arguments
-        ----------
-        
+        ---------
+        *F* : a dict
+
+        *V* : a dict        
 
         Notes
         -----
         
         """
 
-        self.F = dict
-        self.V = dict
-        self.E = dict
-
-
-        if factors:
-            self.F = F
-            self.V = self.topsort_nodes() # nodes are top sorted
-            self.E = [(rv1,rv2) for rv1 in self.nodes() for rv2 in self.children(rv1)] # edges are topsorted
-            self.vals = vals
-        else:
-            self.factors = dict
-            self.V = []
-            self.E = []
-            self.vals = dict
+        self.F = F
+        self.V = V
+        self.E = dict([(rv, list(self.children(rv))) for rv in self.nodes()])
 
     def set_F(self, F):
         self.F = F
@@ -104,7 +92,7 @@ class BayesNet(object):
         *rv* : a string
             The random variable
         """
-        return self.factors[rv]
+        return self.F[rv]
 
     def __iter__(self):
         """
@@ -117,7 +105,7 @@ class BayesNet(object):
             print i
             print j.cpt
         """
-        return iter(self.factors.items())
+        return iter(self.F.items())
 
     def __contains__(self, rv):
         """
@@ -186,23 +174,26 @@ class BayesNet(object):
         'RV_NAME': {
                     'cpt' : list
                     'stride' : dictionary
-                    'vals' : dictionary
+                    'V' : dictionary
         }
 
         Notes
         -----
 
         """
-        bn_dict = dict((v,self.factors[v].as_dict()) for v in self.nodes())
+        bn_dict = dict((v,self.F[v].as_dict()) for v in self.nodes())
         return bn_dict
 
     #### STRUCTURE ITERATORS ####
+    def factors(self):
+        for f in self.F.values():
+            yield f
 
     def nodes(self):
         """
         Generator over nodes
         """
-        for node in self.V:
+        for node in self.V.keys():
             yield node
 
     def edges(self,topdown=True):
@@ -220,7 +211,7 @@ class BayesNet(object):
         """
         Return iterator
         """
-        for parent in self.factors[rv].parents():
+        for parent in self.F[rv].parents():
             yield parent
 
     def num_parents(self, rv):
@@ -234,7 +225,7 @@ class BayesNet(object):
         Generator/iterator
         """
         for node in self.nodes():
-            if rv in self.factors[node].parents():
+            if rv in self.F[node].parents():
                 yield node
 
     def num_children(self, rv):
@@ -266,36 +257,36 @@ class BayesNet(object):
     def value_idx(self, rv, val):
         """
         Return integer index of a value of
-        a given node from self.data[rv]['vals']
+        a given node from self.data[rv]['V']
         """
-        return self.vals[rv].index(val)
+        return self.V[rv].index(val)
 
     def values(self, rv):
         """
         Generator over values of RV
         """
-        for val in self.vals[rv]:
+        for val in self.V[rv]:
             yield val
 
     def card(self, rv):
         """
         Get the cardinality of variable *rv*
         """
-        return len(self.vals[rv])
+        return len(self.V[rv])
 
     def stride(self, rv, n):
         """
         Get the stride of a variable "n" IN the
         factor of variable "rv".
         """
-        return self.factors[rv].stride[n]
+        return self.F[rv].stride[n]
 
     def scope_size(self, rv):
         """
         Return number of variables in the
         scope of rv's Factor
         """
-        return len(self.factors[rv].scope)
+        return len(self.F[rv].scope)
 
 
 
@@ -330,7 +321,7 @@ class BayesNet(object):
             "numoutcomes" : an integer
                         The number of outcomes an RV has.
 
-            "vals" : a list
+            "V" : a list
                 The list of instantiations (values) an RV has.
 
             "parents" : a list
@@ -345,7 +336,7 @@ class BayesNet(object):
         """
         self.data = dict((rv,
                     {'numoutcomes':card_dict[rv],
-                    'vals':range(card_dict[rv]),
+                    'V':range(card_dict[rv]),
                     'parents':[i for i in edge_dict.keys() if rv in edge_dict[i]],
                     'children':edge_dict[rv],
                     'cprob':[]}) \
@@ -440,11 +431,11 @@ class BayesNet(object):
         for i in range(max(sp_sort.values())+1):
             new_nodes = []
             nodes = [n for n in sp_sort if sp_sort[n]==i]
-            node_vals = [self.data[n]['vals'] for n in nodes]
+            node_V = [self.data[n]['V'] for n in nodes]
             print nodes
-            node_vals.append([str(i)])
+            node_V.append([str(i)])
 
-            val_combs = map(list,list(product(*node_vals)))
+            val_combs = map(list,list(product(*node_V)))
             for val in val_combs:
                 new_node = "-".join(val)
                 G.add_node(new_node)

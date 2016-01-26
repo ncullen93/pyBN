@@ -122,10 +122,13 @@ def read_bif(path):
     # CREATE FACTORS
     factors = {}
     for rv in _scope.keys():
-        _scopevals = {k:v for (k,v) in _vals.items() if k in _scope[rv]}
-        f = Factor(var=rv, cpt=np.round(np.array(_cpt[rv]).flatten(),5),vals=_scopevals)
+        _card = {k:len(v) for (k,v) in _vals.items() if k in _scope[rv]}
+        f = Factor(var=rv, 
+                    cpt=np.round(np.array(_cpt[rv]).flatten(),5),
+                    card=_card)
         factors[rv] = f
-    bn = BayesNet(factors=factors,vals=_vals)
+
+    bn = BayesNet(F=factors,V=_vals)
 
     return bn
 
