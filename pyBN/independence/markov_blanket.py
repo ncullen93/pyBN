@@ -21,13 +21,11 @@ def markov_blanket(bn):
 		is a node and the value is a list of
 		the key-node's markov blanket
 	"""
-	mb = dict([(rv,[]) for rv in bn.V])
+	mb = dict([(rv,bn.parents(rv)+bn.children(rv)) for rv in bn.nodes()])
 
 	for rv in bn.V:
-		mb[rv].extend(bn.data[rv]['parents']) # add parents
-		mb[rv].extend(bn.data[rv]['children']) # add children
-		for child in bn.data[rv]['children']:
-			for c_parent in bn.data[child]['parents']:
+		for child in bn.children(rv):
+			for c_parent in bn.parents(child):
 				if c_parent != rv:
 					mb[rv].append(c_parent) # add spouse
 	return mb

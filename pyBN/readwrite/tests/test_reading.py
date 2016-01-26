@@ -8,26 +8,23 @@ Reading
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import unittest
-
-
-def suite():
-	suite = unittest.TestLoader().loadTestsFromTestCase(ReadingTestCase)
-	return suite
+from pyBN.readwrite.read import read_bn
+import os
+from os.path import dirname
 
 
 class ReadingTestCase(unittest.TestCase):
 
 	def setUp(self):
-		pass
+		self.dpath = os.path.join(dirname(dirname(dirname(dirname(__file__)))),'data')	
+		self.bn_bif = read_bn(os.path.join(self.dpath,'cancer.bif'))
+		self.bn_bn = read_bn(os.path.join(self.dpath,'cmu.bn'))
+
 	def tearDown(self):
 		pass
 
-	def test_read_bn_vertices:
-		path = 'data/cmu.bn'
-		bn = read_bn(path)
-		self.assertListEqual(bn.V, ['Burglary','Earthquake','Alarm','JohnCalls','MaryCalls'])
+	def test_read_bn_vertices(self):
+		self.assertListEqual(self.bn_bn.V, ['Burglary','Earthquake','Alarm','JohnCalls','MaryCalls'])
 
-	def test_read_bif_vertices:
-		path = 'data/cancer.bif'
-		bn = read_bn(path)
-		self.assertListEqual(bn.V, ['Pollution', 'Smoker', 'Cancer', 'Xray', 'Dyspnoea'])
+	def test_read_bif_vertices(self):
+		self.assertListEqual(self.bn_bif.V, ['Smoker', 'Pollution', 'Cancer', 'Xray', 'Dyspnoea'])

@@ -94,62 +94,9 @@ class BayesNet(object):
 
     def parents(self, rv):
         return self.F[rv]['parents']
-
-    ###################### UTILITY METHODS ##############################
-
-    def set_structure(self, edge_dict, card_dict):
-        """
-        Set the node/edge structure of this BayesNet object
-        from the given edge_dict. If the current BayesNet's structure
-        is empty, it will be initialized. If it is already initialized,
-        it will be overwritten. If there is any parameter information, 
-        it will be cleared.
-
-        Arguments
-        ---------
-        *edge_dict* : a dictionary where key = node, value = python list of its neighbors
-            Ex: {0:[1,2],1:[3],2:[],3:[]} -> should NOT have repeat edges
-
-        *card_dict* : a dictionary where key = node, value = its cardinality
-
-        Returns
-        -------
-        None
-
-        Effects
-        -------
-        - Sets the structure information (self.data, self.E, self.V)
-
-        Notes
-        -----
-        Values to set:
-            "numoutcomes" : an integer
-                        The number of outcomes an RV has.
-
-            "V" : a list
-                The list of instantiations (values) an RV has.
-
-            "parents" : a list
-                The list of the parents' names
-
-            "children": a list
-                The list of the childrens' names
-
-            "cprob" : a nested python list
-                The probability values for every combination
-                of parent(s)-self values
-        """
-        self.data = dict((rv,
-                    {'numoutcomes':card_dict[rv],
-                    'V':range(card_dict[rv]),
-                    'parents':[i for i in edge_dict.keys() if rv in edge_dict[i]],
-                    'children':edge_dict[rv],
-                    'cprob':[]}) \
-                        for rv in edge_dict.keys())        
-        
-        #self.E = [(str(i),str(j)) for i in edge_dict.keys() for j in edge_dict[i]]
-        self.V = [str(v) for v in range(len(card_dict))]
-
+    
+    def children(self, rv):
+        return self.E[rv]
 
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):
