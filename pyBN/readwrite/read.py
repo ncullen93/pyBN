@@ -18,6 +18,7 @@ import copy
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
+from pyBN.utils.topsort import topsort
 
 
 def read_bn(path):
@@ -73,13 +74,13 @@ def read_bif(path):
 
     Notes
     -----
-    Arguments for a factor:
-        scope (list)
-        cpt (list)
-        vals (dict, key=rv, val=list of values)
+    *V* : a list of strings
+    *E* : a dict, where key = vertex, val = list of its children
+    *F* : a dict, where key = rv, val = another dict with
+                keys = 'parents', 'values', cpt'
 
     """
-    _scope = {} # key = vertex, value = list of vertices in the scope (includind itself)
+    _parents = {} # key = vertex, value = list of vertices in the scope (includind itself)
     _cpt = {} # key = vertex, value = list (then numpy array)
     _vals = {} # key=vertex, val=list of its possible values
 
@@ -89,7 +90,7 @@ def read_bif(path):
             if 'variable' in line:
                 new_vertex = line.split()[1]
 
-                _scope[new_vertex] = [new_vertex]
+                _parents[new_vertex] = []
                 _cpt[new_vertex] = []
                 #_vals[new_vertex] = []
 
@@ -105,9 +106,10 @@ def read_bif(path):
                 if len(parent_rvs) == 0: # prior
                     new_line = f.readline().replace(';', ' ').replace(',',' ').split()
                     prob_values = new_line[1:]
-                    _cpt[child_rv] = map(float,prob_values)
+                    _cpt[child_rv].append(map(float,prob_values))
+                    #_cpt[child_rv] = map(float,prob_values)
                 else: # not a prior
-                    _scope[child_rv].extend(list(parent_rvs))
+                    _parents[child_rv].extend(list(parent_rvs))
                     while True:
                         new_line = f.readline()
                         if '}' in new_line:
@@ -120,15 +122,21 @@ def read_bif(path):
                 break
 
     # CREATE FACTORS
-    factors = {}
-    for rv in _scope.keys():
-        _card = {k:len(v) for (k,v) in _vals.items() if k in _scope[rv]}
-        f = Factor(var=rv, 
-                    cpt=np.round(np.array(_cpt[rv]).flatten(),5),
-                    card=_card)
-        factors[rv] = f
+    _F = {}
+    _E = {}
+    for rv in _vals.keys():
+        _E[rv] = [c for c in _vals.keys() if rv in _parents[c]]
+        f = {
+            'parents' : _parents[rv],
+            'values' : _vals[rv],
+            'cpt' : [item for sublist in _cpt[rv] for item in sublist]
+        }
+        _F[rv] = f
 
-    bn = BayesNet(F=factors,V=_vals)
+    bn = BayesNet()
+    bn.F = _F
+    bn.E = _E
+    bn.V = list(topsort(_E))
 
     return bn
 
@@ -188,9 +196,7 @@ def read_json(path):
             return input
 
     bn = BayesNet()
-    V = []
-    E = []
-    data = {}
+    
     f = open(path,'r')
     ftxt = f.read()
 
@@ -199,9 +205,11 @@ def read_json(path):
         data = byteify(json.loads(ftxt))
         bn.V = data['V']
         bn.E = data['E']
-        bn.data = data['Vdata']
+        bn.F = data['F']
         success = True
     except ValueError:
         print "Could not read file - check format"
+    bn.V = topsort(bn.E)
 
     return bn
+

@@ -111,9 +111,8 @@ class Factor(object):
 
 
     def __init__(self,
-                var,
-                cpt,
-                card):
+                bn,
+                var):
         """
         Initialize a Factor from a BayesNet object
         for a given random variable.
@@ -131,9 +130,10 @@ class Factor(object):
         Effects
         -------
         - sets *self.var*
+        - sets *self.cpt*
+        - sets *self.card*
         - sets *self.scope*
         - sets *self.stride*
-        - sets *self.cpt*
 
         Notes
         -----
@@ -141,16 +141,15 @@ class Factor(object):
         - self.bn is no longer an attribute
 
         """
+        self.bn = bn
         self.var = var
-        self.cpt = cpt
-        self.card = card
+        self.cpt = bn.get_cpt(var)
+        self.scope = bn.scope(var)
+        self.card = dict([(rv, bn.card(rv)) for rv in self.scope])
 
-        # SET SCOPE
-        self.scope = self.card.keys()
-        # SET STRIDE
         self.stride = {self.var:1}
         s=self.card[self.var]
-        for v in self.parents():
+        for v in bn.parents(var):
             self.stride[v]=s
             s*=self.card[v]
 
@@ -165,26 +164,6 @@ class Factor(object):
         s += ', '.join(self.parents())
         return s
 
-    def as_dict(self):
-        """
-        Return the factor as a pure dictionary.
-        This is mostly used for writing to file as
-        json format.
-        """
-        f_dict = {
-                'vals':self.vals,
-                'cpt':[round(elem,4) for elem in self.cpt],
-                #'cpt':list(self.cpt),
-                'stride':self.stride
-        }
-        return f_dict
-
-    def copy(self):
-        """
-        Return a copy of the factor
-        """
-        pass
-
 
     def parents(self):
         """
@@ -194,12 +173,6 @@ class Factor(object):
         for rv in self.scope:
             if rv != self.var:
                 yield rv
-
-    def num_parents(self):
-        """
-        Number of parents the main variable has
-        """
-        return len(self.scope)-1
 
     ##### FACTOR OPERATIONS #####
 
@@ -535,7 +508,7 @@ class Factor(object):
         exp_len = len(self.cpt)/float(self.card[rv])
         new_cpt = np.zeros((exp_len,))
 
-        val_idx = self.bn.data[rv]['vals'].index(val)
+        val_idx = self.bn.F[rv]['values'].index(val)
         rv_card = self.card[rv]
         rv_stride = self.stride[rv]
 

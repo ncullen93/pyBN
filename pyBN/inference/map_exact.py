@@ -61,8 +61,8 @@ def map_ve_e(bn,
     self.sol = None # most recent solution
 
 	"""
-	#self.temp_f_list = [Factor(self.BN,var) for var in self.BN.V]
-	self.temp_F = copy(bn.F)
+	temp_F = [Factor(bn,var) for var in bn.nodes()]
+
 	map_list = []
 
 	#### ORDER HANDLING ####

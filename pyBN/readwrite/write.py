@@ -71,8 +71,9 @@ def write_json(bn, path):
 
     
     """
+    bn_dict = OrderedDict([('V',bn.V),('E',bn.E),('F',bn.F)])
     with open(path, 'w') as outfile:
-        json.dump(bn.as_dict(), outfile,indent=2)
+        json.dump(bn_dict, outfile,indent=2)
 
 
 

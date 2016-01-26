@@ -51,19 +51,21 @@ class BayesNet(object):
     Attributes
     ----------
 
-
     Notes
     -----
 
     """
 
-    def __init__(self, F, V):
+    def __init__(self):
         """
         Initialize the BayesNet class.
 
         Arguments
         ---------
-        *F* : a dict
+        *V* : a list of strings - vertices in topsort order
+        *E* : a dict, where key = vertex, val = list of its children
+        *F* : a dict, where key = rv, val = another dict with
+                keys = 'children', 'parents', 'values', cpt'
 
         *V* : a dict        
 
@@ -71,224 +73,27 @@ class BayesNet(object):
         -----
         
         """
-
-        self.F = F
-        self.V = V
-        self.E = dict([(rv, list(self.children(rv))) for rv in self.nodes()])
-
-    def set_F(self, F):
-        self.F = F
-    def set_V(self, V):
-        self.V = V
-    def set_E(self, E):
-        self.E = E
-
-    def __getitem__(self, rv):
-        """
-        Return the factor of a given Random Variable
-
-        Arguments
-        ---------
-        *rv* : a string
-            The random variable
-        """
-        return self.F[rv]
-
-    def __iter__(self):
-        """
-        An iterator over the BayesNet object,
-        where each iteration yields a tuple with the
-        first element being the random variable name and 
-        the second element being its Factor object
-
-        for i,j in bn:
-            print i
-            print j.cpt
-        """
-        return iter(self.F.items())
-
-    def __contains__(self, rv):
-        """
-        Boolean - whether a given Random Variable
-        exists in the Bayesian network
-
-        Arguments
-        ---------
-        *rv* : a string
-            The random variable to check.
-        """
-        return rv in self.V
-
-    def __len__(self):
-        """
-        The number of nodes in the graph
-        """
-        return len(self.nodes)
-
-    def __str__(self):
-        """
-        What's printed to the console when the user
-        types "print bn"
-        """
-        s = 'Conditional Dependencies \n'
-        s +='------------------------\n'
-        for rv in self.nodes():
-            s += str(rv)
-            if len(self.data[rv]['parents']) > 0:
-                s += ' | '
-                s += ','.join(self.data[rv]['parents'])
-            else:
-                s += ' (Prior)'
-            s += '\n'
-        return s
-
-    def __repr__(self):
-        """
-        The representation of the BayesNet object:
-        what's printed to the screen when the user
-        types only "bn". For "print bn" see __str__.
-        """
-        s = '\n Conditional Dependencies \n'
-        s +=' ------------------------\n'
-        for rv in self.nodes():
-            s += ' ' + str(rv)
-            if len(list(self.parents(rv))) > 0:
-                s += ' | '
-                s += ','.join(list(self.parents(rv)))
-            else:
-                s += ' (Prior)'
-            s += '\n'
-        return s
-
-    def as_dict(self):
-        """
-        Convert BayesNet object to a pure dictionary
-        where key = rv and value = rv's factor which
-        has also been converted into a dictionary.
-
-        This is essentially how the BayesNet object
-        gets written to file.
-
-        Format
-        ------
-        'RV_NAME': {
-                    'cpt' : list
-                    'stride' : dictionary
-                    'V' : dictionary
-        }
-
-        Notes
-        -----
-
-        """
-        bn_dict = dict((v,self.F[v].as_dict()) for v in self.nodes())
-        return bn_dict
-
-    #### STRUCTURE ITERATORS ####
-    def factors(self):
-        for f in self.F.values():
-            yield f
+        self.V = list
+        self.E = list
+        self.F = dict
 
     def nodes(self):
-        """
-        Generator over nodes
-        """
-        for node in self.V.keys():
-            yield node
+        for v in self.V:
+            yield v
 
-    def edges(self,topdown=True):
-        """
-        Generator over edges as tuples
-        """
-        if topdown:
-            for e in self.E:
-                yield e
-        else:
-            for e in reversed(self.E):
-                yield e
-
-    def parents(self, rv):
-        """
-        Return iterator
-        """
-        for parent in self.F[rv].parents():
-            yield parent
-
-    def num_parents(self, rv):
-        count = 0
-        for parent in self.parents(rv):
-            count +=1
-        return count
-
-    def children(self, rv):
-        """
-        Generator/iterator
-        """
-        for node in self.nodes():
-            if rv in self.F[node].parents():
-                yield node
-
-    def num_children(self, rv):
-        count = 0
-        for child in self.children(rv):
-            count+=1
-        return count
-
-    def num_nodes(self):
-        """
-        The number of nodes in the graph
-        """
-        return len(self.V)
-
-    ######
-    def node_idx(self, rv):
-        """
-        Return integer index of a node string
-        from self.V - this is a topological sort
-        index as well.
-
-        Example
-        -------
-        if V = ['X','Y','Z']
-        then bn.node_idx('Y') = 1
-        """
-        return self.V.index(rv)
-
-    def value_idx(self, rv, val):
-        """
-        Return integer index of a value of
-        a given node from self.data[rv]['V']
-        """
-        return self.V[rv].index(val)
-
-    def values(self, rv):
-        """
-        Generator over values of RV
-        """
-        for val in self.V[rv]:
-            yield val
+    def get_cpt(self, rv):
+        return np.array(self.F[rv]['cpt'])
 
     def card(self, rv):
-        """
-        Get the cardinality of variable *rv*
-        """
-        return len(self.V[rv])
+        return len(self.F[rv]['values'])
 
-    def stride(self, rv, n):
-        """
-        Get the stride of a variable "n" IN the
-        factor of variable "rv".
-        """
-        return self.F[rv].stride[n]
+    def scope(self, rv):
+        scope = [rv]
+        scope.extend(self.F[rv]['parents'])
+        return scope
 
-    def scope_size(self, rv):
-        """
-        Return number of variables in the
-        scope of rv's Factor
-        """
-        return len(self.F[rv].scope)
-
-
+    def parents(self, rv):
+        return self.F[rv]['parents']
 
     ###################### UTILITY METHODS ##############################
 
