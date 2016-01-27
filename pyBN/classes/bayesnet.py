@@ -81,8 +81,8 @@ class BayesNet(object):
         for v in self.V:
             yield v
 
-    def get_cpt(self, rv):
-        return np.array(self.F[rv]['cpt'])
+    def cpt(self, rv):
+        return self.F[rv]['cpt']
 
     def card(self, rv):
         return len(self.F[rv]['values'])
@@ -94,12 +94,12 @@ class BayesNet(object):
 
     def parents(self, rv):
         return self.F[rv]['parents']
-    
-    def children(self, rv):
-        return self.E[rv]
 
     def values(self, rv):
         return self.F[rv]['values']
+
+    def children(self, rv):
+        return self.E[rv]
 
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):

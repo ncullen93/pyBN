@@ -143,7 +143,7 @@ class Factor(object):
         """
         self.bn = bn
         self.var = var
-        self.cpt = bn.get_cpt(var)
+        self.cpt = np.array(bn.cpt(var))
         self.scope = bn.scope(var)
         self.card = dict([(rv, bn.card(rv)) for rv in self.scope])
 

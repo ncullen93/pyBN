@@ -96,8 +96,8 @@ def map_ve_e(bn,
 	# Traceback MAP
 	assignment={}
 	for m in reversed(map_list):
-		var = m.var
-		#var = list(set(m.scope) - set(assignment.keys()))[0]
+		#var = m.var
+		var = list(set(m.scope) - set(assignment.keys()))[0]
 		m.reduce_factor_by_list([[k,v] for k,v in assignment.items() \
 									if k in m.scope and k!=var])
 		assignment[var] = bn.values(var)[(np.argmax(m.cpt) / m.stride[var]) % m.card[var]]

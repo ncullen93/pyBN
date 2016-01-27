@@ -30,9 +30,11 @@ from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor 
 from pyBN.utils.topsort import topsort
 
+import numpy as np
+
 
 def marginal_fs_a(bn,
-				n=1000):
+				  n=1000):
 	"""
 	Approximate marginal probabilities from
 	forward sampling algorithm on a BayesNet object.
@@ -67,21 +69,19 @@ def marginal_fs_a(bn,
 	-----
 	- Evidence is not currently implemented.
 	"""
-	
-	#rv_order = topsort(bn) # rvs in topological sort order
 
 	sample_dict = {}
-	for var in bn.V:
+	for var in bn.nodes():
 	    sample_dict[var] = {}
 	    for val in bn.values(var):
 	        sample_dict[var][val] = 0
 
 	for i in range(n):
-	    if i % (n/float(10)) == 0:
-	        print 'Sample: ' , i
+	    #if i % (n/float(10)) == 0:
+	     #   print 'Sample: ' , i
 	    new_sample = {}
-	    for rv in topsort(bn):
-	        f = bn[rv]
+	    for rv in bn.nodes():
+	        f = Factor(bn,rv)
 	        for p in bn.parents(rv):
 	            f.reduce_factor(p,new_sample[p])
 	        choice_vals = bn.values(rv)
@@ -97,53 +97,64 @@ def marginal_fs_a(bn,
 	
 	return sample_dict
 
-def marginal_lws_a(n=1000, evidence={}):
+def marginal_lws_a(bn, n=1000, evidence={}):
 	"""
 	Approximate Marginal probabilities from
 	likelihood weighted sample algorithm on
 	a BayesNet object.
 
+	Arguments
+	---------
+	*bn* : a BayesNet object
 
-	Parameters
-	----------
+	*n* : an integer
+		The number of samples to take
 
+	*evidence* : a dictionary, where
+		key = rv, value = instantiation
 
 	Returns
 	-------
+	*sample_dict* : a dictionary where key = rv
+		and value = another dictionary where
+		key = rv instantiation and value = marginal
+		probability
 
+	Effects
+	-------
+	None
 
 	Notes
 	-----
+
 	"""
 	sample_dict = {}
 	weight_list = np.ones(n)
 
-	rv_order = copy(bn.V)
-
 	#factor_dict = dict([(var,Factor(bn, var)) for var in bn.V])
-	parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
+	#parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
 
-	for var in bn.V:
+	for var in bn.nodes():
 	    sample_dict[var] = {}
-	    for val in bn.data[var]['vals']:
+	    for val in bn.values(var):
 	        sample_dict[var][val] = 0
 
 	for i in range(n):
-	    if i % (n/float(10)) == 0:
-	        print 'Sample: ' , i
+	    #if i % (n/float(10)) == 0:
+	     #   print 'Sample: ' , i
 	    new_sample = {}
-	    for rv in rv_order:
+	    for rv in bn.nodes():
 	        f = Factor(bn,rv)
 	        # reduce_factor by parent samples
-	        for p in parent_dict[rv]:
+	        for p in bn.parents(rv):
 	            f.reduce_factor(p,new_sample[p])
 	        # if rv in evidence, choose that value and weight
-	        if rv in evidence.keys():
+	        if rv in evidence:
 	            chosen_val = evidence[rv]
-	            weight_list[i] *= f.cpt[bn.data[rv]['vals'].index(evidence[rv])]
+	            weight_list[i] *= f.cpt[bn.values(rv).index(evidence[rv])]
 	        # if rv not in evidence, sample as usual
 	        else:
-	            choice_vals = bn.data[rv]['vals']
+	            choice_vals = bn.values(rv)
 	            choice_probs = f.cpt
 	            chosen_val = np.random.choice(choice_vals, p=choice_probs)
 	            
@@ -162,51 +173,60 @@ def marginal_lws_a(n=1000, evidence={}):
 	return sample_dict
 
 
-def marginal_gs_a(bn,
-					n=1000):
+def marginal_gs_a(bn, n=1000, burn=200):
 	"""
 	Approximate Marginal probabilities from Gibbs Sampling
 	over a BayesNet object.
 
+	Arguments
+	---------
+	*bn* : a BayesNet object
 
-	Parameters
-	----------
+	*n* : an integer
+		The number of samples to take
 
+	*burn* : an integer
+		The number of beginning samples to
+		throw away for the MCMC mixing.
 
 	Returns
 	-------
-
+	*sample_dict* : a dictionary where key = rv
+		and value = another dictionary where
+		key = rv instantiation and value = marginal
+		probability
 
 	Notes
 	-----
+
 	"""
 
 	sample_dict ={}
-	for rv in bn.V:
+	for rv in bn.nodes():
 	    sample_dict[rv]={}
-	    for val in bn.data[rv]['vals']:
+	    for val in bn.values(rv):
 	        sample_dict[rv][val] = 0
 
 	state = {}
-	for rv in bn.V:
-	    state[rv] = np.random.choice(bn.data[rv]['vals']) # uniform sample
+	for rv in bn.nodes():
+	    state[rv] = np.random.choice(bn.values(rv)) # uniform sample
 
 	for i in range(n):
-	    if i % (n/float(10)) == 0:
-	        print 'Sample: ' , i
-	    for rv in bn.V:
+	    #if i % (n/float(10)) == 0:
+	      #  print 'Sample: ' , i
+	    for rv in bn.nodes():
 	        # get possible values conditioned on everything else
-	        parents = bn.data[rv]['parents']
+	        parents = bn.parents(rv)
 	        # no parents - prior
 	        if len(parents) == 0:
-	            choice_vals = bn.data[rv]['vals']
-	            choice_probs = bn.data[rv]['cprob']
+	            choice_vals = bn.values(rv)
+	            choice_probs = bn.cpt(rv)
 	        # has parent - filter cpt
 	        else:
 	            f = Factor(bn,rv)
 	            for p in parents:
 	                f.reduce_factor(p,state[p])
-	            choice_vals = bn.data[rv]['vals']
+	            choice_vals = bn.values(rv)
 	            choice_probs = f.cpt
 	        # sample over remaining possibilities
 	        chosen_val = np.random.choice(choice_vals,p=choice_probs)
