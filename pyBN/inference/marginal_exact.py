@@ -89,9 +89,7 @@ def marginal_ve_e(bn,
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
 		temp_F = irrelevant_factors
-
-	
-	
+		
 	marginal = temp_F[0]
 	# multiply final factors in factor_list
 	if len(temp_F) > 1:
