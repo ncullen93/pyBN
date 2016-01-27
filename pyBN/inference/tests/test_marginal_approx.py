@@ -12,7 +12,7 @@ import os
 from os.path import dirname
 import numpy as np
 
-from pyBN.inference.marginal_approx import marginal_fs_a
+from pyBN.inference.marginal_approx import marginal_fs_a, marginal_lws_a, marginal_gs_a
 from pyBN.readwrite.read import read_bn
 
 class MarginalApproxTestCase(unittest.TestCase):
@@ -36,7 +36,7 @@ class MarginalApproxTestCase(unittest.TestCase):
 
 	def test_likelihood_weighted_sample(self):
 		np.random.seed(3636)
-		self.assertDictEqual(marginal_lws_a(bn,evidence={'Burglary':'Yes'}),
+		self.assertDictEqual(marginal_lws_a(self.bn,evidence={'Burglary':'Yes'}),
 			{'Alarm': {'No': 0.73, 'Yes': 0.27},
 			 'Burglary': {'No': 0.0, 'Yes': 1.0},
 			 'Earthquake': {'No': 0.997, 'Yes': 0.003},
@@ -44,7 +44,7 @@ class MarginalApproxTestCase(unittest.TestCase):
 			 'MaryCalls': {'No': 0.802, 'Yes': 0.198}})
 
 	def test_lws_allevidence(self):
-		self.assertDictEqual(marginal_lws_a(bn,evidence={'Burglary':'Yes','Alarm':'Yes',
+		self.assertDictEqual(marginal_lws_a(self.bn,evidence={'Burglary':'Yes','Alarm':'Yes',
 			'Earthquake':'Yes','JohnCalls':'Yes','MaryCalls':'Yes'}),
 			{'Alarm': {'No': 0.0, 'Yes': 1.0},
 			 'Burglary': {'No': 0.0, 'Yes': 1.0},
@@ -54,7 +54,7 @@ class MarginalApproxTestCase(unittest.TestCase):
 
 	def test_gibbs(self):
 		np.random.seed(3636)
-		self.assertDictEqual(marginal_gs_a(bn,n=1000,burn=200),
+		self.assertDictEqual(marginal_gs_a(self.bn,n=1000,burn=200),
 			{'Alarm': {'No': 0.9988, 'Yes': 0.0},
 				 'Burglary': {'No': 0.9988, 'Yes': 0.0},
 				 'Earthquake': {'No': 0.9975, 'Yes': 0.0013},

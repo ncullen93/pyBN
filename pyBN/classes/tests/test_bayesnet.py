@@ -112,8 +112,8 @@ class BayesNetTestCase(unittest.TestCase):
 		self.assertListEqual(n,
 		['Burglary', 'Earthquake', 'Alarm', 'JohnCalls', 'MaryCalls'])
 
-	def test_get_cpt(self):
-		cpt = list(self.bn_bn.get_cpt('Alarm'))
+	def test_cpt(self):
+		cpt = list(self.bn_bn.cpt('Alarm'))
 		self.assertListEqual(cpt,
 			[0.999, 0.001, 0.71, 0.29, 0.06, 0.94, 0.05, 0.95])
 

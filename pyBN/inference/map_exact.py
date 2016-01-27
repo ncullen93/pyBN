@@ -106,7 +106,7 @@ def map_ve_e(bn,
 	sol.update(evidence)
 	#print json.dumps(sol,indent=2)
 	val=round(temp_F[0].cpt[0],4)
-	return sol, val
+	return sol[target], val
 
 
 
