@@ -37,22 +37,24 @@ def marginal_ve_e(bn,
 	Perform Sum-Product Variable Elimination on
 	a Discrete Bayesian Network.
 
-	Great candidate for Numba JIT
+	Arguments
+	---------
+	*bn* : a BayesNet object
 
-	Parameters
-	----------
-	bn=BayesNet
-	target=[], 
-	evidence={}, 
-	order=[]
+	*target* : a list of target RVs
+
+	*evidence* : a dictionary, where
+		key = rv and value = rv value
 
 	Returns
 	-------
-
+	*marginal_dict* : a dictionary, where
+		key = an rv in target and value =
+		a numpy array containing the key's
+		marginal conditional probability distribution.
 
 	Notes
 	-----
-	This function is fully implemented, but not tested
 
 	"""
 	temp_F = [Factor(bn,var) for var in bn.nodes()] # topsort order
@@ -89,7 +91,7 @@ def marginal_ve_e(bn,
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
 		temp_F = irrelevant_factors
-		
+
 	marginal = temp_F[0]
 	# multiply final factors in factor_list
 	if len(temp_F) > 1:
