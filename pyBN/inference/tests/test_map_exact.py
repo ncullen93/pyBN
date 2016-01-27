@@ -8,16 +8,29 @@ Map Exact
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import unittest
+import os
+from os.path import dirname
+import numpy as np
 
-
-def suite():
-	suite = unittest.TestLoader().loadTestsFromTestCase(MapExactTestCase)
-	return suite
-
+from pyBN.readwrite.read import read_bn
 
 class MapExactTestCase(unittest.TestCase):
 
 	def setUp(self):
-		pass
+		self.dpath = os.path.join(dirname(dirname(dirname(dirname(__file__)))),'data')	
+		self.bn = read_bn(os.path.join(self.dpath),'cmu.bn')
+
 	def tearDown(self):
 		pass
+
+	def test_map_noevidence(self):
+		p = list(map_ve_e(bn,target='Alarm'))
+		self.assertListEqual(p,['No',0.9981])
+
+	def test_map_prior(self):
+		p = list(map_ve_e(bn,target='Burglary'))
+		self.assertListEqual(p,['No',0.999])
+
+	def test_map_leaf(self):
+		p = list(map_ve_e(bn,target='JohnCalls'))
+		

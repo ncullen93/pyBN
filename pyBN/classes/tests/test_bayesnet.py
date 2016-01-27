@@ -128,6 +128,12 @@ class BayesNetTestCase(unittest.TestCase):
 		self.assertListEqual(self.bn_bn.parents('Alarm'),
 			['Burglary','Earthquake'])
 
+	def test_values(self):
+		self.assertListEqual(self.bn_bn.values('Alarm'),['No','Yes'])
+
+	def test_values_idx(self):
+		self.assertEqual(self.bn_bn.values('Alarm')[1],'Yes')
+
 if __name__ == '__main__':
 	unittest.main(exit=False)
 

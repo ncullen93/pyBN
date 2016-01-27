@@ -98,6 +98,9 @@ class BayesNet(object):
     def children(self, rv):
         return self.E[rv]
 
+    def values(self, rv):
+        return self.F[rv]['values']
+
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):
         """

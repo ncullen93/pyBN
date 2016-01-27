@@ -428,7 +428,9 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        self.normalize()
+
+        if len(self.scope) > 0:
+            self.normalize()
 
     def reduce_factor_by_list(self, evidence):
         """
@@ -526,7 +528,8 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        self.normalize()
+        if len(self.scope) > 0:
+            self.normalize()
 
     def to_log(self):
         """

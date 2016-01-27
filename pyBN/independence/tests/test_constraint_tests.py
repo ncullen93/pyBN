@@ -50,3 +50,14 @@ class ConstraintTestsTestCase(unittest.TestCase):
 		np.random.seed(3636)
 		self.data = np.random.randint(1,10,size=((10000,4)))
 		self.assertEqual(mi_test(self.data),0.0071)
+
+
+
+
+
+
+
+
+
+
+
