@@ -12,16 +12,22 @@ Design Specs
 - Bayesian Network -
 
     - F -
+        key:
+            - rv -
+        values:
+            - children -
+            - parents -
+            - values -
+            - cpt -
 
-        - main variable -
-        - scope -
-        - conditional probability table -
-        - stride -
+    - V -
+        - list of rvs -
 
-    - Vertices : values -
-
-    - Edges -
-
+    - E -
+        key:
+            - rv -
+        values:
+            - list of rv's children -
 Notes
 -----
 - Edges can be inferred from Factorization, but Vertex values 

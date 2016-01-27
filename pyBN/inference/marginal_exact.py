@@ -25,12 +25,14 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
-
+from pyBN.classes.factor import Factor
+import copy
+import numpy as np
+import json
 
 def marginal_ve_e(bn, 
 				target=None, 
-				evidence=None, 
-				order=None):
+				evidence={}):
 	"""
 	Perform Sum-Product Variable Elimination on
 	a Discrete Bayesian Network.
@@ -53,24 +55,11 @@ def marginal_ve_e(bn,
 	This function is fully implemented, but not tested
 
 	"""
-	temp_f_list = [Factor(bn,var) for var in bn.V]
-	map_list = []
+	temp_F = [Factor(bn,var) for var in bn.nodes()] # topsort order
 
 	#### ORDER HANDLING ####
-	if not order:
-		order = copy.copy(bn.V)
-		if isinstance(target,list):
-			for t in target:
-				order.remove(t)
-		else: 
-			order.remove(target)
-	if isinstance(target,list):
-		for t in target:
-			if target in order:
-				order.remove(t)
-	else:
-		if target in order:
-			order.remove(target)
+	order = copy.copy(list(bn.nodes()))
+	order.remove(target)
 
 	##### EVIDENCE #####
 
@@ -78,18 +67,18 @@ def marginal_ve_e(bn,
 		assert isinstance(evidence, dict), 'Evidence must be Dictionary'
 		temp=[]
 		for obs in evidence.items():
-			for f in temp_f_list:
+			for f in temp_F:
 				if len(f.scope)>1 or obs[0] not in f.scope:
 					temp.append(f)
 				if obs[0] in f.scope:
 					f.reduce_factor(obs[0],obs[1])
 			order.remove(obs[0])
-		temp_f_list=temp
+		temp_F=temp
 
 	#### ALGORITHM ####
 	for var in order:
-		relevant_factors = [f for f in temp_f_list if var in f.scope]
-		irrelevant_factors = [f for f in temp_f_list if var not in f.scope]
+		relevant_factors = [f for f in temp_F if var in f.scope]
+		irrelevant_factors = [f for f in temp_F if var not in f.scope]
 
 		# mutliply all relevant factors
 		fmerge = relevant_factors[0]
@@ -99,13 +88,13 @@ def marginal_ve_e(bn,
 		fmerge.sumout_var(var) # remove var from factor
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
-		temp_f_list = irrelevant_factors
+		temp_F = irrelevant_factors
 
 	
 	
-	marginal = temp_f_list[0]
+	marginal = temp_F[0]
 	# multiply final factors in factor_list
-	if len(temp_f_list) > 1:
+	if len(temp_F) > 1:
 		for i in range(1,len(temp_f_list)):
 			marginal.multiply_factor(temp_f_list[i])
 	marginal.normalize()

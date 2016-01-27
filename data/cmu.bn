@@ -22,7 +22,7 @@
 
         "Alarm": {
             "values": ["No","Yes"],
-            "parents": ["Burglary", "Earthquake"],
+            "parents": ["Earthquake","Burglary"],
             "cpt": [0.999,0.001,0.71,0.29,0.06,0.94,0.05,0.95]
         },
 

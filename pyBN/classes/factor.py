@@ -173,6 +173,8 @@ class Factor(object):
         for rv in self.scope:
             if rv != self.var:
                 yield rv
+    def values(self, rv):
+        return self.bn.values(rv)
 
     ##### FACTOR OPERATIONS #####
 
@@ -300,7 +302,7 @@ class Factor(object):
         self.scope = [rv]
         self.var = rv
 
-        self.normalize()
+        #self.normalize()
 
     def sumout_var_list(self, var_list):
         """
@@ -374,7 +376,7 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        self.normalize()
+        #self.normalize()
 
     def maxout_var(self, rv):
         """
@@ -429,8 +431,8 @@ class Factor(object):
         self.scope.remove(rv)
 
 
-        if len(self.scope) > 0:
-            self.normalize()
+        #if len(self.scope) > 0:
+           # self.normalize()
 
     def reduce_factor_by_list(self, evidence):
         """
@@ -528,8 +530,8 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        if len(self.scope) > 0:
-            self.normalize()
+        #if len(self.scope) > 0:
+          #  self.normalize()
 
     def to_log(self):
         """
