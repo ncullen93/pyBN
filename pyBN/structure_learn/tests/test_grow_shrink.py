@@ -42,3 +42,14 @@ class GrowShrinkTestCase(unittest.TestCase):
 			{0: {'cpt': [], 'parents': [], 'values': []},
 			 1: {'cpt': [], 'parents': [0], 'values': []},
 			 2: {'cpt': [], 'parents': [0], 'values': []}})
+
+	def test_gs_data(self):
+		d = np.loadtxt(os.path.join(self.dpath,'gs_data.txt'),dtype='int32')
+		bn = gs(d)
+		self.assertDictEqual(bn.E,
+			{0: [], 1: [], 2: [0, 1, 4, 3], 3: [], 4: []})
+
+
+
+
+

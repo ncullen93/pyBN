@@ -122,11 +122,11 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	print edge_dict
+	#print edge_dict
 	##### ORIENT EDGES #####
 	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
-
-	bn=BayesNet(directed_edge_dict)
+	value_dict = dict([(rv,range(rv_card[rv])) for rv in range(n_rv)])
+	bn=BayesNet(directed_edge_dict,value_dict)
 	return bn
 
 

@@ -62,7 +62,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self,E=None):
+    def __init__(self,E=None,values=None):
         """
         Initialize the BayesNet class.
 
@@ -85,7 +85,8 @@ class BayesNet(object):
         
         """
         if E is not None:
-            self.set_structure(E)
+            assert (values is not None), 'Must set values if E is set.'
+            self.set_structure(E,values)
         else:
             self.V = list
             self.E = list
@@ -123,10 +124,19 @@ class BayesNet(object):
         for v in self.V:
             yield v
 
+    def node_idx(self, rv):
+        try:
+            return self.V.index(rv)
+        except ValueError:
+            return -1
+
     def edges(self):
         for u in self.nodes():
             for v in self.children(u):
-                yield (u,v) 
+                yield (u,v)
+
+    def scope_size(self, rv):
+        return len(self.parents(rv))+1
 
     def num_nodes(self):
         return len(self.V)
@@ -150,8 +160,22 @@ class BayesNet(object):
 
     def values(self, rv):
         return self.F[rv]['values']
+    def value_idx(self, rv, val):
+        try:
+            return self.F[rv]['values'].index(val)
+        except ValueError:
+            return -1
 
-    def set_structure(self, edge_dict):
+    def stride(self, rv, n):
+        if n==rv:
+            return 1
+        else:
+            card_list = [self.card(rv)]
+            card_list.extend([self.card(p) for p in self.parents(rv)])
+                n_idx = self.parents(rv).index(n)
+                return np.prod(card_list[0:n_idx])
+
+    def set_structure(self, edge_dict, value_dict):
         """
         Set the structure of a BayesNet object. This
         function is mostly used to instantiate a BN
@@ -189,7 +213,7 @@ class BayesNet(object):
             self.F[rv] = {
                 'parents':[p for p in self.nodes() if rv in self.children(p)],
                 'cpt': [],
-                'values': []
+                'values': value_dict[rv]
             }
 
 

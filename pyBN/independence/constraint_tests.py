@@ -185,7 +185,7 @@ def chi2_test(data):
 	"""
 	# compress extra Z variables at the start.. not implemented yet
 	bins = np.amax(data, axis=0)
-	hist,_ = np.histogramdd(data,bins=bins=bins)
+	hist,_ = np.histogramdd(data,bins=bins)
 
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
 
@@ -199,10 +199,10 @@ def chi2_test(data):
 	observed_dist = Pxyz # Empirical distribution
 	#Not correct right now -> Pz is wrong dimension
 	Px_y_z = np.empty((Pxy_z.shape)) # P(Z)P(X|Z)P(Y|Z)
-		for i in xrange(bins[0]):
-			for j in xrange(bins[1]):
-				for k in xrange(bins[2]):
-					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
+	for i in xrange(bins[0]):
+		for j in xrange(bins[1]):
+			for k in xrange(bins[2]):
+				Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 	Px_y_z *= Pz
 
 	observed = observed_dist.flatten() * len(data)

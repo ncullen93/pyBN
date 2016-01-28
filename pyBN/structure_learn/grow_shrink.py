@@ -155,8 +155,8 @@ def gs(data, alpha=0.05):
 	
 	# STEP 3: ORIENT EDGES
 	oriented_edge_dict = orient_edges_gs(edge_dict,B,data,alpha)
-	
-	bn=BayesNet(oriented_edge_dict)
+	value_dict = dict([(rv,range(rv_card[rv])) for rv in range(n_rv)])
+	bn=BayesNet(oriented_edge_dict,value_dict)
 	
 	return bn
 
