@@ -62,7 +62,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self):
+    def __init__(self,E=None):
         """
         Initialize the BayesNet class.
 
@@ -70,8 +70,13 @@ class BayesNet(object):
         ---------
         *V* : a list of strings - vertices in topsort order
         *E* : a dict, where key = vertex, val = list of its children
-        *F* : a dict, where key = rv, val = another dict with
-                keys = 'children', 'parents', 'values', cpt'
+        *F* : a dict, 
+            where key = rv, 
+            val = another dict with
+                keys = 
+                    'parents', 
+                    'values', 
+                    'cpt'
 
         *V* : a dict        
 
@@ -79,30 +84,39 @@ class BayesNet(object):
         -----
         
         """
-        self.V = list
-        self.E = list
-        self.F = dict
-
-        self.distance_metric = 'euclidean'
+        if E is not None:
+            self.set_structure(E)
+        else:
+            self.V = list
+            self.E = list
+            self.F = dict
 
     def __eq__(self, y):
-        if not set(self.V) == set(y.V):
-            return False
+        """
+        Tests whether two Bayesian Networks are
+        equivalent - i.e. they contain the same
+        node/edge structure, and equality of
+        conditional probabilities.
+        """
+        _equal=True
+        if set(self.V) != set(y.V):
+             _equal=False
         else:
-            return True
-
-    def __cmp__(self):
-        pass
+            for rv in self.nodes():
+                if set(self.E[rv])!=set(y.E[rv]):
+                    _equal=False
+                    break
+                if set(self.cpt(rv))!=set(y.cpt(rv)):
+                    _equal=False
+                    break
+        return _equal
 
     def __hash__(self):
-        pass
-
-    def __add__(self):
-        pass
-
-    def __sub__(self):
-        pass
-
+        """
+        Allows BayesNet objects to be used
+        as keys in a dictionary (i.e. hashable)
+        """
+        return hash((str(self.V),str(self.E)))
 
 
     def nodes(self):
@@ -123,11 +137,64 @@ class BayesNet(object):
     def parents(self, rv):
         return self.F[rv]['parents']
 
+    def children(self, rv):
+        return self.E[rv]
+
     def values(self, rv):
         return self.F[rv]['values']
 
-    def children(self, rv):
-        return self.E[rv]
+    def set_structure(self, edge_dict):
+        """
+        Set the structure of a BayesNet object. This
+        function is mostly used to instantiate a BN
+        skeleton after structure learning algorithms.
+
+        See "structure_learn" folder & algorithms
+
+        Arguments
+        ---------
+        *edge_dict* : a dictionary,
+            where key = rv,
+            value = list of rv's children
+            NOTE: THIS MUST BE DIRECTED ALREADY!
+
+        Returns
+        -------
+        None
+
+        Effects
+        -------
+        - sets self.V in topsort order from edge_dict
+        - sets self.E
+        - creates self.F structure and sets the parents
+
+        Notes
+        -----
+
+        """
+        from pyBN.utils.topsort import topsort
+
+        self.V = topsort(edge_dict)
+        self.E = edge_dict
+        self.F = dict([(rv,{}) for rv in self.nodes()])
+        for rv in self.nodes():
+            self.F[rv] = {
+                'parents':[p for p in self.nodes() if rv in self.children(p)],
+                'cpt': [],
+                'values': []
+            }
+
+
+
+    def set_values(self, value_dict):
+        """
+        Arguments
+        ---------
+        *value_dict* : a dictionary,
+            where key = rv, and
+            value = list of rv's values
+        """
+        pass
 
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):

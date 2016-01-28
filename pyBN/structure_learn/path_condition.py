@@ -49,7 +49,7 @@ import numpy as np
 
 from pyBN.independence.constraint_tests import mi_test
 from pyBN.classes import BayesNet
-#from pyBN.structurelearning.orient_edges import orient_edges
+from pyBN.structure_learn.orient_edges import orient_edges_pc
 from numba import jit
 
 
@@ -59,13 +59,6 @@ def pc(data, pval=0.05):
 	good test, but has some issues with test reliability when
 	the size of the dataset is small. The Necessary Path
 	Condition (NPC) algorithm can solve these problems.
-
-	Speed Test (mean -> 1000 iterations)
-	------------------------------------
-	*bnlearn* -> 1.65 milliseconds
-		cextend(gs(lizards))
-	*pyBN* -> 1.87 milliseconds
-		pc(lizards)
 
 	Arguments
 	---------
@@ -92,10 +85,6 @@ def pc(data, pval=0.05):
 
 	Notes
 	-----
-	- Z_dict is used to orient the edges -> not implemented yet.
-	- Because edge_dict includes double the number of edges right now,
-	the number of conditional independence tests this function runs is also
-	double the sufficient amount... fix this for better speed.
 	"""
 	##### FIND EDGES #####
 	rv_card = np.amax(data, axis=0)
@@ -118,24 +107,24 @@ def pc(data, pval=0.05):
 						if y not in z:
 							cols = (x,y) + z
 							pval_xy_z = mi_test(data[:,cols])
+							# if I(X,Y | Z) = TRUE
 							if pval_xy_z > pval:
 								block_dict[x] = {y:z}
+								block_dict[y] = {x:z}
 								edge_dict[x].remove(y)
 								edge_dict[y].remove(x)
+							
 		i += 1
 		stop = True
 		for x in xrange(n_rv):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	
-	##### ORIENT EDGES #####
-	#d_edge_dict = orient_edges(edge_dict, block_list)
 
-	# wont work correctly until edge orientation is figured out
-	card_dict = dict(zip(range(len(rv_card)),rv_card))
-	bn=BayesNet()
-	bn.set_structure(edge_dict, card_dict)
+	##### ORIENT EDGES #####
+	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
+
+	bn=BayesNet(directed_edge_dict)
 	return bn
 
 

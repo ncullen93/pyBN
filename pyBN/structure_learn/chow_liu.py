@@ -24,11 +24,6 @@ def chow_liu(data):
 	Perform Chow-Liu structure learning algorithm
 	over an entire dataset, and return the BN-tree.
 
-	Speed Comparison 
-	(mean -> 1000 loops)
-	--------------------
-	bnlearn -> 777 microseconds (without numba JIT)
-
 
 	Arguments
 	---------
@@ -67,8 +62,8 @@ def chow_liu(data):
 			mst[j].append(i)
 			vertex_cache.add(i)
 	
-	bn=BayesNet()
-	bn.set_structure(mst,rv_card)
+	
+	bn=BayesNet(mst)
 	return bn
 
 

@@ -4,7 +4,7 @@ Topological sort from a Factor dictionary
 
 def topsort(E):
 	"""
-	Generator of nodes in topological sort order from edge dict
+	List of nodes in topological sort order from edge dict
 	where key = rv and value = list of rv's children
 	"""
 	queue = []

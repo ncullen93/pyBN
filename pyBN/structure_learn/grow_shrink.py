@@ -156,10 +156,7 @@ def gs(data, alpha=0.05):
 	# STEP 3: ORIENT EDGES
 	oriented_edge_dict = orient_edges_gs(edge_dict,B,data,alpha)
 	
-	# Create BayesNet object from dictionary
-	card_dict = dict(zip(range(len(rv_card)),rv_card))
-	bn=BayesNet()
-	bn.set_structure(oriented_edge_dict, card_dict)
+	bn=BayesNet(oriented_edge_dict)
 	
 	return bn
 

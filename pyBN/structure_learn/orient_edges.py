@@ -18,8 +18,10 @@ from copy import copy
 
 def orient_edges_gs(edge_dict, B, data, alpha):
 	"""
-	Orient edges based on the rules presented
-	in Margaritis' Thesis pg. 35
+	Orient edges for GrowShrink based on the rules presented
+	in Margaritis' Thesis pg. 35. This method requires a
+	markov blanket, so may not be useful for other Structure
+	learning methods.
 
 	# if there exists a variable Z in N(X)-N(Y)-{Y}
 	# such that Y and Z are dependent given S+{X} for
@@ -36,9 +38,14 @@ def orient_edges_gs(edge_dict, B, data, alpha):
 		twice since Y in edge_dict[X] and
 		X in edge_dict[Y]
 
-	*blanket_dict* : a dictionary, where
+	*B* : a dictionary, where
 		key = node and value = list of
 		nodes in the markov blanket of node
+
+	*data* : a nested numpy array
+
+	*alpha* : a float
+		Probability of Type II error.
 
 	Returns
 	-------
@@ -81,6 +88,59 @@ def orient_edges_gs(edge_dict, B, data, alpha):
 	return edge_dict
 
 
+def orient_edges_pc(edge_dict, block_dict):
+	"""
+	Orient edges produced from the Path Condition algorithm
+
+	The orientation step will proceed by looking
+	for sets of three variables {X, Y,Z} such that
+	edges X - Z, Y - Z are in the graph by not the
+	edge X - Y . Then, if Z not in edge_dict[x][y] , it orients the
+	edges from X to Z and from Y to Z creating a
+	v-structure: X -> Z <- Y
+
+	Arguments
+	---------
+	*edge_dict* : a dictionary, where
+		key = vertex and value = list of its neighbors.
+		NOTE: this is undirected, so the edges are duplicated.
+
+	*block_dict* : a dictionary, where
+		key = X, value = another dictionary where
+		key = Y, value = set S such that I(X,Y|S)
+
+	Returns
+	-------
+	*d_edge_dict* : an directed version of original edge_dict
+
+	Effects
+	-------
+	None
+
+	Notes
+	-----
+	"""
+	d_edge_dict = dict([(rv,[]) for rv in edge_dict.keys()])
+	for x in edge_dict.keys():
+		for y in edge_dict.keys():
+			if y!=x:
+				for z in edge_dict.keys():
+					if z!=x and z!=y:
+						if z in edge_dict[x] and \
+							y in edge_dict[z] and \
+							x not in edge_dict[y]:
+
+							if z not in block_dict[x][y]:
+								if z not in d_edge_dict[x]:
+									d_edge_dict[x].append(z)
+								if z not in d_edge_dict[y]:
+									d_edge_dict[y].append(z)
+							else:
+								if x not in d_edge_dict[z]:
+									d_edge_dict[z].append(x)
+								if y not in d_edge_dict[z]:
+									d_edge_dict[z].append(y)
+	return d_edge_dict
 
 
 
