@@ -71,11 +71,10 @@ so fast and efficient in pyBN.
 - Hamming Distance
 
 <h4>Parameter-based Distance Metrics</h4>
-- Kulbach-Leibler Divergence
+- Kullbach-Leibler Divergence
 - Jensen-Shannon Divergence
 - Euclidean
 - Manhattan
-- Mutual Information
 - Hellinger
 - Minkowski
 
