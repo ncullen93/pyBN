@@ -10,6 +10,7 @@ the graphviz framework.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import networkx as nx
+import pydot
 import graphviz as gv
 from graphviz import dot
 import matplotlib.pyplot as plt
@@ -45,8 +46,8 @@ def draw_bn(bn, method='nx',save=False, **kwargs):
 		draw_nx(bn,**kwargs)
 
 	elif method == 'gv':
-		nodes = bn.V # good
-		edges = bn.E
+		nodes = list(bn.nodes()) # good
+		edges = list(bn.edges())
 		styles = {
 					'graph': {
 							'label': 'A Fancy Graph',

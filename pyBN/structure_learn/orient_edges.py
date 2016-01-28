@@ -75,16 +75,20 @@ def orient_edges_gs(edge_dict, blanket, data, alpha):
 							cols = (Y,Z,X) + tuple(S)
 							pval = mi_test(data[:,cols])
 							if pval < alpha:
-								edge_dict[X].remove(Y)
+								if Y in edge_dict[X]:
+									edge_dict[X].remove(Y)
 							else:
-								edge_dict[Y].remove(X)
+								if Y in edge_dict[X]:
+									edge_dict[Y].remove(X)
 				else:
 					cols = (Y,Z,X)
 					pval = mi_test(data[:,cols])
 					if pval < alpha:
-						edge_dict[X].remove(Y)
+						if Y in edge_dict[X]:
+							edge_dict[X].remove(Y)
 					else:
-						edge_dict[Y].remove(X)
+						if X in edge_dict[Y]:
+							edge_dict[Y].remove(X)
 	return edge_dict
 
 
@@ -125,16 +129,17 @@ def orient_edges_pc(edge_dict, block_dict):
 		for z in edge_dict[x]:
 			for y in edge_dict[z]:
 				if y!=x and x not in edge_dict[y] and y not in edge_dict[x]:
-					if z not in block_dict[x][y]:
-						if z not in d_edge_dict[x]:
-							d_edge_dict[x].append(z)
-						if z not in d_edge_dict[y]:
-							d_edge_dict[y].append(z)
-					else:
-						if x not in d_edge_dict[z]:
-							d_edge_dict[z].append(x)
-						if y not in d_edge_dict[z]:
-							d_edge_dict[z].append(y)
+					if y in block_dict[x]:
+						if z not in block_dict[x][y]:
+							if z not in d_edge_dict[x]:
+								d_edge_dict[x].append(z)
+							if z not in d_edge_dict[y]:
+								d_edge_dict[y].append(z)
+						else:
+							if x not in d_edge_dict[z]:
+								d_edge_dict[z].append(x)
+							if y not in d_edge_dict[z]:
+								d_edge_dict[z].append(y)
 
 	return d_edge_dict
 

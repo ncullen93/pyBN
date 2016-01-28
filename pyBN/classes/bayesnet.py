@@ -123,6 +123,11 @@ class BayesNet(object):
         for v in self.V:
             yield v
 
+    def edges(self):
+        for u in self.nodes():
+            for v in self.children(u):
+                yield (u,v) 
+
     def num_nodes(self):
         return len(self.V)
 

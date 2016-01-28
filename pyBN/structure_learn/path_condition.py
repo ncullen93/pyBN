@@ -100,8 +100,9 @@ def pc(data, pval=0.05):
 				if i == 0:
 					pval_xy_z = mi_test(data[:,(x,y)])
 					if pval_xy_z > pval:
-						edge_dict[x].remove(y)
-						edge_dict[y].remove(x)
+						if y in edge_dict[x]:
+							edge_dict[x].remove(y)
+							edge_dict[y].remove(x)
 				else:
 					for z in itertools.combinations(edge_dict[x],i):
 						if y not in z:
@@ -111,8 +112,9 @@ def pc(data, pval=0.05):
 							if pval_xy_z > pval:
 								block_dict[x] = {y:z}
 								block_dict[y] = {x:z}
-								edge_dict[x].remove(y)
-								edge_dict[y].remove(x)
+								if y in edge_dict[x]:
+									edge_dict[x].remove(y)
+									edge_dict[y].remove(x)
 							
 		i += 1
 		stop = True
@@ -120,7 +122,7 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	
+	print edge_dict
 	##### ORIENT EDGES #####
 	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
 
