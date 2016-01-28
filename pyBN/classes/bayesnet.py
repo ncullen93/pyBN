@@ -107,9 +107,6 @@ class BayesNet(object):
                 if set(self.E[rv])!=set(y.E[rv]):
                     _equal=False
                     break
-                if set(self.cpt(rv))!=set(y.cpt(rv)):
-                    _equal=False
-                    break
         return _equal
 
     def __hash__(self):
@@ -178,6 +175,14 @@ class BayesNet(object):
             card_list.extend([self.card(p) for p in self.parents(rv)])
             n_idx = self.parents(rv).index(n)
             return np.prod(card_list[0:n_idx])
+
+    def flat_cpt(self):
+        """
+        Return all cpt values in the BN as a flattened
+        numpy array ordered by bn.nodes() - i.e. topsort
+        """
+        cpt = np.array([val for val in self.cpt(rv) for rv in self.nodes()])
+        return cpt
 
     def set_structure(self, edge_dict, value_dict):
         """
