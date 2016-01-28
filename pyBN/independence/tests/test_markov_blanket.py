@@ -27,7 +27,7 @@ class ConstraintTestsTestCase(unittest.TestCase):
 
 	def test_markov_blanket(self):
 		self.assertDictEqual(markov_blanket(self.bn),
-			{'Alarm': ['Burglary', 'Earthquake', 'JohnCalls', 'MaryCalls'],
+			{'Alarm': ['Earthquake', 'Burglary', 'JohnCalls', 'MaryCalls'],
 			 'Burglary': ['Alarm', 'Earthquake'],
 			 'Earthquake': ['Alarm', 'Burglary'],
 			 'JohnCalls': ['Alarm'],

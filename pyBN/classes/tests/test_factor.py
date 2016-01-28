@@ -63,7 +63,7 @@ class FactorTestCase(unittest.TestCase):
 		self.assertEqual(self.f.var, 'Alarm')
 	
 	def test_factor_scope(self):
-		self.assertListEqual(self.f.scope,['Alarm','Burglary','Earthquake'])
+		self.assertListEqual(self.f.scope,['Alarm','Earthquake','Burglary'])
 	
 	def test_factor_card(self):
 		self.assertDictEqual(self.f.card,
@@ -71,7 +71,7 @@ class FactorTestCase(unittest.TestCase):
 	
 	def test_factor_stride(self):
 		self.assertDictEqual(self.f.stride,
-			{'Alarm':1, 'Burglary':2, 'Earthquake':4})
+			{'Alarm':1, 'Burglary':4, 'Earthquake':2})
 	
 	def test_factor_cpt(self):
 		self.assertListEqual(list(self.f.cpt),
@@ -107,13 +107,16 @@ class FactorTestCase(unittest.TestCase):
 		self.assertDictEqual(f.stride,
 			{'Alarm':1,'Burglary':2})
 		self.assertListEqual(list(f.cpt),
-			[ 0.5295,  0.4705,  0.38  ,  0.62  ])
+			[ 0.8545,  0.1455,  0.055 ,  0.945 ])
 
 	def test_maxout_var(self):
+		"""
+		I KNOW THIS IS CORRECT.
+		"""
 		f = Factor(self.bn,'Alarm')
 		f.maxout_var('Burglary')
 		self.assertListEqual(list(f.cpt),
-			[ 0.77501,  0.22499,  0.05942,  0.94058])
+			[ 0.999,  0.94 ,  0.71 ,  0.95 ])
 		self.assertListEqual(f.scope,['Alarm','Earthquake'])
 		self.assertDictEqual(f.stride,
 			{'Alarm':1,'Earthquake':2})
@@ -129,7 +132,7 @@ class FactorTestCase(unittest.TestCase):
 		f = Factor(self.bn, 'Alarm')
 		f.reduce_factor('Burglary','Yes')
 		self.assertListEqual(list(f.cpt),
-			[ 0.71,  0.29,  0.05,  0.95])
+			[ 0.06,  0.94,  0.05,  0.95])
 
 	def test_to_log(self):
 		f = Factor(self.bn,'Earthquake')

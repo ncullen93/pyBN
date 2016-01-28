@@ -1,0 +1,41 @@
+{
+    "V": ["Burglary", "Earthquake", "Alarm", "JohnCalls", "MaryCalls"],
+    "E": {
+        "Burglary" : ["Alarm"],
+        "Earthquake" : ["Alarm"],
+        "Alarm" : [ "JohnCalls","MaryCalls"],
+        "JohnCalls" : [],
+        "MaryCalls" : []
+    },
+    "F": {
+        "Burglary": {
+            "values": ["No", "Yes"],
+            "parents": [],
+            "cpt": [0.99,0.01]
+        },
+
+        "Earthquake": {
+            "values": ["No", "Yes"],
+            "parents": [],
+            "cpt": [0.98,0.02]
+        },
+
+        "Alarm": {
+            "values": ["No","Yes"],
+            "parents": ["Earthquake","Burglary"],
+            "cpt": [0.999,0.001,0.71,0.29,0.06,0.94,0.05,0.95]
+        },
+
+        "JohnCalls": {
+            "values": ["No","Yes"],
+            "parents": ["Alarm"],
+            "cpt": [0.95,0.05,0.1,0.9]
+        },
+
+        "MaryCalls": {
+            "values": ["No", "Yes"],
+            "parents": ["Alarm"],
+            "cpt":  [0.99,0.01,0.3,0.7]
+        }
+    }
+}

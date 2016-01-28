@@ -26,22 +26,25 @@ class MarginalApproxTestCase(unittest.TestCase):
 
 	def test_forward_sample(self):
 		np.random.seed(3636)
-		self.assertDictEqual(marginal_fs_a(self.bn,n=10000),
-			{'Alarm': {'No': 0.997, 'Yes': 0.003},
-			 'Burglary': {'No': 0.9987, 'Yes': 0.0013},
-			 'Earthquake': {'No': 0.9981, 'Yes': 0.0019},
-			 'JohnCalls': {'No': 0.943, 'Yes': 0.057},
-			 'MaryCalls': {'No': 0.9889, 'Yes': 0.0111}}
+		self.assertDictEqual(marginal_fs_a(self.bn,n=1000),
+			{'Alarm': {'No': 0.996, 'Yes': 0.004},
+			 'Burglary': {'No': 0.998, 'Yes': 0.002},
+			 'Earthquake': {'No': 1.0, 'Yes': 0.0},
+			 'JohnCalls': {'No': 0.946, 'Yes': 0.054},
+			 'MaryCalls': {'No': 0.99, 'Yes': 0.01}}
 			 )
 
 	def test_likelihood_weighted_sample(self):
+		"""
+		THIS HAS BEEN VALIDATED AGAINST BNLEARN
+		"""
 		np.random.seed(3636)
 		self.assertDictEqual(marginal_lws_a(self.bn,evidence={'Burglary':'Yes'}),
-			{'Alarm': {'No': 0.73, 'Yes': 0.27},
+			{'Alarm': {'No': 0.058, 'Yes': 0.942},
 			 'Burglary': {'No': 0.0, 'Yes': 1.0},
 			 'Earthquake': {'No': 0.997, 'Yes': 0.003},
-			 'JohnCalls': {'No': 0.724, 'Yes': 0.276},
-			 'MaryCalls': {'No': 0.802, 'Yes': 0.198}})
+			 'JohnCalls': {'No': 0.136, 'Yes': 0.864},
+			 'MaryCalls': {'No': 0.343, 'Yes': 0.657}})
 
 	def test_lws_allevidence(self):
 		self.assertDictEqual(marginal_lws_a(self.bn,evidence={'Burglary':'Yes','Alarm':'Yes',

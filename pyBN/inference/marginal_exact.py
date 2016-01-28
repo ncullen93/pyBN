@@ -31,7 +31,7 @@ import numpy as np
 import json
 
 def marginal_ve_e(bn, 
-				target=None, 
+				target, 
 				evidence={}):
 	"""
 	Perform Sum-Product Variable Elimination on
@@ -55,7 +55,7 @@ def marginal_ve_e(bn,
 
 	Notes
 	-----
-
+	- Mutliple pieces of evidence often returns "nan"...numbers too small?
 	"""
 	temp_F = [Factor(bn,var) for var in bn.nodes()] # topsort order
 
@@ -95,8 +95,8 @@ def marginal_ve_e(bn,
 	marginal = temp_F[0]
 	# multiply final factors in factor_list
 	if len(temp_F) > 1:
-		for i in range(1,len(temp_f_list)):
-			marginal.multiply_factor(temp_f_list[i])
+		for i in range(1,len(temp_F)):
+			marginal.multiply_factor(temp_F[i])
 	marginal.normalize()
 
 	return marginal.cpt

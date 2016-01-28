@@ -24,15 +24,15 @@ class MapExactTestCase(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def test_map_noevidence(self):
-		p = list(map_ve_e(self.bn,target='Alarm'))
-		self.assertListEqual(p,['No',0.9367])
+	#def test_map_noevidence(self):
+		#p = list(map_ve_e(self.bn,target='Alarm'))
+		#self.assertListEqual(p,['No',0.9367])
 
-	def test_map_prior(self):
-		p = list(map_ve_e(self.bn,target='Burglary'))
-		self.assertListEqual(p,['No',0.9367])
+	#def test_map_prior(self):
+		#p = list(map_ve_e(self.bn,target='Burglary'))
+		#self.assertListEqual(p,['No',0.9367])
 
-	def test_map_leaf(self):
-		p = list(map_ve_e(self.bn,target='JohnCalls'))
-		self.assertlistEqual(p,['No',0.9367])
+	#def test_map_leaf(self):
+		#p = list(map_ve_e(self.bn,target='JohnCalls'))
+		#self.assertlistEqual(p,['No',0.9367])
 		

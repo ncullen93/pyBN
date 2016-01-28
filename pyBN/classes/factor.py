@@ -302,7 +302,7 @@ class Factor(object):
         self.scope = [rv]
         self.var = rv
 
-        #self.normalize()
+        self.normalize()
 
     def sumout_var_list(self, var_list):
         """
@@ -376,7 +376,13 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        #self.normalize()
+        if rv == self.var:
+            l = [k for k,v in self.stride.items() if v==1]
+            if len(l)>0:
+                self.var = l[0]
+
+        #if len([k for k,v in self.stride.items() if v==1]) > 0:
+        self.normalize()
 
     def maxout_var(self, rv):
         """
@@ -405,7 +411,7 @@ class Factor(object):
         -----        
         
         """
-        self.cpt += 0.00002
+        #self.cpt += 0.00002
         exp_len = len(self.cpt)/self.card[rv]
         new_cpt = np.zeros(exp_len)
 
@@ -430,9 +436,11 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
+        if rv == self.var:
+            self.var = [k for k,v in self.stride.items() if v==1][0]
 
         #if len(self.scope) > 0:
-           # self.normalize()
+            #self.normalize()
 
     def reduce_factor_by_list(self, evidence):
         """
@@ -530,6 +538,11 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
+        if rv == self.var:
+            l = [k for k,v in self.stride.items() if v==1]
+            if len(l)>0:
+                self.var = l[0]
+
         #if len(self.scope) > 0:
           #  self.normalize()
 
@@ -565,13 +578,17 @@ class Factor(object):
         -----
 
         """
-        var = [k for k,v in self.stride.items() if v==1][0]
-        
-        for i in range(0,len(self.cpt),self.card[var]):
-            temp_sum = float(np.sum(self.cpt[i:(i+self.card[var])]))
-            for j in range(self.card[var]):
-                self.cpt[i+j] /= temp_sum
-                self.cpt[i+j] = round(self.cpt[i+j],5)
+        var = [k for k,v in self.stride.items() if v==1]
+        if len(var) > 0:
+            var = var[0]
+            for i in range(0,len(self.cpt),self.card[var]):
+                temp_sum = float(np.sum(self.cpt[i:(i+self.card[var])]))
+                for j in range(self.card[var]):
+                    self.cpt[i+j] /= temp_sum
+                    self.cpt[i+j] = round(self.cpt[i+j],5)
+        else:
+            for i in range(len(self.cpt)):
+                self.cpt[i] /= np.sum(self.cpt)
 
 
 

@@ -96,16 +96,16 @@ class BayesNetTestCase(unittest.TestCase):
 	def test_F_bn(self):
 		self.assertDictEqual(self.bn_bn.F,
 			{'Alarm': {'cpt': [0.999, 0.001, 0.71, 0.29, 0.06, 0.94, 0.05, 0.95],
-				  'parents': ['Burglary', 'Earthquake'],
-				  'values': ['No', 'Yes']},
-			'Burglary': {'cpt': [0.999, 0.001], 'parents': [], 'values': ['No', 'Yes']},
-			'Earthquake': {'cpt': [0.998, 0.002], 'parents': [], 'values': ['No', 'Yes']},
-			'JohnCalls': {'cpt': [0.95, 0.05, 0.1, 0.9],
-				  'parents': ['Alarm'],
-				  'values': ['No', 'Yes']},
-			'MaryCalls': {'cpt': [0.99, 0.01, 0.3, 0.7],
-				  'parents': ['Alarm'],
-				  'values': ['No', 'Yes']}})
+			  'parents': ['Earthquake', 'Burglary'],
+			  'values': ['No', 'Yes']},
+			 'Burglary': {'cpt': [0.999, 0.001], 'parents': [], 'values': ['No', 'Yes']},
+			 'Earthquake': {'cpt': [0.998, 0.002], 'parents': [], 'values': ['No', 'Yes']},
+			 'JohnCalls': {'cpt': [0.95, 0.05, 0.1, 0.9],
+			  'parents': ['Alarm'],
+			  'values': ['No', 'Yes']},
+			 'MaryCalls': {'cpt': [0.99, 0.01, 0.3, 0.7],
+			  'parents': ['Alarm'],
+			  'values': ['No', 'Yes']}})
 
 	def test_nodes(self):
 		n = list(self.bn_bn.nodes())
@@ -122,11 +122,11 @@ class BayesNetTestCase(unittest.TestCase):
 
 	def test_scope(self):
 		self.assertListEqual(self.bn_bn.scope('Alarm'),
-			['Alarm', 'Burglary', 'Earthquake'])
+			['Alarm', 'Earthquake', 'Burglary'])
 	
 	def test_parents(self):
 		self.assertListEqual(self.bn_bn.parents('Alarm'),
-			['Burglary','Earthquake'])
+			['Earthquake','Burglary'])
 
 	def test_values(self):
 		self.assertListEqual(self.bn_bn.values('Alarm'),['No','Yes'])
