@@ -11,7 +11,7 @@ Getting up-and-running with this package is simple:
 1. Click "Download ZIP" button towards the upper right corner of the page.
 2. Unpack the ZIP file wherever you want on your local machine. You should now have a folder called "pyBN-master"
 3. In your python terminal, change directories to be IN pyBN-master. Typing "ls" should show you "data", "examples" and "pyBN" folders. Stay in the "pyBN-master" directory for now!
-4. In your python terminal, simply type "from pyBN import *". This will load all of the module's functions, classes, etc.
+4. In your python terminal, simply type "from pyBN import ". This will load all of the module's functions, classes, etc.
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
 <h2>Examples</h2>
@@ -66,4 +66,16 @@ so fast and efficient in pyBN.
 <h4>Parameter Learning</h4>
 - Maximum Likelihood Estimator
 - Bayesian Estimator
+
+<h4>Structure-based Distance Metrics</h4>
+- Hamming Distance
+
+<h4>Parameter-based Distance Metrics</h4>
+- Kulbach-Leibler Divergence
+- Jensen-Shannon Divergence
+- Euclidean
+- Manhattan
+- Mutual Information
+- Hellinger
+- Minkowski
 
