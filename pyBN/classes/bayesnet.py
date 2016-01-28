@@ -194,6 +194,10 @@ class BayesNet(object):
             value = list of rv's children
             NOTE: THIS MUST BE DIRECTED ALREADY!
 
+        *value_dict* : a dictionary,
+            where key = rv,
+            value = list of rv's possible values
+
         Returns
         -------
         None
