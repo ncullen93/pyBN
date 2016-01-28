@@ -5,12 +5,13 @@ Parameter Learning
 *******************
 
 """
+from __future__ import division
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 
 
-def bayes_estimator(bn, data, sample_size, prior_dict=None):
+def bayes_estimator(bn, data, equiv_sample=None):
 	"""
 	Bayesian Estimation method of parameter learning.
 	This method proceeds by either 1) assuming a uniform prior
@@ -57,8 +58,39 @@ def bayes_estimator(bn, data, sample_size, prior_dict=None):
 	-----
 
 	"""
-	pass
+	if equiv_sample is None:
+		equiv_sample = len(data)
 
+	obs_dict = dict.fromkeys(bn.nodes())
+	# set empty conditional probability table for each RV
+	for rv in bn.nodes():
+		# get number of values in the CPT = product of scope vars' cardinalities
+		p_idx = int(np.prod([bn.card(p) for p in bn.parents(rv)])*bn.card(rv))
+		bn.F[rv]['cpt'] = [equiv_sample/p_idx]*p_idx
+	
+	# loop through each row of data
+	for row in data:
+
+		# loop through each RV and increment its observed parent-self value
+		for rv in bn.nodes():
+			obs_dict[rv] = row[rv]
+
+			value_indices = np.empty(bn.scope_size(rv))
+			value_indices[0] = bn.value_idx(rv, obs_dict[rv])
+
+			strides = np.empty(bn.scope_size(rv))
+			strides[0] = 1
+
+			for i,p in enumerate(bn.parents(rv)):
+				value_indices[i+1] = bn.value_idx(p,obs_dict[p])
+				strides[i+1] = bn.stride(rv, p)
+			
+			offset = int(np.sum(value_indices*strides))
+			bn.F[rv]['cpt'][offset] += 1
+	
+	for rv in bn.nodes():
+		for val_idx in xrange(len(bn.F[rv]['cpt'])):
+			bn.F[rv]['cpt'][val_idx] /= len(data)*2
 
 
 

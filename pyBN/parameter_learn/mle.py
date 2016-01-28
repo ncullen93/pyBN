@@ -5,8 +5,9 @@ Parameter Learning
 *****************************
 
 """
-
+from __future__ import division
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
+
 
 import numpy as np
 
@@ -71,9 +72,6 @@ def mle_estimator(bn, data):
 	# loop through each row of data
 	for row in data:
 
-		# dont need this because of topsort order
-		#obs_dict = dict([(rv,row[bn.node_idx(rv)]) for rv in bn.nodes()]) # key=node, val=row value
-
 		# loop through each RV and increment its observed parent-self value
 		for rv in bn.nodes():
 			obs_dict[rv] = row[rv]
@@ -93,7 +91,7 @@ def mle_estimator(bn, data):
 	
 	for rv in bn.nodes():
 		for val_idx in xrange(len(bn.F[rv]['cpt'])):
-			bn.F[rv]['cpt'][val_idx] /= float(len(data))
+			bn.F[rv]['cpt'][val_idx] /= len(data)
 
 
 	
