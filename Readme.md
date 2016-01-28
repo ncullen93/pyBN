@@ -63,11 +63,7 @@ so fast and efficient in pyBN.
 - Conditional Mutual Information (i.e. Cross Entropy)
 - Pearson X^2
 
-<h2>Future Features:</h2>
-
-<h4>Structure Learning</h4>
-- Hill-climbing
-
 <h4>Parameter Learning</h4>
-- Bayesian Estimation
-- Maximum Likelihood Estimation
+- Maximum Likelihood Estimator
+- Bayesian Estimator
+
