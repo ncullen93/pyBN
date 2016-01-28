@@ -136,7 +136,7 @@ class BayesNet(object):
                 yield (u,v)
 
     def scope_size(self, rv):
-        return len(self.parents(rv))+1
+        return len(self.F[rv]['parents'])+1
 
     def num_nodes(self):
         return len(self.V)
@@ -160,11 +160,15 @@ class BayesNet(object):
 
     def values(self, rv):
         return self.F[rv]['values']
+
     def value_idx(self, rv, val):
         try:
             return self.F[rv]['values'].index(val)
         except ValueError:
-            return -1
+            try:
+                return self.F[rv]['values'].index(val-1)
+            except ValueError:
+                return -1
 
     def stride(self, rv, n):
         if n==rv:
@@ -172,8 +176,8 @@ class BayesNet(object):
         else:
             card_list = [self.card(rv)]
             card_list.extend([self.card(p) for p in self.parents(rv)])
-                n_idx = self.parents(rv).index(n)
-                return np.prod(card_list[0:n_idx])
+            n_idx = self.parents(rv).index(n)
+            return np.prod(card_list[0:n_idx])
 
     def set_structure(self, edge_dict, value_dict):
         """

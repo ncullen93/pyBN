@@ -61,31 +61,39 @@ def mle_estimator(bn, data):
 	- Do not want to alter bn.data directly!
 
 	"""
+	obs_dict = dict.fromkeys(bn.nodes())
 	# set empty conditional probability table for each RV
 	for rv in bn.nodes():
 		# get number of values in the CPT = product of scope vars' cardinalities
-		p_idx = int(np.prod([bn.scope_size(p) for p in bn.parents(rv)])*bn.scope_size(rv))
+		p_idx = int(np.prod([bn.card(p) for p in bn.parents(rv)])*bn.card(rv))
 		bn.F[rv]['cpt'] = [0]*p_idx
 	
 	# loop through each row of data
 	for row in data:
 
-		obs_dict = dict([(rv,row[bn.node_idx(rv)]) for rv in bn.nodes()]) # key=node, val=row value
+		# dont need this because of topsort order
+		#obs_dict = dict([(rv,row[bn.node_idx(rv)]) for rv in bn.nodes()]) # key=node, val=row value
+
 		# loop through each RV and increment its observed parent-self value
 		for rv in bn.nodes():
+			obs_dict[rv] = row[rv]
 
 			value_indices = np.empty(bn.scope_size(rv))
 			value_indices[0] = bn.value_idx(rv, obs_dict[rv])
 
 			strides = np.empty(bn.scope_size(rv))
-			stride[0] = 1
+			strides[0] = 1
 
 			for i,p in enumerate(bn.parents(rv)):
 				value_indices[i+1] = bn.value_idx(p,obs_dict[p])
 				strides[i+1] = bn.stride(rv, p)
 			
-			offset = np.sum(np.prod(value_indices,strides))
+			offset = int(np.sum(value_indices*strides))
 			bn.F[rv]['cpt'][offset] += 1
+	
+	for rv in bn.nodes():
+		for val_idx in xrange(len(bn.F[rv]['cpt'])):
+			bn.F[rv]['cpt'][val_idx] /= float(len(data))
 
 
 	
