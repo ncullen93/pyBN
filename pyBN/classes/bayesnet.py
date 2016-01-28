@@ -123,6 +123,9 @@ class BayesNet(object):
         for v in self.V:
             yield v
 
+    def num_nodes(self):
+        return len(self.V)
+
     def cpt(self, rv):
         return self.F[rv]['cpt']
 

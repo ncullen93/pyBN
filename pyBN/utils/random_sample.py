@@ -11,13 +11,14 @@ with or without evidence.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.classes.factor import Factor
-import networkx as nx
+import numpy as np
+from copy import deepcopy
 
-def random_sample(bn, n=100, evidence={}):
+def random_sample(bn, n=1000):
     """
     Take a random sample of "n" observations from a
-    BayesNet object. This is essentially just a repeated
-    forward sample algorithm that returns every sample.
+    BayesNet object. This is essentially just the
+    forward sample algorithm that returns the samples.
 
     Parameters
     ----------
@@ -32,42 +33,31 @@ def random_sample(bn, n=100, evidence={}):
     Returns
     -------
     *sample_dict* : a list of samples, where each sample
-        is a dictionary containing each variable as a key
-        and its sampled value as the dictionary value
+        is a list of values in bn.nodes() (topsort) order
 
     Notes
     -----
-    - Not tested
 
     """
-    sample_dict = []
-    weight_list = np.ones(n)
+    sample = np.empty((n,bn.num_nodes()),dtype=np.int)
 
-    parent_dict = dict([(var, bn.data[var]['parents']) for var in bn.V])
-
-    for i in range(n):
-        if i % (n/float(10)) == 0:
-            if i > 0:
-                print 'Sample: ' , i
-        new_sample = {}
-        for rv in rv_order:
-            f = Factor(bn,rv)
+    rv_map = dict([(rv,idx) for idx,rv in enumerate(bn.nodes())])
+    factor_map = dict([(rv,Factor(bn,rv)) for rv in bn.nodes()])
+    
+    for i in xrange(n):
+        for rv in bn.nodes():
+            f = deepcopy(factor_map[rv])
             # reduce_factor by parent samples
-            for p in parent_dict[rv]:
-                f.reduce_factor(p,new_sample[p])
-            # if rv in evidence, choose that value and weight
-            if rv in evidence.keys():
-                chosen_val = evidence[rv]
-                weight_list[i] *= f.cpt[bn.data[rv]['vals'].index(evidence[rv])]
-            # if rv not in evidence, sample as usual
-            else:
-                choice_vals = bn.data[rv]['vals']
-                choice_probs = f.cpt
-                chosen_val = np.random.choice(choice_vals, p=choice_probs)
-                
-            new_sample[rv] = chosen_val
-        sample_dict.append(new_sample)
+            for p in bn.parents(rv):
+                f.reduce_factor(p,bn.values(p)[sample[i][rv_map[p]]])
+            choice_vals = bn.values(rv)
+            choice_probs = f.cpt
+            chosen_val = np.random.choice(choice_vals, p=choice_probs)
+            sample[i][rv_map[rv]] = bn.values(rv).index(chosen_val)
 
-    return sample_dict
+    return sample
+
+
+
 
 
