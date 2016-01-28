@@ -83,6 +83,28 @@ class BayesNet(object):
         self.E = list
         self.F = dict
 
+        self.distance_metric = 'euclidean'
+
+    def __eq__(self, y):
+        if not set(self.V) == set(y.V):
+            return False
+        else:
+            return True
+
+    def __cmp__(self):
+        pass
+
+    def __hash__(self):
+        pass
+
+    def __add__(self):
+        pass
+
+    def __sub__(self):
+        pass
+
+
+
     def nodes(self):
         for v in self.V:
             yield v

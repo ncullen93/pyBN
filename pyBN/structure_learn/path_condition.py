@@ -102,7 +102,7 @@ def pc(data, pval=0.05):
 	n_rv = len(rv_card)
 	
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
-	block_dict = dict.fromkeys(range(n_rv),[])
+	block_dict = dict([(i,[]) for i in range(n_rv)])
 	stop = False
 	i = 1
 	while not stop:
