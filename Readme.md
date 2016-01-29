@@ -31,8 +31,7 @@ so fast and efficient in pyBN.
 | ------------- | ------------- | 
 | BIF format    | Graphviz Engine  |
 | JSON format   | Networkx      |
-|				|				| 
-|				|				| 
+
 
 <h4>Inference</h4>
 | Exact Marginal Inference  | Approximate Marginal Inference  | Exact MAP Inference |
@@ -60,12 +59,10 @@ so fast and efficient in pyBN.
 <h4>Distance/Model Comparison Metrics</h4>
 | Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  |
 | ------------- | ------------- | 
-| Missing Edges   | KL-Divergence |
-| Extra Edges  | JS-Divergence     |
+| Missing Edges   | KL-Divergence and JS-Divergence|
+| Extra Edges  | Manhattan and Euclidean |
 | Incorrect Edge Orientation				|Hellinger				| 
-|	Hamming Distance			|			Euclidean	| 
-|					| Manhattan |
-|					| Minkowski	|
+|	Hamming Distance			|		Minkowski	| 
 
 <h4 style="float:left">Reading BNs</h4>
 - Bif format
