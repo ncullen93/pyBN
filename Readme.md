@@ -26,21 +26,21 @@ so fast and efficient in pyBN.
 
 <h2>Current features:</h2>
 
-<h4>FileIO and Operations</h4>
-| Reading BNS   | Drawing BNs   | Factor Operations |
-| ------------- | ------------- | ----------------- |
-| BIF format    | Graphviz Engine     | Factor Multiplication    |
-| JSON format   | Networkx      | Factor Reduction     |
-|				|				| Convert to/from log space |
-|				|				| Normalize 			|
+<h4>FileIO and Drawing</h4>
+| Reading BNS   | Drawing BNs   |
+| ------------- | ------------- | 
+| BIF format    | Graphviz Engine  |
+| JSON format   | Networkx      |
+|				|				| 
+|				|				| 
 
 <h4>Inference</h4>
 | Exact Marginal Inference  | Approximate Marginal Inference  | Exact MAP Inference |
 | ------------- | ------------- | ----------------- |
 | Sum-Product Variable Elimination   | Forward Sampling    | Max-Sum Variable Elimination   |
 | Clique Tree Message Passing  | Likelihood Weighted Sampling     |     
-|				|				| Gibbs (MCMC) Sampling 			|
-|				|				| Loopy Belief Propagation			|
+|				|		Gibbs (MCMC) Sampling 		| 			|
+|				|		Loopy Belief Propagation			| 		|
 
 <h4>Learning</h4>
 | Structure Learning   | Parameter Learning   | Independence Tests |
@@ -50,6 +50,22 @@ so fast and efficient in pyBN.
 | Chow-Liu Tree Algorithm			|				| Pearsion Chi-Square|
 | Naive Bayes				|				| 			|
 
+<h4>Classification</h4>
+| Supervised  |
+| ------------- |
+| Naive Bayes    |
+| Tree-Augmented Naive Bayes   | 
+| MAP Classification			|
+
+<h4>Distance/Model Comparison Metrics</h4>
+| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  |
+| ------------- | ------------- | 
+| Missing Edges   | KL-Divergence |
+| Extra Edges  | JS-Divergence     |
+| Incorrect Edge Orientation				|Hellinger				| 
+|	Hamming Distance			|			Euclidean	| 
+|					| Manhattan |
+|					| Minkowski	|
 
 <h4 style="float:left">Reading BNs</h4>
 - Bif format
