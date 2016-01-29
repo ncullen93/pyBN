@@ -44,8 +44,10 @@ def chow_liu(data):
 	-----
 
 	"""
+	value_dict = dict(zip(range(data.shape[1]),
+		[list(np.unique(col)) for col in data.T]))
+
 	n_rv = data.shape[1]
-	rv_card = np.amax(data, axis=0)
 
 	edge_list = [(i,j,mi_test(data[:,(i,j)],chi2_test=False)) \
 					for i in xrange(n_rv) for j in xrange(i+1,n_rv)]
@@ -63,7 +65,7 @@ def chow_liu(data):
 			vertex_cache.add(i)
 	
 	
-	bn=BayesNet(mst)
+	bn=BayesNet(mst,value_dict)
 	return bn
 
 

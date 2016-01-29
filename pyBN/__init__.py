@@ -1,4 +1,5 @@
 from pyBN.classes import *
+from pyBN.classification import *
 from pyBN.distance import *
 from pyBN.drawing import *
 from pyBN.independence import *

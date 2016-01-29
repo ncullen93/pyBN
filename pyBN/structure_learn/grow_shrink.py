@@ -80,8 +80,9 @@ def gs(data, alpha=0.05):
 	-----
 
 	"""
-	rv_card = np.amax(data,axis=0)
-	n_rv = len(rv_card)
+	value_dict = dict(zip(range(data.shape[1]),
+		[list(np.unique(col)) for col in data.T]))
+	n_rv = data.shape[1]
 
 	# STEP 1 : COMPUTE MARKOV BLANKETS
 	B = dict([(rv,[]) for rv in range(n_rv)])
@@ -155,7 +156,6 @@ def gs(data, alpha=0.05):
 	
 	# STEP 3: ORIENT EDGES
 	oriented_edge_dict = orient_edges_gs(edge_dict,B,data,alpha)
-	value_dict = dict([(rv,range(rv_card[rv])) for rv in range(n_rv)])
 	bn=BayesNet(oriented_edge_dict,value_dict)
 	
 	return bn

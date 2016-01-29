@@ -38,6 +38,6 @@ class ChowLiuTestCase(unittest.TestCase):
 	def test_chow_liu1_F(self):
 		bn = chow_liu(self.data)
 		self.assertDictEqual(bn.F,
-			{0: {'cpt': [], 'parents': [], 'values': []},
-			 1: {'cpt': [], 'parents': [0], 'values': []},
-			 2: {'cpt': [], 'parents': [0], 'values': []}})
+			{0: {'cpt': [], 'parents': [], 'values': [1,2]},
+			 1: {'cpt': [], 'parents': [0], 'values': [1,2]},
+			 2: {'cpt': [], 'parents': [0], 'values': [1,2]}})

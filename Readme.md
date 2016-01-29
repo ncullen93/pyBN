@@ -57,6 +57,7 @@ so fast and efficient in pyBN.
 - Path Condition (PC) Algorithm
 - Grow Shrink (GS) Algorithm
 - Chow-Liu Tree Algorithm
+- Naive Bayes
 
 <h4>Conditional Independence Tests</h4>
 - Marginal Mutual Information (i.e. KL-Divergence)
@@ -66,6 +67,11 @@ so fast and efficient in pyBN.
 <h4>Parameter Learning</h4>
 - Maximum Likelihood Estimator
 - Bayesian Estimator
+
+<h4>Classification</h4>
+- Bayesian Network MAP Classification
+- Naive Bayes Classification
+- Tree-Augmented Naive Bayes Classification
 
 <h4>Structure-based Distance Metrics</h4>
 - Missing Edges

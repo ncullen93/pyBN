@@ -53,16 +53,9 @@ class BayesNet(object):
     """
     Overarching class for Bayesian Networks
 
-
-    Attributes
-    ----------
-
-    Notes
-    -----
-
     """
 
-    def __init__(self,E=None,values=None):
+    def __init__(self,E=None,value_dict=None):
         """
         Initialize the BayesNet class.
 
@@ -85,8 +78,8 @@ class BayesNet(object):
         
         """
         if E is not None:
-            assert (values is not None), 'Must set values if E is set.'
-            self.set_structure(E,values)
+            assert (value_dict is not None), 'Must set values if E is set.'
+            self.set_structure(E,value_dict)
         else:
             self.V = list
             self.E = list
@@ -116,6 +109,33 @@ class BayesNet(object):
         """
         return hash((str(self.V),str(self.E)))
 
+    def add_node(self, rv, values=None):
+        self.V.append(rv)
+        if values is not None:
+            self.F[rv] = {'cpt':[],'parents':[],'values':values}
+        else:
+            self.F[rv] = {'cpt':[],'parents':[],'values':[]}
+
+    def add_edge(self, u, v):
+        if not self.has_node(u):
+            self.add_node(u)
+        if not self.has_node(v):
+            self.add_node(v)
+        self.E[u].append(v)
+        self.V = topsort(self.E)
+
+    def set_data(self, rv, data):
+        assert (isistance(data, dict)), 'data must be dictionary'
+        self.F[rv] = data
+
+    def set_cpt(self, rv, cpt):
+        self.F[rv]['cpt'] = cpt
+
+    def set_parents(self, rv, parents):
+        self.F[rv]['parents'] = parents
+
+    def set_values(self, rv, values):
+        self.F[rv]['values'] = values
 
     def nodes(self):
         for v in self.V:
@@ -129,6 +149,9 @@ class BayesNet(object):
 
     def has_node(self, rv):
         return rv in self.V
+
+    def has_edge(self, u, v):
+        return u in self.E[v]
 
     def edges(self):
         for u in self.nodes():

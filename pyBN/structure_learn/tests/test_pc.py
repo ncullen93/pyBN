@@ -38,6 +38,6 @@ class PCTestCase(unittest.TestCase):
 	def test_pc1_F(self):
 		bn = pc(self.data)
 		self.assertDictEqual(bn.F,
-			{0: {'cpt': [], 'parents': [], 'values': []},
-			 1: {'cpt': [], 'parents': [0], 'values': []},
-			 2: {'cpt': [], 'parents': [0], 'values': []}})
+			{0: {'cpt': [], 'parents': [], 'values': [1,2]},
+			 1: {'cpt': [], 'parents': [0], 'values': [1,2]},
+			 2: {'cpt': [], 'parents': [0], 'values': [1,2]}})

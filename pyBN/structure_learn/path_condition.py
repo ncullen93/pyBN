@@ -87,8 +87,9 @@ def pc(data, pval=0.05):
 	-----
 	"""
 	##### FIND EDGES #####
-	rv_card = np.amax(data, axis=0)
-	n_rv = len(rv_card)
+	value_dict = dict(zip(range(data.shape[1]),
+		[list(np.unique(col)) for col in data.T]))
+	n_rv = data.shape[1]
 	
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
 	block_dict = dict([(i,[]) for i in range(n_rv)])
@@ -122,10 +123,9 @@ def pc(data, pval=0.05):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break
-	#print edge_dict
+	
 	##### ORIENT EDGES #####
 	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
-	value_dict = dict([(rv,range(rv_card[rv])) for rv in range(n_rv)])
 	bn=BayesNet(directed_edge_dict,value_dict)
 	return bn
 
