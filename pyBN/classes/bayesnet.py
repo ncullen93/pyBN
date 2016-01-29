@@ -127,6 +127,9 @@ class BayesNet(object):
         except ValueError:
             return -1
 
+    def has_node(self, rv):
+        return rv in self.V
+
     def edges(self):
         for u in self.nodes():
             for v in self.children(u):
@@ -154,6 +157,9 @@ class BayesNet(object):
 
     def children(self, rv):
         return self.E[rv]
+
+    def degree(self, rv):
+        return len(self.parents(rv)) + len(self.children(rv))
 
     def values(self, rv):
         return self.F[rv]['values']
