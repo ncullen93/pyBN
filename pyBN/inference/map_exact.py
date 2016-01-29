@@ -108,9 +108,85 @@ def map_ve_e(bn,
 	val=round(temp_F[0].cpt[0],4)
 	return sol[target], val
 
+def map_opt_e(bn, evidence={}):
+	"""
+	Solve MAP Inference as a dynamic programming
+	problem, where the solution is built up from
+	the leaf nodes by solving subproblems of
+	maximal probability rv assignments at each node
+
+	Arguments
+	---------
+	*bn* : a BayesNet object
+
+	*evidence* : a dictionary, where
+		key = rv and value = rv's value
+
+	Returns
+	-------
+	*sol* : a dictionary, where
+		key = rv and value = maximal assignment
+
+	Effects
+	-------
+	None
+
+	Notes
+	-----
+	decision variables:
+		variable for each set of values in a cpt
+	objective:
+		minimize sum of negative log probabilities
+	constraints:
+		- sum for all variables in a cpt must be 1
+		- intersection of variables between cpt must agree
+	"""
+	if evidence:
+			assert isinstance(evidence, dict), 'Evidence must be in dictionary form'
+
+	model = LpProblem("MAP Inference",LpMinimize)
+
+	node_var_dict=dict([(rv,[]) for rv in bn.nodes()])
+	node_weight_dict = dict([(rv,[]) for rv in bn.nodes()])
+
+	for node_idx,node in enumerate(bn.nodes()):
+		for cpt_idx,cpt_val in enumerate(bn.cpt(node)):
+			new_var = LpVariable(str(str(node_idx)+'-'+str(cpt_idx)),0,1,LpInteger)
+			var_list.append(new_var)
+			node_var_dict[node].append(new_var)
+			node_weight_dict[node].append(-np.log(cpt_val))
+			weight_list.append(-np.log(cpt_val))
+
+	model += np.dot(weight_list,var_list) # minimizes -1*var*probability
+
+	# constraint set 1
+	# exactly one choice from each factor
+	k = 0
+	for rv in bn.nodes():
+		cell = node_var_dict[rv]
+		model += np.sum(cell) == 1, "Factor Sum Constraint" + str(k)
+		k+=1
+
+	# constraint set 2
+	# intersection of factors must agree
+	
 
 
+	#add constraint set 3
+	#all evidence variables set = 1
+	if evidence:
+		for k,v in evidence.items():
+			ev = str(k)+'='+str(v)
+			model += name_var_dict[ev] == 1, 'Evidence Constraint' + str(k)
+			k+=1
+			
+	model.solve()
+	max_inference = dict([(v.name,v.varValue) for v in model.variables() if v.varValue == 1])
 
+
+	
+
+	
 
 
 

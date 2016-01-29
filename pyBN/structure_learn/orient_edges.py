@@ -16,12 +16,12 @@ from pyBN.independence.constraint_tests import mi_test
 import itertools
 from copy import copy
 
-def orient_edges_gs(edge_dict, blanket, data, alpha):
+def orient_edges_Mb(edge_dict, Mb, data, alpha):
 	"""
-	Orient edges for GrowShrink based on the rules presented
-	in Margaritis' Thesis pg. 35. This method requires a
-	markov blanket, so may not be useful for other Structure
-	learning methods.
+	Orient edges from a Markov Blanket based on the rules presented
+	in Margaritis' Thesis pg. 35. This method is used
+	for structure learning algorithms that return/resolve
+	a markov blanket - i.e. growshrink and iamb.
 
 	# if there exists a variable Z in N(X)-N(Y)-{Y}
 	# such that Y and Z are dependent given S+{X} for
@@ -66,8 +66,8 @@ def orient_edges_gs(edge_dict, blanket, data, alpha):
 			nxy = set(edge_dict[X]) - set(edge_dict[Y]) - {Y}
 
 			for Z in nxy:
-				by = set(blanket[Y]) - {X} - {Z}
-				bz = set(blanket[Z]) - {X} - {Y}
+				by = set(Mb[Y]) - {X} - {Z}
+				bz = set(Mb[Z]) - {X} - {Y}
 				T = min(by,bz)
 				if len(T)>0:
 					for i in range(len(T)):
@@ -91,6 +91,27 @@ def orient_edges_gs(edge_dict, blanket, data, alpha):
 							edge_dict[Y].remove(X)
 	return edge_dict
 
+def orient_edges_gs2(edge_dict, Mb, data, alpha):
+	"""
+	Similar algorithm as above, but slightly modified for speed?
+	Need to test.
+	"""
+	d_edge_dict = dict([(rv,[]) for rv in edge_dict])
+	for X in edge_dict.keys():
+		for Y in edge_dict[X]:
+			nxy = set(edge_dict[X]) - set(edge_dict[Y]) - {Y}
+			for Z in nxy:
+				d_edge_dict[Y].append(X) # SET Y -> X
+				B = min(set(Mb[Y]) - {X} - {Z},set(Mb[Z]) - {X} - {Y})
+				for i in range(len(T)):
+					for S in itertools.combinations(T,i):
+						cols = (Y,Z,X) + tuple(S)
+						pval = mi_test(data[:,cols])
+						if pval < alpha: # Y IS independent of Z given S+X
+							d_edge_dict[Y].remove(X)
+				if X in d_edge_dict[Y]:
+					break
+	return d_edge_dict
 
 def orient_edges_pc(edge_dict, block_dict):
 	"""

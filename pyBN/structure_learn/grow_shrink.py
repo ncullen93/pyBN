@@ -37,6 +37,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.independence.constraint_tests import mi_test
 from pyBN.structure_learn.orient_edges import orient_edges_gs
+from pyBN.independence.markov_blanket import resolve_markov_blanket
 from pyBN.classes.bayesnet import BayesNet
 
 from copy import copy
@@ -85,7 +86,7 @@ def gs(data, alpha=0.05):
 	n_rv = data.shape[1]
 
 	# STEP 1 : COMPUTE MARKOV BLANKETS
-	B = dict([(rv,[]) for rv in range(n_rv)])
+	Mb = dict([(rv,[]) for rv in range(n_rv)])
 
 	for X in range(n_rv):
 		S = []
@@ -121,41 +122,16 @@ def gs(data, alpha=0.05):
 				else: # independent -> condition searching
 					shrink_condition=True
 		
-		B[X] = TEMP_S
+		Mb[X] = TEMP_S
 		
 	# STEP 2: COMPUTE GRAPH STRUCTURE
-	edge_dict = dict([(rv,[]) for rv in range(n_rv)])
-	for X in range(n_rv):
-		for Y in B[X]:
-			# X and Y are direct neighbors if X and Y are dependent
-			# given S for all S in T, where T is the smaller of
-			# B(X)-{Y} and B(Y)-{X}
-			if len(B[X]) < len(B[Y]):
-				T = copy(B[X]) # shallow copy is sufficient
-				if Y in T:
-					T.remove(Y)
-			else:
-				T = copy(B[Y]) # shallow copy is sufficient
-				if X in T:
-					T.remove(X)
-
-			# X and Y must be dependent conditioned upon
-			# EVERY POSSIBLE COMBINATION of T
-			direct_neighbors=True
-			for i in range(len(T)):
-				for S in itertools.combinations(T,i):
-					cols = (X,Y) + tuple(S)
-					pval = mi_test(data[:,cols])
-					if pval > alpha:
-						direct_neighbors=False
-			if direct_neighbors:
-				if Y not in edge_dict[X] and X not in edge_dict[Y]:
-					edge_dict[X].append(Y)
-				if X not in edge_dict[Y]:
-					edge_dict[Y].append(X)
+	# i.e. Resolve Markov Blanket
+	edge_dict = resolve_markov_blanket(Mb,data)
 	
 	# STEP 3: ORIENT EDGES
-	oriented_edge_dict = orient_edges_gs(edge_dict,B,data,alpha)
+	oriented_edge_dict = orient_edges_Mb(edge_dict,Mb,data,alpha)
+
+	# CREATE BAYESNET OBJECT
 	bn=BayesNet(oriented_edge_dict,value_dict)
 	
 	return bn

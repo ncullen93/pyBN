@@ -53,7 +53,7 @@ from pyBN.structure_learn.orient_edges import orient_edges_pc
 from numba import jit
 
 
-def pc(data, pval=0.05):
+def pc(data, alpha=0.05):
 	"""
 	Path Condition algorithm for structure learning. This is a
 	good test, but has some issues with test reliability when
@@ -100,7 +100,7 @@ def pc(data, pval=0.05):
 			for y in edge_dict[x]:
 				if i == 0:
 					pval_xy_z = mi_test(data[:,(x,y)])
-					if pval_xy_z > pval:
+					if pval_xy_z > alpha:
 						if y in edge_dict[x]:
 							edge_dict[x].remove(y)
 							edge_dict[y].remove(x)
@@ -110,7 +110,7 @@ def pc(data, pval=0.05):
 							cols = (x,y) + z
 							pval_xy_z = mi_test(data[:,cols])
 							# if I(X,Y | Z) = TRUE
-							if pval_xy_z > pval:
+							if pval_xy_z > alpha:
 								block_dict[x] = {y:z}
 								block_dict[y] = {x:z}
 								if y in edge_dict[x]:
@@ -124,9 +124,12 @@ def pc(data, pval=0.05):
 				stop = False
 				break
 	
-	##### ORIENT EDGES #####
+	# ORIENT EDGES
 	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
+
+	# CREATE BAYESNET OBJECT
 	bn=BayesNet(directed_edge_dict,value_dict)
+	
 	return bn
 
 

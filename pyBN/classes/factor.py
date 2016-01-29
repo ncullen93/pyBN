@@ -176,6 +176,26 @@ class Factor(object):
     def values(self, rv):
         return self.bn.values(rv)
 
+    def value_indices(self, rv, value):
+        """
+        Return the indices in the cpt
+        where RV=Value
+        """
+        rv_stride = self.stride[rv]
+        rv_card = self.card[rv]
+        value_idx = self.bn.value_idx(rv,value)
+
+        value_indices = []
+        idx=rv_stride*value_idx
+        value_indices.append(idx)          
+        while idx < len(self.cpt):
+            idx+=rv_card*rv_stride
+            value_indices.append(idx)
+        return value_indices
+
+
+
+
     ##### FACTOR OPERATIONS #####
 
     def multiply_factor(self, other_factor):
