@@ -27,8 +27,8 @@ so fast and efficient in pyBN.
 <h2>Current features:</h2>
 
 <h4>Reading BNs</h4>
-- .bif format
-- json format
+- Bif format
+- Json format
 
 <h4>Drawing BNs</h4>
 - Graphviz Engine
@@ -41,10 +41,10 @@ so fast and efficient in pyBN.
 - Normalize
 
 <h4>Approximate Marginal Inference</h4>
-- loopy belief propagation
-- forward sampling
-- gibbs sampliing
-- likelihood weighted sampling
+- Loopy Belief Propagation
+- Forward Sampling
+- Gibbs Sampliing
+- Likelihood Weighted Sampling
 
 <h4>Exact Marginal Inference</h4>
 - Sum-Product Variable Elimination
@@ -68,13 +68,16 @@ so fast and efficient in pyBN.
 - Bayesian Estimator
 
 <h4>Structure-based Distance Metrics</h4>
+- Missing Edges
+- Extra Edges
+- Incorrect Edge Direction
 - Hamming Distance
 
 <h4>Parameter-based Distance Metrics</h4>
 - Kullbach-Leibler Divergence
 - Jensen-Shannon Divergence
+- Hellinger
 - Euclidean
 - Manhattan
-- Hellinger
 - Minkowski
 
