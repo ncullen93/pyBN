@@ -26,21 +26,21 @@ so fast and efficient in pyBN.
 
 <h2>Current features:</h2>
 
-<h4>Reading BNs</h4>
+<h4 style="float:left">Reading BNs</h4>
 - Bif format
 - Json format
 
-<h4>Drawing BNs</h4>
+<h4 style="float:right">Drawing BNs</h4>
 - Graphviz Engine
 - Networkx (matplotlib/pylab) Engine
 
-<h4>Fast Factor Operations</h4>
+<h4 style="float:left">Fast Factor Operations</h4>
 - Factor multiplication
 - Factor reduction (sum out variables)
 - Convert to/from log space
 - Normalize
 
-<h4>Approximate Marginal Inference</h4>
+<h4 style="float:right">Approximate Marginal Inference</h4>
 - Loopy Belief Propagation
 - Forward Sampling
 - Gibbs Sampliing
