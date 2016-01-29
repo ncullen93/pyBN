@@ -35,12 +35,21 @@ so fast and efficient in pyBN.
 |				|				| Normalize 			|
 
 <h4>Inference</h4>
-| Exact Marginal   | Approximate Marginal   | Exact MAP |
+| Exact Marginal Inference  | Approximate Marginal Inference  | Exact MAP Inference |
 | ------------- | ------------- | ----------------- |
 | Sum-Product Variable Elimination   | Forward Sampling    | Max-Sum Variable Elimination   |
-| Clique Tree Message Passing  | Likelihood Weighted Sampling     |     |
-|				|				| Gibbs (MCMC) Sampling |
+| Clique Tree Message Passing  | Likelihood Weighted Sampling     |     
+|				|				| Gibbs (MCMC) Sampling 			|
 |				|				| Loopy Belief Propagation			|
+
+<h4>Learning</h4>
+| Structure Learning   | Parameter Learning   | Independence Tests |
+| ------------- | ------------- | ----------------- |
+| Path Condition (PC) Algorithm   | Maximum Likelihood Estimation     | Marginal Mutual Information (KL-Divergence)    |
+| Grow-Shrink (GS) Algorithm   | Bayesian Estimation     | Conditional Mutual Information (Cross Entropy)     |
+| Chow-Liu Tree Algorithm			|				| Pearsion Chi-Square|
+| Naive Bayes				|				| 			|
+
 
 <h4 style="float:left">Reading BNs</h4>
 - Bif format
