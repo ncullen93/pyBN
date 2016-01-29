@@ -47,6 +47,7 @@ import numba
 import time
 import pdb
 from collections import OrderedDict
+from pyBN.independence.class_equivalence import are_class_equivalent
 
 
 class BayesNet(object):
@@ -92,15 +93,7 @@ class BayesNet(object):
         node/edge structure, and equality of
         conditional probabilities.
         """
-        _equal=True
-        if set(self.V) != set(y.V):
-             _equal=False
-        else:
-            for rv in self.nodes():
-                if set(self.E[rv])!=set(y.E[rv]):
-                    _equal=False
-                    break
-        return _equal
+        return are_class_equivalent(self, y)
 
     def __hash__(self):
         """

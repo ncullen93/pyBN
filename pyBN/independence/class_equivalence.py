@@ -13,7 +13,7 @@ equivalent Bayesian networks from a given BN.
 
 """
 
-def are_equivalent(x,y):
+def are_class_equivalent(x,y):
 	are_equivalent = True
 
 	if set(list(x.nodes())) != set(list(y.nodes())):
@@ -22,7 +22,7 @@ def are_equivalent(x,y):
 		for rv in x.nodes():
 			rv_x_neighbors = set(x.parents(rv)) + set(y.children(rv))
 			rv_y_neighbors = set(y.parents(rv)) + set(y.children(rv))
-			if rv_x_neighbors != rv_y_neihbors:
+			if rv_x_neighbors != rv_y_neighbors:
 				are_equivalent =  False
 				break
 	return are_equivalent
