@@ -26,6 +26,7 @@ so fast and efficient in pyBN.
 
 <h2>Current features:</h2>
 
+<h4>FileIO and Operations</h4>
 | Reading BNS   | Drawing BNs   | Factor Operations |
 | ------------- | ------------- | ----------------- |
 | BIF format    | Graphviz Engine     | Factor Multiplication    |
@@ -33,6 +34,13 @@ so fast and efficient in pyBN.
 |				|				| Convert to/from log space |
 |				|				| Normalize 			|
 
+<h4>Inference</h4>
+| Exact Marginal   | Approximate Marginal   | Exact MAP |
+| ------------- | ------------- | ----------------- |
+| Sum-Product Variable Elimination   | Forward Sampling    | Max-Sum Variable Elimination   |
+| Clique Tree Message Passing  | Likelihood Weighted Sampling     |     |
+|				|				| Gibbs (MCMC) Sampling |
+|				|				| Loopy Belief Propagation			|
 
 <h4 style="float:left">Reading BNs</h4>
 - Bif format
