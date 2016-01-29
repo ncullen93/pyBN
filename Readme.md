@@ -26,6 +26,12 @@ so fast and efficient in pyBN.
 
 <h2>Current features:</h2>
 
+| Reading BNS   | Drawing BNs   | Factor Operations |
+| ------------- | ------------- | ----------------- |
+| BIF format    | Graphviz      | Multiplication    |
+| JSON format   | Networkx      | Reduction         |
+
+
 <h4 style="float:left">Reading BNs</h4>
 - Bif format
 - Json format
