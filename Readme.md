@@ -28,7 +28,7 @@ so fast and efficient in pyBN.
 
 | Reading BNS   | Drawing BNs   | Factor Operations |
 | ------------- | ------------- | ----------------- |
-| BIF format    | Graphviz      | Multiplication    |
+| BIF format    | Graphviz Engine     | Multiplication    |
 | JSON format   | Networkx      | Reduction         |
 
 
