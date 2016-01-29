@@ -28,8 +28,10 @@ so fast and efficient in pyBN.
 
 | Reading BNS   | Drawing BNs   | Factor Operations |
 | ------------- | ------------- | ----------------- |
-| BIF format    | Graphviz Engine     | Multiplication    |
-| JSON format   | Networkx      | Reduction         |
+| BIF format    | Graphviz Engine     | Factor Multiplication    |
+| JSON format   | Networkx      | Factor Reduction     |
+|				|				| Convert to/from log space |
+|				|				| Normalize 			|
 
 
 <h4 style="float:left">Reading BNs</h4>
