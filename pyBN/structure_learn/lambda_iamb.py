@@ -33,7 +33,7 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 
 	*L* : a float
 		The lambda hyperparameter - see [1].
-		
+
 	*alpha* : a float
 		The type II error rate.
 
@@ -71,10 +71,9 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 				cols = (T,X)+tuple(Mb(T))
 				ent_val = entropy(data[:,cols])
 				if ent_val < min_val:
-					min_val2 = min_val1
-					min_val1 = ent_val
-					min_x2 = min_x1
-					min_x1 = X
+					min_val2, min_val1 = min_val1, ent_val
+					min_x2,min_x1 = min_x1, X
+					
 			# if min_x1 is dependent on T given Mb(T)...
 			cols = (min_x1,T) + tuple(Mb(T))
 			if are_independent(data[:,cols]):
