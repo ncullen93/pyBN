@@ -24,7 +24,6 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
-import json
 import copy
 import numpy as np
 
@@ -145,16 +144,14 @@ def map_opt_e(bn, evidence={}):
 			assert isinstance(evidence, dict), 'Evidence must be in dictionary form'
 
 	model = LpProblem("MAP Inference",LpMinimize)
-
-	node_var_dict=dict([(rv,[]) for rv in bn.nodes()])
-	node_weight_dict = dict([(rv,[]) for rv in bn.nodes()])
-
-	for node_idx,node in enumerate(bn.nodes()):
+	var_dict = {} # maps variable string name to actual variable
+	var_list = []
+	for node in bn.nodes():
 		for cpt_idx,cpt_val in enumerate(bn.cpt(node)):
-			new_var = LpVariable(str(str(node_idx)+'-'+str(cpt_idx)),0,1,LpInteger)
+			new_var = LpVariable(str(str(node)+'-'+str(cpt_idx)),0,1,LpInteger)
 			var_list.append(new_var)
+			var_dict[str(str(node)+'-'+str(cpt_idx))] = new_var
 			node_var_dict[node].append(new_var)
-			node_weight_dict[node].append(-np.log(cpt_val))
 			weight_list.append(-np.log(cpt_val))
 
 	model += np.dot(weight_list,var_list) # minimizes -1*var*probability
@@ -167,22 +164,35 @@ def map_opt_e(bn, evidence={}):
 		model += np.sum(cell) == 1, "Factor Sum Constraint" + str(k)
 		k+=1
 
+	factor_dict = dict([(rv, Factor(bn,rv)) for rv in bn.nodes()])
 	# constraint set 2
 	# intersection of factors must agree
-	
+	for rv1 in bn.nodes():
+		for rv2 in bn.children(rv):
+			f_rv1 = factor_dict[rv1]
+			f_rv2 = factor_dict[rv2]
+			# get their intersection
+			#intersection_vars = set(bn.scope(rv1)) & set(bn.scope(rv2))
+			#for var in intersection_vars:
+			for value in bn.values(rv1):
+				# get indices of var-value in f_rv1
+				f_rv1_indices = f_rv1.value_indices(rv1,value)
+				# get indices of var-value in f_rv2
+				f_rv2_indices = f_rv2.value_indices(rv2,value)
+				# get the associated model variables for f_rv1
+				f_rv1_vars = [var_dict[str(str(rv1)+'-'+str(idx))] for idx in f_rv1_indices]
+				f_rv2_vars = [var_dict[str(str(rv2)+'-'+str(idx))] for idx in f_rv2_indices]
+				# create constraint that they must sum to the same thing
+				model+= np.sum(f_rv1_vars)-np.sum(f_rv2_vars) == 0, 'Factor Agreement Constraint' + str(k)
+			k+=1
 
 
 	#add constraint set 3
 	#all evidence variables set = 1
-	if evidence:
-		for k,v in evidence.items():
-			ev = str(k)+'='+str(v)
-			model += name_var_dict[ev] == 1, 'Evidence Constraint' + str(k)
-			k+=1
 			
 	model.solve()
 	max_inference = dict([(v.name,v.varValue) for v in model.variables() if v.varValue == 1])
-
+   	return max_inference
 
 	
 

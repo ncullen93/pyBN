@@ -40,15 +40,10 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 import networkx as nx
-import pandas as pd
 from itertools import product
 import copy
-import numba
-import time
-import pdb
-from collections import OrderedDict
 from pyBN.independence.class_equivalence import are_class_equivalent
-
+from pyBN.utils.topsort import topsort
 
 class BayesNet(object):
     """
@@ -118,7 +113,7 @@ class BayesNet(object):
         self.V = topsort(self.E)
 
     def set_data(self, rv, data):
-        assert (isistance(data, dict)), 'data must be dictionary'
+        assert (isinstance(data, dict)), 'data must be dictionary'
         self.F[rv] = data
 
     def set_cpt(self, rv, cpt):
@@ -203,7 +198,7 @@ class BayesNet(object):
         Return all cpt values in the BN as a flattened
         numpy array ordered by bn.nodes() - i.e. topsort
         """
-        cpt = np.array([val for val in self.cpt(rv) for rv in self.nodes()])
+        cpt = np.array([val for rv in self.nodes() for val in self.cpt(rv)])
         return cpt
 
     def set_structure(self, edge_dict, value_dict):
@@ -250,18 +245,6 @@ class BayesNet(object):
                 'cpt': [],
                 'values': value_dict[rv]
             }
-
-
-
-    def set_values(self, value_dict):
-        """
-        Arguments
-        ---------
-        *value_dict* : a dictionary,
-            where key = rv, and
-            value = list of rv's values
-        """
-        pass
 
     ###################### UTILITY METHODS ##############################
     def get_adj_list(self):

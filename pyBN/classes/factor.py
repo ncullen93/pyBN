@@ -173,6 +173,7 @@ class Factor(object):
         for rv in self.scope:
             if rv != self.var:
                 yield rv
+                
     def values(self, rv):
         return self.bn.values(rv)
 
@@ -186,11 +187,10 @@ class Factor(object):
         value_idx = self.bn.value_idx(rv,value)
 
         value_indices = []
-        idx=rv_stride*value_idx
-        value_indices.append(idx)          
+        idx=rv_stride*value_idx         
         while idx < len(self.cpt):
+            value_indices.extend(range(idx,idx+rv_stride))
             idx+=rv_card*rv_stride
-            value_indices.append(idx)
         return value_indices
 
 
