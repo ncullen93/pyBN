@@ -246,7 +246,7 @@ def mi_from_en(data):
 	ncols = data.shape[1]
 
 	if ncols > 3:
-		print "mi_from_en is not validated for 4 variables.. Consider 'mi_test' instead"
+		print "mi_from_en is not validated for 4 vars. Consider mi_test instead"
 
 	if ncols==2:
 		MI = entropy(data[:,0]) - entropy(data)

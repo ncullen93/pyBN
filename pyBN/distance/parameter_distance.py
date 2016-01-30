@@ -77,7 +77,7 @@ def minkowski(x,y,p=1.5):
 	distance = np.sum( ( x.flat_cpt() - y.flat_cpt() )**2 )**( 1/p )
 	return distance
 
-def kl_divergence(x,y, both=False):
+def kl_divergence(x,y):
 	"""
 	KL-Divergence is a well-known metric, although
 	it is not technically a valid distance measure
