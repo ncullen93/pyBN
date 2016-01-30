@@ -29,6 +29,8 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 | Grow-Shrink (GS) Algorithm   | Bayesian Estimation     | Conditional Mutual Information (Cross Entropy)     |
 | Chow-Liu Tree Algorithm			|				| Pearsion Chi-Square|
 | Naive Bayes				|				| 			|
+| IAMB Algorithm			|				|			|
+| Lambda-IAMB Algorithm		|				|			|
 
 <h4>Classification</h4>
 | Supervised  |
