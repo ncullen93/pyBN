@@ -14,6 +14,10 @@ equivalent Bayesian networks from a given BN.
 """
 
 def are_class_equivalent(x,y):
+	"""
+	Check whether two Bayesian networks belong
+	to the same equivalence class.
+	"""
 	are_equivalent = True
 
 	if set(list(x.nodes())) != set(list(y.nodes())):

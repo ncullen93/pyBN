@@ -8,7 +8,11 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 def markov_blanket(bn):
 	"""
-	A markov blanket is a node's parents, children, and 
+	Return the Markov Blanket dictionary from a fully
+	(structurally) instantiated BayesNet object.
+
+	The markov blanket for a given node is just
+	the node's parents, children, and 
 	its children's parents (i.e. spouses)
 
 	Arguments
@@ -32,11 +36,13 @@ def markov_blanket(bn):
 
 def resolve_markov_blanket(Mb, data):
 	"""
-	Resolves Markov blanket by returning
-	a directed graph - this is actually a PDAG,
-	so the edges still need to be oriented by calling
-	some version of the "orient_edges" function in
-	pyBN.structure_learn.orient_edges module.
+	Resolving the Markov blanket is the process
+	by which a PDAG is constructed from the collection
+	of Markov Blankets for each node. Since an
+	undirected graph is returned, the edges still need to 
+	be oriented by calling some version of the 
+	"orient_edges" function in "pyBN.structure_learn.orient_edges" 
+	module.
 
 	This algorithm is adapted from Margaritis.
 
