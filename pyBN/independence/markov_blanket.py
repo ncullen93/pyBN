@@ -2,6 +2,13 @@
 **************
 Markov Blanket
 **************
+
+References
+----------
+[1] Koller and Sahami, "Toward Optimal Feature Selection."
+[2] Yaramakala and Margaritis, "Speculative Markov Blanket Discovery 
+for Optimal Feature Selection"
+
 """
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
@@ -97,6 +104,25 @@ def resolve_markov_blanket(Mb, data):
 					edge_dict[Y].append(X)
 	return edge_dict
 
+def mb_fitness(data, Mb):
+	"""
+	Evaluate the fitness of a Markov Blanket dictionary
+	learned from a given data set based on the heuristic
+	provided in [1] and [2].
+
+	From [2]:
+		A distance measure that indicates the “fitness” 
+		of the discovered blanket... the average, over all attributes
+		X outside the blanket, of the expected KL-divergence between
+		Pr(T | B(T)) and Pr(T | B(T) u {X}). We can expect this 
+		measure to be close to zero when B(T) is an approximate
+		blanket. -- 
+		My Note: T is the target variable, and if the KL-divergence
+		between the two distributions above is zero, then it means that
+		{X} provides no new information about T and can thus be excluded
+		from Mb(T) -- this is the exact definition of conditional independence.
+	"""
+	pass
 
 
 

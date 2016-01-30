@@ -7,7 +7,7 @@ LEARNING ALGORITHM
 """
 
 import numpy as np
-from pyBN.independence.independence_tests import mi_test
+from pyBN.independence.independence_tests import are_independent
 
 def iamb(data, alpha=0.05):
 	"""
@@ -57,13 +57,13 @@ def iamb(data, alpha=0.05):
 			max_x = None
 			for X in V - Mb(T) - {T}:
 				cols = (X,T)+tuple(Mb(T))
-				mi_val = mi_test(data[:,cols])
+				mi_val = mi_test(data[:,cols],test=False)
 				if mi_val > max_val:
 					max_val = mi_val
 					max_x = X
 			# if Xmax is dependent on T given Mb(T)
 			cols = (max_x,T) + tuple(Mb(T))
-			if mi_test(data[:,cols]) < alpha:
+			if are_independent(data[:,cols]):
 				Mb(T).add(X)
 				Mb_change = True
 
@@ -71,7 +71,7 @@ def iamb(data, alpha=0.05):
 		for X in Mb(T):
 			# if x is indepdent of t given Mb(T) - {x}
 			cols = (X,T) + tuple(Mb(T)-{X})
-			if mi_test(data[:,cols]) > alpha:
+			if are_independent(data[:,cols],alpha)
 				Mb(T).remove(X)
 
 	# RESOLVE GRAPH STRUCTURE
