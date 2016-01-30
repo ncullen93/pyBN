@@ -31,12 +31,9 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 	---------
 	*data* : a nested numpy array
 
-	*dag* : a boolean
-		Whether to return a Directed graph
-
-	*pdag* : a boolean
-		Whether to return a Partially Directed Graph.
-
+	*L* : a float
+		The lambda hyperparameter - see [1].
+		
 	*alpha* : a float
 		The type II error rate.
 
