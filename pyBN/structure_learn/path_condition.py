@@ -47,7 +47,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import itertools
 import numpy as np
 
-from pyBN.independence.constraint_tests import mi_test
+from pyBN.independence.independence_tests import mi_test
 from pyBN.classes import BayesNet
 from pyBN.structure_learn.orient_edges import orient_edges_pc
 from numba import jit

@@ -3,6 +3,7 @@ Lambda IAMB Code
 """
 
 
+
 def lamba_iamb(data, alpha=0.05):
 	"""
 	Lambda IAMB Algorithm for learning the structure of a
@@ -10,9 +11,16 @@ def lamba_iamb(data, alpha=0.05):
 	is similar to the iamb algorithm, except that it allows
 	for a "lambda" coefficient that helps avoid false positives.
 
-	In practice, this algorithm does just as well in most
-	classification tasks compare to IAMB, but actually
-	does much better when traditional IAMB does very poorly.
+	This algorithm was originally developed for use as a
+	feature selection algorithm - discovering the markov
+	blanket of a target variable is equivalent to discovering
+	the relevant features for classifications.
+
+	In practice, this algorithm does just as well as a feature
+	selection method compared to IAMB when naive bayes was 
+	used as a classifier, but Lambda-iamb actually does much
+	better than traditional iamb when traditional iamb does
+	very poorly due to high false positive rates.
 
 	Arguments
 	---------

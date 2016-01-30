@@ -7,7 +7,7 @@ LEARNING ALGORITHM
 """
 
 import numpy as np
-from pyBN.independence.constraint_tests import mi_test
+from pyBN.independence.independence_tests import mi_test
 
 def iamb(data, alpha=0.05):
 	"""
