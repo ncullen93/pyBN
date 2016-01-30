@@ -1,10 +1,15 @@
 """
 Lambda IAMB Code
+
+References
+----------
+[1] Zhang et al, "An Improved IAMB Algorithm for Markov
+Blanket Discovery"
 """
 
+from pyBN.independence.independence_tests import are_independent, entropy
 
-
-def lamba_iamb(data, alpha=0.05):
+def lamba_iamb(data, L=1.5, alpha=0.05):
 	"""
 	Lambda IAMB Algorithm for learning the structure of a
 	Discrete Bayesian Network from data. This Algorithm
@@ -58,20 +63,31 @@ def lamba_iamb(data, alpha=0.05):
 		# GROWING PHASE
 		while Mb_change:
 			Mb_change = False
-			# find X_max in V-Mb(T)-{T} that maximizes 
-			# mutual information of X,T|Mb(T)
+			cols = (T) + tuple(Mb(T))
+			H_tmb = entropy(data[:,cols])
+			# find X1_min in V-Mb(T)-{T} that minimizes
+			# entropy of T|X1_inMb(T)
 			# i.e. max of mi_test(data[:,(X,T,Mb(T))])
-			max_val = -1
-			max_x = None
+			min_val1, min_val2 = 1e7,1e7
+			min_x1, min_x2 = None, None
 			for X in V - Mb(T) - {T}:
-				cols = (X,T)+tuple(Mb(T))
-				mi_val = mi_test(data[:,cols])
-				if mi_val > max_val:
-					max_val = mi_val
-					max_x = X
-			# if Xmax is dependent on T given Mb(T)
-			cols = (max_x,T) + tuple(Mb(T))
-			if mi_test(data[:,cols]) < alpha:
+				cols = (T,X)+tuple(Mb(T))
+				ent_val = entropy(data[:,cols])
+				if ent_val < min_val:
+					min_val2 = min_val1
+					min_val1 = ent_val
+					min_x2 = min_x1
+					min_x1 = X
+			# if min_x1 is dependent on T given Mb(T)
+			cols = (min_x1,T) + tuple(Mb(T))
+			if are_independent(data[:,cols]):
+				if (min_val2 - L*min_val1) < ((1-L)*H_tmb):
+					cols = (min_x2,T)+tuple(Mb(T))
+					if are_independent(data[:,cols]):
+						Mb(T).add(min_x1)
+						Mb(T).add(min_x2)
+						Mb_change = True
+			else:
 				Mb(T).add(X)
 				Mb_change = True
 
@@ -94,3 +110,11 @@ def lamba_iamb(data, alpha=0.05):
 	bn=BayesNet(oriented_edge_dict,value_dict)
 
 	return edge_dict
+
+
+
+
+
+
+
+

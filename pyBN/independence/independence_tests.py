@@ -21,6 +21,12 @@ import numpy as np
 #import pandas as pd
 from scipy import stats
 
+def are_independent(data, method='mi_test',alpha=0.05):
+	pval = mi_test(data)
+	if pval < alpha:
+		return True
+	else:
+		return False
 
 def mi_test(data, test=True):
 	"""
@@ -224,7 +230,9 @@ def mi_from_en(data):
 	function isn't really faster than calculating MI from
 	"mi_test" due to overhead in the histogram/binning from
 	numpy, but it's mostly here for entropy validation or
-	if "mi_test" breaks.
+	if "mi_test" breaks. BUT, calling "entropy" once is much
+	faster than calling "mi_test" once, so that is where the
+	speedup occurs.
 
 	This has been validated with both 2 and 3 variables. For
 	4 variables, it does not seem to return the correct 
