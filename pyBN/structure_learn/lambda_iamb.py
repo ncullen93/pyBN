@@ -63,11 +63,11 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 		# GROWING PHASE
 		while Mb_change:
 			Mb_change = False
-			cols = (T) + tuple(Mb(T))
+			cols = tuple({T}) + tuple(Mb(T))
 			H_tmb = entropy(data[:,cols])
 			# find X1_min in V-Mb(T)-{T} that minimizes
 			# entropy of T|X1_inMb(T)
-			# i.e. max of mi_test(data[:,(X,T,Mb(T))])
+			# i.e. min of entropy(data[:,(T,X,Mb(T))])
 			min_val1, min_val2 = 1e7,1e7
 			min_x1, min_x2 = None, None
 			for X in V - Mb(T) - {T}:
@@ -78,7 +78,7 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 					min_val1 = ent_val
 					min_x2 = min_x1
 					min_x1 = X
-			# if min_x1 is dependent on T given Mb(T)
+			# if min_x1 is dependent on T given Mb(T)...
 			cols = (min_x1,T) + tuple(Mb(T))
 			if are_independent(data[:,cols]):
 				if (min_val2 - L*min_val1) < ((1-L)*H_tmb):
