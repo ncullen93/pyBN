@@ -200,7 +200,8 @@ def entropy(data):
 
 		Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
 		Py = np.sum(Pxy, axis = 0) # P(Y)	
-
+		Py += 1e-7
+		Pxy += 1e-7
 		H = np.sum( Pxy * np.log( Py / Pxy ) )
 
 	else:
@@ -234,9 +235,7 @@ def mi_from_en(data):
 	faster than calling "mi_test" once, so that is where the
 	speedup occurs.
 
-	This has been validated with both 2 and 3 variables. For
-	4 variables, it does not seem to return the correct 
-	answer compared to "mi_test".
+	This has been validated with both 2, 3 and 4 variables.
 
 	Entropy is related to marginal mutual information as follows:
 			MI(X;Y) = H(X) - H(X|Y)
@@ -245,13 +244,26 @@ def mi_from_en(data):
 	"""
 	ncols = data.shape[1]
 
-	if ncols > 3:
-		print "mi_from_en is not validated for 4 vars. Consider mi_test instead"
+	if ncols == 1:
+		print "Need at least 2 columns"
 
-	if ncols==2:
+	elif ncols==2:
 		MI = entropy(data[:,0]) - entropy(data)
-	else:
+
+	elif ncols==3:
 		MI = entropy(data[:,(0,2)]) - entropy(data)
+
+	elif ncols>3:
+		# join extra columns
+		data = data.astype('str')
+		ncols = data.shape[1]
+		for i in xrange(len(data)):
+			data[i,2] = ''.join(data[i,2:ncols])
+		data = data.astype('int')[:,0:3]
+
+		MI = entropy(data[:,(0,2)]) - entropy(data)
+
+
 	return round(MI,4)
 
 
