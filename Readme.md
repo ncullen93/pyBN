@@ -10,7 +10,7 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 <h2>Current features:</h2>
 
 <h4>FileIO and Drawing</h4>
-| Reading BNS   | Drawing BNs   |
+| Reading BNs   | Drawing BNs   |
 | ------------- | ------------- | 
 | BIF format    | Graphviz Engine  |
 | JSON format   | Networkx      |
