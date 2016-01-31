@@ -46,7 +46,7 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | Tree-Augmented Naive Bayes   |  |
 
 <h4>Comparing Two Bayesian Networks</h4>
-| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  | Cl
+| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  | 
 | ------------- | ------------- | 
 | Missing Edges   | KL-Divergence and JS-Divergence|
 | Extra Edges  | Manhattan and Euclidean |
