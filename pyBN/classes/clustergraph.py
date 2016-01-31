@@ -22,37 +22,13 @@ from pyBN.classes.cliquetree import CliqueTree
 
 class ClusterGraph(object):
     """
-    Class for Cluster Graphs
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-
-    Notes
-    -----
+    ClusterGraph Class
 
     """
 
-    def __init__(self, bn, method=''):
+    def __init__(self, bn):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Initialize a ClusterGraph object
 
         """
         self.BN = BN
@@ -62,22 +38,9 @@ class ClusterGraph(object):
         self.initialize_graph(method)
         self.beliefs = {} # dict where key = cluster idx, value = belief cpt
 
-    def initialize_graph(self, method):
+    def initialize_graph(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Initialize the structure of the cluster graph.
 
         """
         # generate graph structure
@@ -90,21 +53,7 @@ class ClusterGraph(object):
 
     def bethe(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
+        Generate Bethe cluster graph structure.
         """
         self.V = {}
         self.E = []
@@ -144,22 +93,6 @@ class ClusterGraph(object):
 
     def initialize_messages(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
         For each edge (i-j) in the ClusterGraph,
         set delta_(i-j) = 1 and
         set delta_(j-i) = 1.
@@ -181,21 +114,6 @@ class ClusterGraph(object):
 
     def loopy_belief_propagation(self, target, evidence, max_iter=100):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
         
         This is Message Passing (Loopy Belief Propagation) over a cluster graph.
 
@@ -241,7 +159,3 @@ class ClusterGraph(object):
         print 'Now Collecting Beliefs..'
         self.collect_beliefs()
         self.BN.ctree = self
-
-
-    def is_calibrated(self):        
-        return False

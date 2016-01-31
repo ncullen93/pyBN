@@ -3,10 +3,14 @@
 CliqueTree Class
 ****************
 
-This is a class for creating/manipulating Clique Trees.
-
-It is a great candidate for Numba JIT compilation w.r.t
-functions and the class structure as a whole.
+This is a class for creating/manipulating Clique Trees, and
+performing inference over them. The advantage of clique trees
+over traditional variable elimination over the original Bayesian 
+network is that clique trees allow you to compute marginal
+probabilities of MULTIPLE variables without having to run the
+entire algorithm over. Therefore, if you have to query the Bayesian
+network many times, it might be best to use the clique tree data
+structure for inference.
 
 See Clique class
 
@@ -21,37 +25,22 @@ import pandas as pd
 import networkx as nx
 import copy
 
-from pyBN.classes.bayesnet import BayesNet
-from pyBN.classes.factor import Factor
+from pybn.classes.bayesnet import BayesNet
+from pybn.classes.factor import Factor
 
 class CliqueTree(object):
     """
-    Class for the Clique Tree
-
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-
-    Notes
-    -----
-
+    CliqueTree Class
 
     """
 
-    def __init__(self, bn, method=''):
+    def __init__(self, bn):
         """
-        Overview
-        --------
+        Instantiate a CliqueTree object.
 
-
-        Parameters
-        ----------
-
+        Arguments
+        ---------
+        *bn*: a BayesNet object
 
         Returns
         -------
@@ -65,39 +54,26 @@ class CliqueTree(object):
         than three nodes), then a CliqueTree is a tree H such that each
         maximal clique C in G is a node in H.
         """
-        self.BN = BN
+        self.bn = bn
         self.V = {} # key = cluster index, value = Clique objects
         self.E = []
         self.G=None # networkx graph
-        self.initialize_tree(method)
+        self.initialize_tree()
 
-    def initialize_tree(self, method):
+    def initialize_tree(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
+        Initialize the structure of a clique tree, using
+        the following steps:
+            - Moralize graph (i.e. marry parents)
+            - Triangulate graph (i.e. make graph chordal)
+            - Get max cliques (i.e. community/clique detection)
+            - Max spanning tree over sepset cardinality (i.e. create tree)
         
-        1. Moralize graph
-        2. Triangulate graph
-        3. Get max cliques
-        4. Max spanning tree over sepset cardinality
         """
         self.V = {}
         self.E  =[]
         # get chordal/triangulated graph
-        G = self.BN.get_chordal_nx()
+        G = self.bn.get_chordal_nx()
         # get max cliques from chordal
         max_cliques = reversed(list(nx.chordal_graph_cliques(G)))
         for clique in max_cliques:
@@ -123,23 +99,10 @@ class CliqueTree(object):
 
     def assign_factors(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        This clearly needs to be changed       
 
         """
-        factorization = Factorization(self.BN)
+        factorization = Factorization(self.bn)
         for f in factorization.f_list:
             assigned=False
             for v in self.V.values():
@@ -150,26 +113,33 @@ class CliqueTree(object):
 
     def message_passing(self, target=None, evidence=None, downward_pass=True):
         """
-        Overview
-        --------
+        Perform Message Passing (Belief Propagation) over a clique tree. This
+        includes an Upward Pass as shown in Koller p.353 along with
+        Downward Pass (Calibration) from Koller p.357 if target is list.
+
+        The result is a marginal distribution over the target rv(s).
 
 
-        Parameters
-        ----------
+        Arguments
+        ---------
+        *target* : a string or a list of strings
+            The variables for which the marginal probabilities
+            are to be computed.
 
+        *evidence* : a dictionary, where
+            key = rv and value = rv's instantiation
 
         Returns
         -------
+        None
 
+        Effects
+        -------
+        - Sends messages
 
         Notes
         -----
 
-        
-        This is Message Passing (Belief Propagation) over a clique tree.
-
-        It is Upward Pass as shown in Koller p.353 along with
-        Downward Pass (Calibration) from Koller p.357 if target is list
         """
         # 1: Moralize the graph
         # 2: Triangluate
@@ -209,6 +179,6 @@ class CliqueTree(object):
                 if len(tree_graph.successors(j)) == 0:                    
                     ctree.V[j].collect_beliefs()
 
-        self.BN.ctree = self
+        self.bn.ctree = self
 
         # beliefs hold the answers

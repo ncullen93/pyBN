@@ -5,9 +5,6 @@ Clique Class
 
 This is a class for creating/manipulating Cliques.
 
-It is a great candidate for Numba JIT compilation w.r.t
-functions and the class structure as a whole.
-
 See CliqueTree class
 
 """
@@ -18,38 +15,19 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 class Clique(object):
     """
-    Class for Cliques
-
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-
-    Notes
-    -----
-
+    Clique Class
     """
 
     def __init__(self, scope):
         """
-        Overview
-        --------
+        Instantiate a clique object
 
+        Arguments
+        ---------
+        *scope* : a python set
+            The set of variables in the cliques scope,
+            i.e. the main var and its parents
 
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
 
         """
         self.scope=scope
@@ -61,20 +39,12 @@ class Clique(object):
 
     def send_initial_message(self, other_clique):
         """
-        Overview
-        --------
+        Send the first message to another clique.
 
 
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Arguments
+        ---------
+        *other_clique* : a different Clique object
 
         """
         psi_copy = copy.copy(self.psi)
@@ -90,41 +60,21 @@ class Clique(object):
 
     def sepset(self, other_clique):
         """
-        Overview
-        --------
+        The sepset of two cliques is the set of
+        variables in the intersection of the two
+        cliques' scopes.
 
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
+        Arguments
+        ---------
+        *other_clique* : a Clique object
 
         """
         return self.scope.intersection(other_clique.scope)
 
     def compute_psi(self):
         """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Compute a new psi (cpt) in order to 
+        set the clique's belief.
 
         """
         if len(self.factors) == 0:
@@ -140,21 +90,13 @@ class Clique(object):
 
     def send_message(self, parent):
         """
-        Overview
-        --------
+        Send a message to the parent clique.
 
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
+        Arguments
+        ---------
+        *parent* : a string
+            The parent to which the message will
+            be sent.
 
         """
         # First generate Belief = Original_Psi * all received messages
@@ -175,42 +117,18 @@ class Clique(object):
 
     def marginalize_over(self, target):
         """
-        Overview
-        --------
+        Marginalize the cpt (belief) over a target variable.
 
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
+        Arguments
+        ---------
+        *target* : a string
+            The target random variable.
 
         """
         self.belief.sumout_var_list(list(self.scope.difference({target})))
 
     def collect_beliefs(self):
-        """
-        Overview
-        --------
-
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-
-        Notes
-        -----
-
-        
+        """        
         A root node (i.e. one that doesn't send a message) must run collect_beliefs
         since they are only collected at send_message()
 
