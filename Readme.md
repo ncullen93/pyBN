@@ -78,3 +78,7 @@ Getting up-and-running with this package is simple:
 4. In your python terminal, simply type "from pyBN import ". This will load all of the module's functions, classes, etc.
 5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
+<h4>Unit Tests</h4>
+If you want to test the functionality to make sure it all works on your local machine, navigate to the pybn-master directory and run the following command from the normal command-line (NOT ipython console):
+- python -m unittest discover
+
