@@ -38,11 +38,10 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 
 
 <h4>Classification</h4>
-| Supervised  |
-| ------------- |
-| Naive Bayes    |
-| Tree-Augmented Naive Bayes   | 
-| MAP Classification			|
+| Constrained (Tree) BNs  | General BNs
+| ------------- | --------- |
+| Naive Bayes    | MAP Inference Classification |
+| Tree-Augmented Naive Bayes   |  |
 
 <h4>Distance/Model Comparison Metrics</h4>
 | Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  |
