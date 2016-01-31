@@ -39,7 +39,6 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 import numpy as np
-import networkx as nx
 from itertools import product
 import copy
 from pyBN.utils.class_equivalence import are_class_equivalent
