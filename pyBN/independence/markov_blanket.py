@@ -8,6 +8,7 @@ References
 [1] Koller and Sahami, "Toward Optimal Feature Selection."
 [2] Yaramakala and Margaritis, "Speculative Markov Blanket Discovery 
 for Optimal Feature Selection"
+[3] Pellet and Elisseff, "Using Markov Blankets for Causal Structure Learning"
 
 """
 from __future__ import division
@@ -53,7 +54,8 @@ def resolve_markov_blanket(Mb, data):
 	"orient_edges" function in "pyBN.structure_learn.orient_edges" 
 	module.
 
-	This algorithm is adapted from Margaritis.
+	This algorithm is adapted from Margaritis, but also see [3]
+	for good pseudocode.
 
 	Arguments
 	---------

@@ -7,6 +7,8 @@ Structure Learning
 [1] Chickering. "Learning Equivalence Classes of Bayesian
 Network Structues"
 http://www.jmlr.org/papers/volume2/chickering02a/chickering02a.pdf
+
+[2] Pellet and Elisseff, "Using Markov Blankets for Causal Structure Learning"
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
@@ -16,12 +18,14 @@ from pyBN.independence.independence_tests import mi_test
 import itertools
 from copy import copy
 
-def orient_edges_Mb(edge_dict, Mb, data, alpha):
+def orient_edges_MB(edge_dict, Mb, data, alpha):
 	"""
 	Orient edges from a Markov Blanket based on the rules presented
 	in Margaritis' Thesis pg. 35. This method is used
 	for structure learning algorithms that return/resolve
 	a markov blanket - i.e. growshrink and iamb.
+
+	Also, see [2] for good full pseudocode.
 
 	# if there exists a variable Z in N(X)-N(Y)-{Y}
 	# such that Y and Z are dependent given S+{X} for
@@ -113,9 +117,14 @@ def orient_edges_gs2(edge_dict, Mb, data, alpha):
 					break
 	return d_edge_dict
 
-def orient_edges_pc(edge_dict, block_dict):
+def orient_edges_CS(edge_dict, block_dict):
 	"""
-	Orient edges produced from the Path Condition algorithm
+	Orient edges from Collider Sets. This is a little
+	different than orienting edges from a markov blanket.
+	The collider set-based algorithm is used for the 
+	Path-Condition (PC) algorithm.
+
+	See [2] for	good full pseudocode.
 
 	The orientation step will proceed by looking
 	for sets of three variables {X, Y,Z} such that
