@@ -23,6 +23,12 @@ In general, the junction tree algorithms generalize
 Variable Elimination to the efficient, simultaneous execution 
 of a large class of queries.
 
+NOTE: A cluster graph is a generalization of the clique tree
+data structure - to generate a clique tree, you first generate
+a cluster graph, then simply calculate a maximum spanning tree.
+In other words, a clique tree can be considered as a special
+type of cluster graph.
+
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
@@ -36,6 +42,10 @@ import copy
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
+
+from pyBN.utils.mst import minimum_spanning_tree
+
+
 
 class CliqueTree(object):
     """
@@ -67,7 +77,7 @@ class CliqueTree(object):
         
         """
         self.bn = bn
-        self.initialize_tree()
+        self.V,self.E,self.C = self.initiaize_tree()
 
     def initialize_tree(self):
         """
@@ -79,33 +89,37 @@ class CliqueTree(object):
             - Max spanning tree over sepset cardinality (i.e. create tree)
         
         """
-        self.V = {}
-        self.E  =[]
+        #self.V = []
+        #self.E = dict
+        C = {} # key = vertex, value = clique object
+
         # get chordal/triangulated graph
-        G = chordal_bn(self.bn)
-        #G = self.bn.get_chordal_nx()
-        # get max cliques from chordal
+        G = chordal_bn(bn)
+
+        # get max cliques from chordal graph
         max_cliques = reversed(list(nx.chordal_graph_cliques(G)))
-        for clique in max_cliques:
-            self.V[len(self.V)] = Clique(set(clique))
+        for v_idx,clique in enumerate(max_cliques):
+            C[v_idx] = Clique(set(clique))
+
         # find edges used maximum spanning tree
-        new_e_list = []
-        for i in range(len(self.V)):
-            for j in range(len(self.V)):
-                if i!=j:
-                    intersect_cardinality = len(self.V[i].sepset(self.V[j]))
-                    new_edge = (i,j,-1*intersect_cardinality)
-                    new_e_list.append(new_edge)
+        weighted_edge_dict = dict([(rv,dict) for rv in V])
+        for i in range(V-1):
+            for j in range(i+1,V):
+                    intersect_cardinality = len(C[i].sepset(C[j]))
+                    weighted_edge_dict[i][j] = -1*intersect_cardinality
+        
+        mst_G = minimum_spanning_tree(weighted_edge_dict)
 
-        new_G = nx.Graph()
-        new_G.add_weighted_edges_from(new_e_list)
-        mst_G = nx.minimum_spanning_tree(new_G)
-        self.E = mst_G.edges(data=False)
-        self.G = mst_G
+        # set E, V
+        self.E = mst_G # dictionary
+        self.V = mst_G.keys() # list
 
+        # set C - key = rv, value = clique object
         self.assign_factors()
         for clique in self.V.values():
             clique.compute_psi()
+
+        return V, E, C
 
     def assign_factors(self):
         """

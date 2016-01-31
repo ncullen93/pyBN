@@ -9,6 +9,12 @@ supported algorithm is Loopy Belief Propagation. Still,
 the class structure is in place for easy addition of
 any algorithms relying on the Cluster Graph framework.
 
+NOTE: A cluster graph is a generalization of the clique tree
+data structure - to generate a clique tree, you first generate
+a cluster graph, then simply calculate a maximum spanning tree.
+In other words, a clique tree can be considered as a special
+type of cluster graph.
+
 """
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
