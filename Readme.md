@@ -45,19 +45,25 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | Naive Bayes    | MAP Inference Classification |
 | Tree-Augmented Naive Bayes   |  |
 
-<h4>Distance/Model Comparison Metrics</h4>
-| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  |
+<h4>Comparing Two Bayesian Networks</h4>
+| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  | Cl
 | ------------- | ------------- | 
 | Missing Edges   | KL-Divergence and JS-Divergence|
 | Extra Edges  | Manhattan and Euclidean |
 | Incorrect Edge Orientation				|Hellinger				| 
 |	Hamming Distance			|		Minkowski	| 
 
-<h4>Other</h4>
-|Utility|
-| ----- |
-|Discretize Continuous Data |
-|Markov Blanket Feature Selection |
+<h4>Utility Functionality</h4>
+| BN Utility | Other |
+| ---------- | ----- |
+| 	Determine Class Equivalence| Discretize continuous data  |
+| Orient a PDAG from Markov Blanket or Block Set | Generate random sample dataset from a BN |
+| Elimination Ordering Heuristics | Topological Sort Algorithm |
+| Get Markov Blanket of a BN | Minimum Spanning Tree Algorithm |
+| Markov Blanket Fitness Metric |
+| Make a Chordal or Moral BN |
+
+
 
 <h2>Examples</h2>
 This package includes a number of examples to help users get acquainted with the intuitive syntax and functionality of pyBN. For an updated list of examples, check out the collection of ipython notebooks in the "examples" folder located in the master directory.
