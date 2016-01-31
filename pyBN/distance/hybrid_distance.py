@@ -19,5 +19,10 @@ such that maximum (or minimum) closeness is achieved.
 
 """
 
-def hybrid_distance(x,y, structure_metric, parameter_metric):
-	pass
+def hybrid_distance(x,y, alpha, s='hamming', p='euclidean'):
+	structure_score = hamming(x,y)
+	parameter_score = euclidean(x,y)
+
+	hybrid_score = structure_score*alpha + parameter_score*(1-alpha)
+
+	return hybrid_score
