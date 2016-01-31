@@ -22,16 +22,20 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 |				|		Gibbs (MCMC) Sampling 		| 			|
 |				|		Loopy Belief Propagation			| 		|
 
-<h4>Learning</h4>
-| Structure Learning   | Parameter Learning   | Independence Tests |
+<h4>Structure Learning</h4>
+| Constraint-Based  | Tree-Based | Independence Tests |
 | ------------- | ------------- | ----------------- |
-| Path Condition (PC) Algorithm   | Maximum Likelihood Estimation     | Marginal Mutual Information (KL-Divergence)    |
-| Grow-Shrink (GS) Algorithm   | Bayesian Estimation     | Conditional Mutual Information (Cross Entropy)     |
-| Chow-Liu Tree Algorithm			|				| Pearsion Chi-Square|
-| Naive Bayes				|				| 			|
-| IAMB Algorithm			|				|			|
-| Lambda-IAMB Algorithm		|				|			|
-| Fast-IAMB Algorithm		|				|			|
+| Path Condition (PC) Algorithm   | Naive Bayes   | Marginal Mutual Information (KL-Divergence)    |
+| Grow-Shrink (GS) Algorithm   | Tree-Augmented Naive Bayes    | Conditional Mutual Information (Cross Entropy)     |
+| 	IAMB Algorithm		|		Chow-Liu Algorithm		| Pearsion Chi-Square|
+| 	Lambda-IAMB Algorithm		|				| 			|
+| 	Fast-IAMB Algorithm		|				|			|
+
+<h4>Parameter Learning</h4>
+| Frequentist | Bayesian |
+| ----------- | -------- |
+| Maximum Likelihood Estimation | Dirichlet-Multinomial Estimation |
+
 
 <h4>Classification</h4>
 | Supervised  |
