@@ -38,7 +38,7 @@ from __future__ import division
 import numpy as np
 from pyBN.utils.independence_tests import are_independent, mi_test
 
-def fast_iamb(data, k=5, alpha=0.05):
+def fast_iamb(data, k=5, alpha=0.05, fs=None):
 	"""
 	From [1]:
 		"A novel algorithm for the induction of
@@ -71,8 +71,14 @@ def fast_iamb(data, k=5, alpha=0.05):
 	n_rv = data.shape[1]
 	N = data.shape[0]
 	card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
+
+	if fs is None:
+		_T = range(n_rv)
+	else:
+		assert (not isinstance(fs, list)), 'fs must be only one value'
+		_T = [fs]
 	# LEARN MARKOV BLANKET
-	for T in xrange(n_rv):
+	for T in _T:
 		S = set(range(n_rv)) - {T}
 		for A in S:
 			if not are_independent(data[:,(A,T)]):
@@ -112,7 +118,22 @@ def fast_iamb(data, k=5, alpha=0.05):
 					cols = (A,T) + tuple(Mb[T])
 					if are_independent(data[:,cols]):
 						S.add(a)
-	return Mb
+	
+	if fs is None:
+		# RESOLVE GRAPH STRUCTURE
+		edge_dict = resolve_markov_blanket(Mb, data)
+
+		# ORIENT EDGES
+		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
+
+		# CREATE BAYESNET OBJECT
+		value_dict = dict(zip(range(data.shape[1]),
+			[list(np.unique(col)) for col in data.T]))
+		bn=BayesNet(oriented_edge_dict,value_dict)
+
+		return BN
+	else:
+		return Mb[_T]
 
 
 

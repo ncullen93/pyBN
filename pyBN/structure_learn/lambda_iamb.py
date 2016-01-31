@@ -52,8 +52,14 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 	Mb = dict([(rv,{}) for rv in range(n_rv)])
 	n_rv = data.shape[1]
 
+	if fs is None:
+		_T = range(n_rv)
+	else:
+		assert (not isinstance(fs, list)), 'fs must be only one value'
+		_T = [fs]
+
 	# LEARN MARKOV BLANKET
-	for T in xrange(n_rv):
+	for T in _T:
 
 		V = set(range(n_rv)) - {T}
 		Mb_change=True
@@ -95,18 +101,21 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 			if mi_test(data[:,cols]) > alpha:
 				Mb(T).remove(X)
 
-	# RESOLVE GRAPH STRUCTURE
-	edge_dict = resolve_markov_blanket(Mb, data)
+	if fs is None:
+		# RESOLVE GRAPH STRUCTURE
+		edge_dict = resolve_markov_blanket(Mb, data)
 
-	# ORIENT EDGES
-	oriented_edge_dict = orient_edges_Mb(edge_dict,Mb,data,alpha)
+		# ORIENT EDGES
+		oriented_edge_dict = orient_edges_Mb(edge_dict,Mb,data,alpha)
 
-	# CREATE BAYESNET OBJECT
-	value_dict = dict(zip(range(data.shape[1]),
-		[list(np.unique(col)) for col in data.T]))
-	bn=BayesNet(oriented_edge_dict,value_dict)
+		# CREATE BAYESNET OBJECT
+		value_dict = dict(zip(range(data.shape[1]),
+			[list(np.unique(col)) for col in data.T]))
+		bn=BayesNet(oriented_edge_dict,value_dict)
 
-	return edge_dict
+		return bn
+	else:
+		return Mb[_T]
 
 
 

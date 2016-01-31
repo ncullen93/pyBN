@@ -44,7 +44,7 @@ from copy import copy
 import numpy as np
 import itertools
 
-def gs(data, alpha=0.05):
+def gs(data, alpha=0.05, fs=None):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
@@ -85,10 +85,16 @@ def gs(data, alpha=0.05):
 		[list(np.unique(col)) for col in data.T]))
 	n_rv = data.shape[1]
 
+	if fs is None:
+		_T = range(n_rv)
+	else:
+		assert (not isinstance(fs, list)), 'fs must be only one value'
+		_T = [fs]
+
 	# STEP 1 : COMPUTE MARKOV BLANKETS
 	Mb = dict([(rv,[]) for rv in range(n_rv)])
 
-	for X in range(n_rv):
+	for X in _T:
 		S = []
 
 		grow_condition = True
@@ -123,18 +129,21 @@ def gs(data, alpha=0.05):
 					shrink_condition=True
 		
 		Mb[X] = TEMP_S
+	
+	if fs is None:
+		# STEP 2: COMPUTE GRAPH STRUCTURE
+		# i.e. Resolve Markov Blanket
+		edge_dict = resolve_markov_blanket(Mb,data)
 		
-	# STEP 2: COMPUTE GRAPH STRUCTURE
-	# i.e. Resolve Markov Blanket
-	edge_dict = resolve_markov_blanket(Mb,data)
-	
-	# STEP 3: ORIENT EDGES
-	oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
+		# STEP 3: ORIENT EDGES
+		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
 
-	# CREATE BAYESNET OBJECT
-	bn=BayesNet(oriented_edge_dict,value_dict)
-	
-	return bn
+		# CREATE BAYESNET OBJECT
+		bn=BayesNet(oriented_edge_dict,value_dict)
+		
+		return bn
+	else:
+		return Mb[_T]
 
 
 

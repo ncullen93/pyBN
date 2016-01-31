@@ -51,7 +51,6 @@ def fs_gambit(data, target):
 		- iamb
 		- fast_iamb
 		- lambda_iamb
-		- pc (path-condition)
 		- gs (grow-shrink)
 		
 	Arguments
@@ -79,16 +78,15 @@ def fs_gambit(data, target):
 	None
 
 	"""
-	algorithms = ['iamb', 'fast_iamb', 
-				'lambda_iamb', 'pc', 'gs']
+	algorithms = ['iamb', 'fast_iamb', 'lambda_iamb', 'gs']
 	fs_gambit = {}
 
 	for algo in algorithms:
-		fs_gambit[algo] = feature_selection(data=data, method=algo)
+		fs_gambit[algo] = feature_selection(data=data, target=target, method=algo)
 
 	return fs_gambit
 
-def feature_selection(data, method='iamb'):
+def feature_selection(data, target, method='iamb'):
 	"""
 	Wrapper for Markov Blanket-based Feature Selection. This
 	function provides a unified interface for using the
@@ -107,22 +105,19 @@ def feature_selection(data, method='iamb'):
 
 	"""
 	if method == 'iamb':
-		features = iamb(data, fs=True)
+		features = iamb(data, fs=target)
 
 	elif method == 'fast_iamb':
-		features = fast_iamb(data, fs=True)
+		features = fast_iamb(data, fs=target)
 
 	elif method == 'lambda_iamb':
-		features = lambda_iamb(data, fs=True)
-
-	elif method == 'pc':
-		features = pc(data, fs=True)
+		features = lambda_iamb(data, fs=target)
 
 	elif method == 'gs':
-		features = gs(data, fs=True)
+		features = gs(data, fs=target)
 
 	else:
-		features = iamb(data, fs=True)
+		features = iamb(data, fs=target)
 
 	return features
 
