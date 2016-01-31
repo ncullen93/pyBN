@@ -43,6 +43,7 @@ import copy
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
 
+from pyBN.utils.chordal_bn import chordal_bn
 from pyBN.utils.mst import minimum_spanning_tree
 
 

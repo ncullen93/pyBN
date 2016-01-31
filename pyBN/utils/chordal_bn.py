@@ -7,38 +7,6 @@ three random variables.
 """
 from copy import copy
 
-def max_cliques(G):
-	pass
-
-
-def get_moralized_graph(G):
-	"""
-	This function creates the moral of a BN - i.e. it
-	adds an edge between each of the parents of each node if
-	there isn't already an edge between them.
-
-	Parameters
-	----------
-	None
-
-	Returns
-	-------
-	*e_list* : a list of lists contains the edges of moralized graph
-
-	Notes
-	-----
-	Where is this used?
-
-	"""
-	e_list = copy(G.E)
-	for node in self.V:
-		parents = self.data[node]['parents']
-		for p1 in parents:
-			for p2 in parents:
-				if p1!=p2 and [p1,p2] not in e_list and [p2,p1] not in e_list:
-					e_list.append([p1,p2])
-	return e_list
-
 def make_chordal(bn, v=None,e=None):
 	"""
 	This function creates a chordal graph - i.e. one in which there
@@ -76,7 +44,7 @@ def make_chordal(bn, v=None,e=None):
 
 
 	"""
-	chordal_E = self.get_moralized_edge_list() # start with moral graph
+	chordal_E = bn.moralized_edges() # start with moral graph
 
 	# if moral graph is already chordal, no need to alter it
 	if not self.is_chordal(chordal_E):            
@@ -141,8 +109,4 @@ def is_chordal(G):
 	write this check on our own.
 
 	"""
-	if not edge_list:
-	edge_list = list(self.edges())
-	G = nx.Graph()
-	G.add_edges_from(edge_list)
 	return nx.is_chordal(G)

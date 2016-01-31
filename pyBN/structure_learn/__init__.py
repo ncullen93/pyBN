@@ -1,7 +1,4 @@
-from pyBN.structure_learn.chow_liu import *
-from pyBN.structure_learn.fast_iamb import *
-from pyBN.structure_learn.grow_shrink import *
-from pyBN.structure_learn.iamb import *
-from pyBN.structure_learn.lambda_iamb import *
-from pyBN.structure_learn.naive_bayes import *
-from pyBN.structure_learn.path_condition import *
+from pyBN.structure_learn.constraint_based import *
+from pyBN.structure_learn.tree_based import *
+
+from pyBN.structure_learn.structure_wrapper import *

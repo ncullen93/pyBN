@@ -145,6 +145,17 @@ class BayesNet(object):
             for v in self.children(u):
                 yield (u,v)
 
+    def moralized_edges(self):
+        e = set()
+        for u in self.nodes():
+            npar = len(self.parents(u))
+            for p1 in xrange(npar-1):
+                e.add((p1,u))
+                for p2 in xrange(p1+1,npar):
+                        e.add((p1,p2))
+        return e
+
+
     def scope_size(self, rv):
         return len(self.F[rv]['parents'])+1
 

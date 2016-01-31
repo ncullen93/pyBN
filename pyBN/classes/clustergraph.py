@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 
-from pyBN.classes.cliquetree import CliqueTree
+from pyBN.classes.cliquetree import Clique
 
 class ClusterGraph(object):
     """
