@@ -34,8 +34,8 @@ import pandas as pd
 import networkx as nx
 import copy
 
-from pybn.classes.bayesnet import BayesNet
-from pybn.classes.factor import Factor
+from pyBN.classes.bayesnet import BayesNet
+from pyBN.classes.factor import Factor
 
 class CliqueTree(object):
     """
