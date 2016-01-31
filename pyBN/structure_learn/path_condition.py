@@ -49,7 +49,7 @@ import numpy as np
 
 from pyBN.utils.independence_tests import mi_test
 from pyBN.classes import BayesNet
-from pyBN.utils.orient_edges import orient_edges_pc
+from pyBN.utils.orient_edges import orient_edges_CS
 
 
 def pc(data, alpha=0.05):
@@ -123,8 +123,8 @@ def pc(data, alpha=0.05):
 				stop = False
 				break
 	
-	# ORIENT EDGES
-	directed_edge_dict = orient_edges_pc(edge_dict,block_dict)
+	# ORIENT EDGES (from collider set)
+	directed_edge_dict = orient_edges_CS(edge_dict,block_dict)
 
 	# CREATE BAYESNET OBJECT
 	bn=BayesNet(directed_edge_dict,value_dict)

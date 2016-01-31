@@ -22,7 +22,6 @@ import networkx as nx
 import copy
 
 from pyBN.classes.bayesnet import BayesNet
-from pyBN.classes.factorization import Factorization
 from pyBN.classes.factor import Factor
 
 class CliqueTree(object):

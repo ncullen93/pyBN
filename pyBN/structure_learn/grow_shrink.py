@@ -36,7 +36,7 @@ NIPS 2000.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.utils.independence_tests import mi_test
-from pyBN.utils.orient_edges import orient_edges_Mb
+from pyBN.utils.orient_edges import orient_edges_MB
 from pyBN.utils.markov_blanket import resolve_markov_blanket
 from pyBN.classes.bayesnet import BayesNet
 
@@ -129,7 +129,7 @@ def gs(data, alpha=0.05):
 	edge_dict = resolve_markov_blanket(Mb,data)
 	
 	# STEP 3: ORIENT EDGES
-	oriented_edge_dict = orient_edges_Mb(edge_dict,Mb,data,alpha)
+	oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
 
 	# CREATE BAYESNET OBJECT
 	bn=BayesNet(oriented_edge_dict,value_dict)

@@ -7,7 +7,7 @@ Algorithm
 
 For Feature Selection (from [1]):
 	"A principled solution to the feature selection problem is
-	to determine a subset of attributes that can “shield” (render
+	to determine a subset of attributes that can "shield" (render
 	independent) the attribute of interest from the effect of
 	the remaining attributes in the domain. Koller and Sahami
 	[4] first showed that the Markov blanket of a given target attribute

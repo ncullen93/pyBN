@@ -115,7 +115,7 @@ def mb_fitness(data, Mb, target=None):
 	provided in [1] and [2].
 
 	From [2]:
-		A distance measure that indicates the “fitness” 
+		A distance measure that indicates the "fitness"
 		of the discovered blanket... to be the average, over all attributes
 		X outside the blanket, of the expected KL-divergence between
 		Pr(T | B(T)) and Pr(T | B(T) u {X}). We can expect this 

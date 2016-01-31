@@ -8,7 +8,7 @@ LEARNING ALGORITHM
 
 import numpy as np
 from pyBN.utils.independence_tests import are_independent
-from pyBN.utils.structure_learn.orient_edges import orient_edges_MB
+from pyBN.utils.orient_edges import orient_edges_MB
 
 def iamb(data, alpha=0.05):
 	"""
@@ -72,7 +72,7 @@ def iamb(data, alpha=0.05):
 		for X in Mb(T):
 			# if x is indepdent of t given Mb(T) - {x}
 			cols = (X,T) + tuple(Mb(T)-{X})
-			if are_independent(data[:,cols],alpha)
+			if are_independent(data[:,cols],alpha):
 				Mb(T).remove(X)
 
 	# RESOLVE GRAPH STRUCTURE
