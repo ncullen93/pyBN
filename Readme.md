@@ -48,7 +48,7 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 | Incorrect Edge Orientation				|Hellinger				| 
 |	Hamming Distance			|		Minkowski	| 
 
-<h4>Utility Methods</h4>
+<h4>Other</h4>
 |Utility|
 | ----- |
 |Discretize Continuous Data |
