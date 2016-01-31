@@ -48,6 +48,11 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 | Incorrect Edge Orientation				|Hellinger				| 
 |	Hamming Distance			|		Minkowski	| 
 
+<h4>Utility Methods</h4>
+|Utility|
+|Discretize Continuous Data |
+|Markov Blanket Feature Selection |
+
 <h2>Examples</h2>
 This package includes a number of examples to help users get acquainted with the intuitive syntax and functionality of pyBN. For an updated list of examples, check out the collection of ipython notebooks in the "examples" folder located in the master directory.
 
