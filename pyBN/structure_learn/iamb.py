@@ -7,7 +7,8 @@ LEARNING ALGORITHM
 """
 
 import numpy as np
-from pyBN.independence.independence_tests import are_independent
+from pyBN.utils.independence_tests import are_independent
+from pyBN.utils.structure_learn.orient_edges import orient_edges_MB
 
 def iamb(data, alpha=0.05):
 	"""
@@ -78,7 +79,7 @@ def iamb(data, alpha=0.05):
 	edge_dict = resolve_markov_blanket(Mb, data)
 
 	# ORIENT EDGES
-	oriented_edge_dict = orient_edges_Mb(edge_dict,Mb,data,alpha)
+	oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
 
 	# CREATE BAYESNET OBJECT
 	value_dict = dict(zip(range(data.shape[1]),

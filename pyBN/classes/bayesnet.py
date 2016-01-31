@@ -42,7 +42,7 @@ import numpy as np
 import networkx as nx
 from itertools import product
 import copy
-from pyBN.independence.class_equivalence import are_class_equivalent
+from pyBN.utils.class_equivalence import are_class_equivalent
 from pyBN.utils.topsort import topsort
 
 class BayesNet(object):

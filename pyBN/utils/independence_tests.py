@@ -18,7 +18,6 @@ cache joint/marginal/conditional probabilities for expedited tests.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
-#import pandas as pd
 from scipy import stats
 
 def are_independent(data, method='mi_test',alpha=0.05):

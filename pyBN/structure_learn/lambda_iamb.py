@@ -8,7 +8,7 @@ Blanket Discovery"
 """
 
 import numpy as np
-from pyBN.independence.independence_tests import are_independent, entropy
+from pyBN.utils.independence_tests import are_independent, entropy
 
 def lamba_iamb(data, L=1.5, alpha=0.05):
 	"""

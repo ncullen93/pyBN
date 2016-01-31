@@ -36,7 +36,7 @@ Markov Blanket Discovery"
 from __future__ import division
 
 import numpy as np
-from pyBN.independence.independence_tests import are_independent, mi_test
+from pyBN.utils.independence_tests import are_independent, mi_test
 
 def fast_iamb(data, k=5, alpha=0.05):
 	"""

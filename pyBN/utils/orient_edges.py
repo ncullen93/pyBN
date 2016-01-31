@@ -13,7 +13,7 @@ http://www.jmlr.org/papers/volume2/chickering02a/chickering02a.pdf
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-from pyBN.independence.independence_tests import mi_test
+from pyBN.utils.independence_tests import mi_test
 
 import itertools
 from copy import copy
