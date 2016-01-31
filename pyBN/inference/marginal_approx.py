@@ -33,8 +33,7 @@ from pyBN.utils.topsort import topsort
 import numpy as np
 
 
-def marginal_fs_a(bn,
-				  n=1000):
+def marginal_fs_a(bn, n=1000):
 	"""
 	Approximate marginal probabilities from
 	forward sampling algorithm on a BayesNet object.
@@ -243,9 +242,7 @@ def marginal_gs_a(bn, n=1000, burn=200):
 	return sample_dict
 
 
-def marginal_lbp_a(target=None, 
-			evidence=None,
-			max_iter=100):
+def marginal_lbp_a(target=None, evidence=None, max_iter=100):
 	"""
 	Perform Message Passing (Loopy Belief Propagation) 
 	over a cluster graph.

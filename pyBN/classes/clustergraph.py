@@ -3,10 +3,11 @@
 ClusterGraph Class
 ******************
 
-This is a class for creating/manipulating Cluster Graphs.
-
-It is a great candidate for Numba JIT compilation w.r.t
-functions and the class structure as a whole.
+This is a class for creating/manipulating Cluster Graphs,
+and performing inference over them - currently the only
+supported algorithm is Loopy Belief Propagation. Still,
+the class structure is in place for easy addition of
+any algorithms relying on the Cluster Graph framework.
 
 """
 

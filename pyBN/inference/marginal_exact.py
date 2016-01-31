@@ -30,9 +30,7 @@ import copy
 import numpy as np
 import json
 
-def marginal_ve_e(bn, 
-				target, 
-				evidence={}):
+def marginal_ve_e(bn, target, evidence={}):
 	"""
 	Perform Sum-Product Variable Elimination on
 	a Discrete Bayesian Network.
@@ -102,15 +100,13 @@ def marginal_ve_e(bn,
 	return marginal.cpt
 
 
-def marginal_bp_e(bn, 
-					target=None, 
-					evidence=None, 
-					downward_pass=True):
+def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):
 	"""
-	Perform Message Passing (Belief Propagation) over a clique tree.
+	Perform Message Passing (Belief Propagation) over a Clique Tree.
 
-	It is Upward Pass as shown in Koller p.353 along with
-	Downward Pass (Calibration) from Koller p.357 if target is list
+	It involves an Upward Pass (see [1] pg. 353) along with
+	Downward Pass (Calibration) ([1] pg. 357) if the target involves
+	multiple random variables - i.e. is a list
 
 
 	Parameters

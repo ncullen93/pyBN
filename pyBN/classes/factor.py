@@ -110,9 +110,7 @@ class Factor(object):
     """            
 
 
-    def __init__(self,
-                bn,
-                var):
+    def __init__(self, bn, var):
         """
         Initialize a Factor from a BayesNet object
         for a given random variable.
@@ -193,6 +191,17 @@ class Factor(object):
             idx+=rv_card*rv_stride
         return value_indices
 
+    def sepset(self, other_factor):
+        """
+        The sepset of two cliques is the set of
+        variables in the intersection of the two
+        cliques' scopes.
+
+        Arguments
+        ---------
+        *other_clique* : a Clique object
+        """
+        return set(self.scope).intersection(set(other_factor.scope))
 
 
 

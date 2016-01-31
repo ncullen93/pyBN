@@ -80,7 +80,13 @@ def draw_nx(bn,**kwargs):
 	"""
 	Draw BayesNet object from networkx engine
 	"""
-	g = bn.get_networkx()
+	def get_networkx(bn):
+        G = nx.DiGraph()
+        edge_list = bn.adj_list()
+        G.add_edges_from(edge_list)
+        return G
+
+	g = get_networkx(bn)
 	pos = nx.graphviz_layout(g,'dot')
 	#node_size=600,node_color='w',with_labels=False
 	nx.draw_networkx(g,pos=pos, **kwargs)
