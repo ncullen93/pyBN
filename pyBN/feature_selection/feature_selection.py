@@ -92,7 +92,10 @@ def feature_selection(data, target, method='iamb'):
 	function provides a unified interface for using the
 	various constraint-based structure learning algorithms
 	for feature selection instead of full Bayesian Network
-	model learning.
+	model learning. It simply calls "learn_structure" which
+	is already a structure learning wrapper, but also passes
+	in "target" denoting that feature selection should take
+	place instead of full structure learning.
 
 	Arguments
 	---------
@@ -104,21 +107,7 @@ def feature_selection(data, target, method='iamb'):
 		method is given, "iamb" is called.
 
 	"""
-	if method == 'iamb':
-		features = iamb(data, fs=target)
-
-	elif method == 'fast_iamb':
-		features = fast_iamb(data, fs=target)
-
-	elif method == 'lambda_iamb':
-		features = lambda_iamb(data, fs=target)
-
-	elif method == 'gs':
-		features = gs(data, fs=target)
-
-	else:
-		features = iamb(data, fs=target)
-
+	features = learn_structure(data, method=method, fs=target)
 	return features
 
 
