@@ -33,9 +33,10 @@ Discovery for Optimal Feature Selection"
 Markov Blanket Discovery" 
 
 """
+from __future__ import division
 
 import numpy as np
-from pyBN.independence.independence_tests import are_independent
+from pyBN.independence.independence_tests import are_independent, mi_test
 
 def fast_iamb(data, k=5, alpha=0.05):
 	"""
@@ -66,4 +67,76 @@ def fast_iamb(data, k=5, alpha=0.05):
 	Notes
 	-----
 	"""
-	pass
+	Mb = dict([(rv,{}) for rv in range(n_rv)])
+	n_rv = data.shape[1]
+	N = data.shape[0]
+	card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
+	# LEARN MARKOV BLANKET
+	for T in xrange(n_rv):
+		S = set(range(n_rv)) - {T}
+		for A in S:
+			if not are_independent(data[:,(A,T)]):
+				S.remove(A)
+		s_h_dict = dict([(s,0) for s in S])
+		while S:
+			insufficient_data = False
+			break_grow_phase = False
+			
+			#### GROW PHASE ####
+			# Calculate mutual information for all variables
+			mi_dict = dict([(s,mi_test(data[:,(s,T)+tuple(Mb[T])])) for s in S])
+			for x_i in sorted(mi_dict, key=mi_dict.get,reverse=True):
+				# Add top MI-score variables until there isn't enough data for bins
+				if (N / card[x_i]*card[T]*np.prod([card[b] for b in Mb(T)])) >= k:
+					Mb[T].append(x_i)
+				else:
+					insufficient_data = True
+					break
+
+			#### SHRINK PHASE ####
+			removed_vars = False
+			for A in Mb[T]:
+				cols = (A,T) + tuple(set(Mb[T]) - {A})
+				# if A is independent of T given Mb[T], remove A
+				if are_independent(data[:,cols]):
+					Mb[T].remove(A)
+					removed_vars=True
+
+			#### FINALIZE BLANKET FOR "T" OR MAKE ANOTHER PASS ####
+			if insufficient_data and not removed_vars:
+				break
+			else:
+				A = set(nodes) - {T} - set(Mb[T])
+				S = {}
+				for a in A:
+					cols = (A,T) + tuple(Mb[T])
+					if are_independent(data[:,cols]):
+						S.add(a)
+	return Mb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

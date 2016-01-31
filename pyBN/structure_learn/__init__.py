@@ -1,4 +1,5 @@
 from pyBN.structure_learn.chow_liu import *
+from pyBN.structure_learn.fast_iamb import *
 from pyBN.structure_learn.grow_shrink import *
 from pyBN.structure_learn.iamb import *
 from pyBN.structure_learn.lambda_iamb import *

@@ -10,6 +10,8 @@ References
 for Optimal Feature Selection"
 
 """
+from __future__ import division
+
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
@@ -104,15 +106,15 @@ def resolve_markov_blanket(Mb, data):
 					edge_dict[Y].append(X)
 	return edge_dict
 
-def mb_fitness(data, Mb):
+def mb_fitness(data, Mb, target=None):
 	"""
 	Evaluate the fitness of a Markov Blanket dictionary
-	learned from a given data set based on the heuristic
+	learned from a given data set based on the distance metric
 	provided in [1] and [2].
 
 	From [2]:
 		A distance measure that indicates the “fitness” 
-		of the discovered blanket... the average, over all attributes
+		of the discovered blanket... to be the average, over all attributes
 		X outside the blanket, of the expected KL-divergence between
 		Pr(T | B(T)) and Pr(T | B(T) u {X}). We can expect this 
 		measure to be close to zero when B(T) is an approximate
@@ -121,8 +123,36 @@ def mb_fitness(data, Mb):
 		between the two distributions above is zero, then it means that
 		{X} provides no new information about T and can thus be excluded
 		from Mb(T) -- this is the exact definition of conditional independence.
+
+	Notes
+	-----
+	- Find Pr(T|B(T)) ..
+	- For each variable X outside of the B(T), calculate 
+		D( Pr(T|B(T)), Pr(T|B(T)u{X}) )
+	- Take the average (closer to Zero is better)
+
+	^^^ This is basically calculating where T is independent of X given B(T)..
+		i.e. Sum over all X not in B(T) of mi_test(data[:,(T,X,B(T))]) / |X|
 	"""
-	pass
+	if target is None:
+		nodes = set(Mb.keys())
+	else:
+		try:
+			nodes = set(target)
+		except TypeError:
+			nodes = {target}
+
+	fitness_dict = dict([(rv, 0) for rv in nodes])
+	for T in nodes:
+		non_blanket = nodes - set(Mb[T]) - {T}
+		for X in non_blanket:
+			pval = mi_test(data[:,(T,X)+tuple(Mb[T])])
+			fitness_dict[T] += 1/pval
+	return fitness_dict
+
+
+	
+
 
 
 
