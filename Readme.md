@@ -50,6 +50,7 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 
 <h4>Utility Methods</h4>
 |Utility|
+| ----- |
 |Discretize Continuous Data |
 |Markov Blanket Feature Selection |
 
