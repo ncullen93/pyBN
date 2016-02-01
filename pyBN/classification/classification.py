@@ -8,6 +8,10 @@ Implementation of various Bayesian network
 classifiers.
 
 """
+from __future__ import division
+
+import numpy as np
+
 
 
 def predict(data, target, classifier=None, method='nb'):
@@ -30,6 +34,12 @@ def predict(data, target, classifier=None, method='nb'):
 
 	Arguments
 	---------
+	*data* : a nested numpy array
+
+	*target* : an integer
+		The data column corresponding to the
+		predictor/target variable.
+
 	*classifer* : a BayesNet object (optional)
 		The BayesNet model to use as the classifier model. 
 		NOTE: The user can supply a BayesNet class which has
@@ -39,12 +49,6 @@ def predict(data, target, classifier=None, method='nb'):
 		to *method*, in which class the corresponding model will be
 		structure/parameter learned IN THIS FUNCTION and used as the
 		classifier.
-		
-	*data* : a nested numpy array
-
-	*target* : an integer
-		The data column corresponding to the
-		predictor/target variable.
 
 	*method* : a string
 		Which BN classifier to use if *classifier* is None.
@@ -75,10 +79,23 @@ def predict(data, target, classifier=None, method='nb'):
 		classifier = learn_structure(data, method)
 		learn_parameters(classifier)
 
-
+	non_target_cols = list(set(range(data.shape[1]))-{target})
+	y = np.empty(data.shape[0])
+	yp = np.empty(data.shape[0])
 	### CLASSIFIER PREDICTION FROM INFERENCE ###
-	for row in data:
-		pass
+	for row in range(data.shape[0]):
+		vals = [data[row,i] for i in non_target_cols]
+		evidence = dict(zip(non_target_cols,vals))
+		y[row] = data[row,target] # true value
+		predicted_val = marginal_ve_e(bn=classifier,
+									target=target,
+									evidence=evidene)
+		yp[row] = predicted_val
+
+	acc = np.sum(y==yp)/data.shape[0]
+	return y, yp, acc
+
+		
 			
 
 

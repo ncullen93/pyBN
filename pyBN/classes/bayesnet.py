@@ -199,13 +199,11 @@ class BayesNet(object):
         return self.F[rv]['values']
 
     def value_idx(self, rv, val):
-        try:
+        try:   
             return self.F[rv]['values'].index(val)
         except ValueError:
-            try:
-                return self.F[rv]['values'].index(val-1)
-            except ValueError:
-                return -1
+            print "Value Index Error"
+            return -1
 
     def stride(self, rv, n):
         if n==rv:

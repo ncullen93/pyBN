@@ -81,9 +81,9 @@ def gs(data, alpha=0.05, fs=None):
 	-----
 
 	"""
-	value_dict = dict(zip(range(data.shape[1]),
-		[list(np.unique(col)) for col in data.T]))
 	n_rv = data.shape[1]
+	value_dict = dict(zip(range(n_rv),
+		[list(np.unique(col)) for col in data.T]))
 
 	if fs is None:
 		_T = range(n_rv)

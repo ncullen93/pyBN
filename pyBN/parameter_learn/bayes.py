@@ -89,9 +89,13 @@ def bayes_estimator(bn, data, equiv_sample=None):
 			offset = int(np.sum(value_indices*strides))
 			bn.F[rv]['cpt'][offset] += 1
 	
-	for rv in bn.nodes():
-		for val_idx in xrange(len(bn.F[rv]['cpt'])):
-			bn.F[rv]['cpt'][val_idx] /= len(data)*2
+	#for rv in bn.nodes():
+	#	main_card = bn.card(rv)
+	#	for val_idx in xrange(0,len(bn.F[rv]['cpt']),main_card):
+	#		for i in range(main_card):
+	#			bn.F[rv]['cpt'][val_idx+i] /= len(data)
+		#for val_idx in xrange(len(bn.F[rv]['cpt'])):
+			#bn.F[rv]['cpt'][val_idx] /= len(data)*2
 
 
 

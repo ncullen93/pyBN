@@ -39,8 +39,9 @@ def iamb(data, alpha=0.05):
 	Notes
 	-----
 	"""
-	Mb = dict([(rv,{}) for rv in range(n_rv)])
 	n_rv = data.shape[1]
+	Mb = dict([(rv,{}) for rv in range(n_rv)])
+	
 
 	if fs is None:
 		_T = range(n_rv)

@@ -67,8 +67,8 @@ def fast_iamb(data, k=5, alpha=0.05, fs=None):
 	Notes
 	-----
 	"""
-	Mb = dict([(rv,{}) for rv in range(n_rv)])
 	n_rv = data.shape[1]
+	Mb = dict([(rv,{}) for rv in range(n_rv)])
 	N = data.shape[0]
 	card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
 

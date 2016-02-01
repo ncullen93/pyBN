@@ -54,6 +54,7 @@ def marginal_ve_e(bn, target, evidence={}):
 	Notes
 	-----
 	- Mutliple pieces of evidence often returns "nan"...numbers too small?
+		- dividing by zero -> perturb values in Factor class
 	"""
 	temp_F = [Factor(bn,var) for var in bn.nodes()] # topsort order
 

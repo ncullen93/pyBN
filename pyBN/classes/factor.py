@@ -572,9 +572,6 @@ class Factor(object):
             if len(l)>0:
                 self.var = l[0]
 
-        #if len(self.scope) > 0:
-          #  self.normalize()
-
     def to_log(self):
         """
         Convert probabilities to log space from
@@ -590,6 +587,14 @@ class Factor(object):
 
         """
         self.cpt = np.round(np.exp(self.cpt),5)
+
+    def perturb(self):
+        """
+        Add some noise to avoid "nan" when dividing by zero.
+        This will probably make cpt values have many 
+        decimal points (bad).
+        """
+        self.cpt += 1e-7
 
     def normalize(self):
         """
@@ -607,17 +612,18 @@ class Factor(object):
         -----
 
         """
+        self.perturb() # stops nan's from happening
         var = [k for k,v in self.stride.items() if v==1]
         if len(var) > 0:
             var = var[0]
             for i in range(0,len(self.cpt),self.card[var]):
                 temp_sum = float(np.sum(self.cpt[i:(i+self.card[var])]))
                 for j in range(self.card[var]):
-                    self.cpt[i+j] /= temp_sum
+                    self.cpt[i+j] /= (temp_sum)
                     self.cpt[i+j] = round(self.cpt[i+j],5)
         else:
             for i in range(len(self.cpt)):
-                self.cpt[i] /= np.sum(self.cpt)
+                self.cpt[i] /= (np.sum(self.cpt))
 
 
 

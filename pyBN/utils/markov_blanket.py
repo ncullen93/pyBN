@@ -77,6 +77,7 @@ def resolve_markov_blanket(Mb, data):
 	Notes
 	-----
 	"""
+	n_rv = data.shape[1]
 	edge_dict = dict([(rv,[]) for rv in range(n_rv)])
 	for X in range(n_rv):
 		for Y in Mb[X]:

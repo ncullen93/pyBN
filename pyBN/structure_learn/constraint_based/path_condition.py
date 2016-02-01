@@ -85,10 +85,10 @@ def pc(data, alpha=0.05):
 	Notes
 	-----
 	"""
-	##### FIND EDGES #####
-	value_dict = dict(zip(range(data.shape[1]),
-		[list(np.unique(col)) for col in data.T]))
 	n_rv = data.shape[1]
+	##### FIND EDGES #####
+	value_dict = dict(zip(range(n_rv),
+		[list(np.unique(col)) for col in data.T]))
 	
 	edge_dict = dict([(i,[j for j in range(n_rv) if i!=j]) for i in range(n_rv)])
 	block_dict = dict([(i,[]) for i in range(n_rv)])

@@ -12,6 +12,8 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 from pyBN.classes.bayesnet import BayesNet
+from pyBN.parameter_learn.mle import mle_estimator
+from pyBN.parameter_learn.bayes import bayes_estimator
 
 def naive_bayes(data, target, estimator='mle'):
 	"""

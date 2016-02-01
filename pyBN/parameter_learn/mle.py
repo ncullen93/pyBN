@@ -67,7 +67,7 @@ def mle_estimator(bn, data):
 	for rv in bn.nodes():
 		# get number of values in the CPT = product of scope vars' cardinalities
 		p_idx = int(np.prod([bn.card(p) for p in bn.parents(rv)])*bn.card(rv))
-		bn.F[rv]['cpt'] = [0]*p_idx
+		bn.F[rv]['cpt'] = [-1]*p_idx
 	
 	# loop through each row of data
 	for row in data:
@@ -89,21 +89,15 @@ def mle_estimator(bn, data):
 			offset = int(np.sum(value_indices*strides))
 			bn.F[rv]['cpt'][offset] += 1
 	
-	for rv in bn.nodes():
-		for val_idx in xrange(len(bn.F[rv]['cpt'])):
-			bn.F[rv]['cpt'][val_idx] /= len(data)
-
-
+	# NORMALIZATION -> NOT CORRECT RIGHT NOW
+	#for rv in bn.nodes():
+	#	main_card = bn.card(rv)
+	#	for val_idx in xrange(0,len(bn.F[rv]['cpt']),main_card):
+	#		for i in range(main_card):
+	#			bn.F[rv]['cpt'][val_idx+i] /= len(data)
+		#for val_idx in xrange(len(bn.F[rv]['cpt'])):
+			#bn.F[rv]['cpt'][val_idx] /= len(data)
 	
-
-	
-
-
-
-
-
-
-
 
 
 
