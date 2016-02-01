@@ -43,7 +43,7 @@ import copy
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
 
-from pyBN.utils.chordal_bn import chordal_bn
+from pyBN.utils.chordal_bn import make_chordal
 from pyBN.utils.mst import minimum_spanning_tree
 
 
@@ -56,6 +56,20 @@ class CliqueTree(object):
     than three nodes), then a CliqueTree is a tree H such that each
     maximal clique C in G is a node in H.
 
+    Attributes
+    ----------
+    - bn 
+        - BayesNet object
+
+    - V
+        - Vertices -> list
+
+    - E
+        - Edges -> dictionary
+
+    - C
+        - Cliques -> a list of Clique objects
+
     """
 
     def __init__(self, bn):
@@ -66,10 +80,6 @@ class CliqueTree(object):
         ---------
         *bn*: a BayesNet object
 
-        Returns
-        -------
-
-
         Notes
         -----
         Ideally, the Factor class should be used as the
@@ -78,7 +88,7 @@ class CliqueTree(object):
         
         """
         self.bn = bn
-        self.V,self.E,self.C = self.initiaize_tree()
+        self.V,self.E,self.C = self.initialize_tree()
 
     def initialize_tree(self):
         """
@@ -95,17 +105,18 @@ class CliqueTree(object):
         C = {} # key = vertex, value = clique object
 
         # get chordal/triangulated graph
-        G = chordal_bn(bn)
-
+        chordal_G = make_chordal(self.bn) # must return a networkx object
+        V = chordal_G.nodes()
         # get max cliques from chordal graph
-        max_cliques = reversed(list(nx.chordal_graph_cliques(G)))
+        max_cliques = reversed(list(nx.chordal_graph_cliques(chordal_G)))
         for v_idx,clique in enumerate(max_cliques):
             C[v_idx] = Clique(set(clique))
 
         # find edges used maximum spanning tree
-        weighted_edge_dict = dict([(rv,dict) for rv in V])
-        for i in range(V-1):
-            for j in range(i+1,V):
+        weighted_edge_dict = dict([(c_idx,{}) for c_idx in xrange(len(C))])
+        for i in range(len(C)):
+            for j in range(len(C)):
+                if i!=j:
                     intersect_cardinality = len(C[i].sepset(C[j]))
                     weighted_edge_dict[i][j] = -1*intersect_cardinality
         
@@ -116,7 +127,7 @@ class CliqueTree(object):
         self.V = mst_G.keys() # list
 
         # set C - key = rv, value = clique object
-        self.assign_factors()
+        self.assign_factors() # factors who have a var in clique's scope
         for clique in self.V.values():
             clique.compute_psi()
 
@@ -130,7 +141,7 @@ class CliqueTree(object):
         factor_list = [Factor(bn,var) for var in self.bn.nodes()]
         for factor in factor_list:
             assigned=False
-            for v in self.V.values():
+            for v in self.C.values():
                 if f.scope.issubset(v.scope):
                     if assigned==False:
                         v.factors.append(f)
@@ -227,10 +238,13 @@ class Clique(object):
         """
         self.scope=scope
         self.factors=[]
-        self.psi = None # Psi should never change
+        self.psi = None # Psi should never change -> Factor object
         self.belief = None
         self.messages_received = []
         self.is_ready = False
+
+    def __repr__(self):
+        return str(self.scope)
 
     def send_initial_message(self, other_clique):
         """
@@ -245,10 +259,13 @@ class Clique(object):
         psi_copy = copy.copy(self.psi)
         sepset = self.sepset(other_clique)
         sumout_vars = self.scope.difference(sepset)
+        # sum out variables not in the sepset of other_clique
         psi_copy.sumout_var_list(list(sumout_vars))
-        psi_copy.cpt = psi_copy.cpt.loc[:,[c for c in psi_copy.cpt.columns if 'Prob' not in c]]
-        psi_copy.cpt[str('Prob-Val-' + str(np.random.randint(0,1000000)))] = 1
-        #print 'Init Msg: \n', psi_copy.cpt
+
+
+        #psi_copy.cpt = psi_copy.cpt.loc[:,[c for c in psi_copy.cpt.columns if 'Prob' not in c]]
+        #psi_copy.cpt[str('Prob-Val-' + str(np.random.randint(0,1000000)))] = 1
+        print 'Init Msg: \n', psi_copy.cpt
         other_clique.messages_received.append(psi_copy)
 
         self.belief = copy.copy(self.psi)
@@ -270,7 +287,6 @@ class Clique(object):
         """
         Compute a new psi (cpt) in order to 
         set the clique's belief.
-
         """
         if len(self.factors) == 0:
             print 'No factors assigned to this clique!'
@@ -279,8 +295,10 @@ class Clique(object):
         if len(self.factors) == 1:
             self.psi = copy.copy(self.factors[0])
         else:
-            self.psi = max(self.factors, key=lambda x: len(x.cpt.columns))
-            self.psi.merge_multiply(self.factors)
+            self.psi = max(self.factors, key=lambda x: len(x.cpt))
+            for f in self.factors:
+                self.psi.multiply(f)
+            #self.psi.merge_multiply(self.factors)
             self.belief = copy.copy(self.psi)
 
     def send_message(self, parent):
@@ -299,7 +317,9 @@ class Clique(object):
             # if there are messages received, mutliply them in to psi first
             if not self.belief:
                 self.belief = copy.copy(self.psi)
-            self.belief.merge_multiply(self.messages_received)
+            for msg in self.messages_received:
+                self.belief.multiply(msg)
+            #self.belief.merge_multiply(self.messages_received)
         else:
             # if there are no messages received, simply move on with psi
             if not self.belief:
@@ -343,3 +363,21 @@ class Clique(object):
         else:
             self.belief = copy.copy(self.belief)
             #print 'No Messages Received - Belief is just original Psi'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

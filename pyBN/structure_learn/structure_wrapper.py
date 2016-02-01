@@ -2,7 +2,7 @@
 Wrapper for Structure Learning
 """
 
-from pyBN.structure_learn
+from pyBN.structure_learn import *
 
 
 def learn_structure(data, method, fs=None):

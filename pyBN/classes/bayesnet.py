@@ -146,14 +146,27 @@ class BayesNet(object):
                 yield (u,v)
 
     def moralized_edges(self):
+        """
+        Moralized graph is the original graph PLUS
+        an edge between every set of common effect
+        structures -
+            i.e. all parents of a node are connected.
+
+        This function has be validated.
+
+        Returns
+        -------
+        *e* : a python list of parent-child tuples.
+
+        """
         e = set()
         for u in self.nodes():
-            npar = len(self.parents(u))
-            for p1 in xrange(npar-1):
+            for p1 in self.parents(u):
                 e.add((p1,u))
-                for p2 in xrange(p1+1,npar):
+                for p2 in self.parents(u):
+                    if p1!=p2 and (p2,p1) not in e:
                         e.add((p1,p2))
-        return e
+        return list(e)
 
 
     def scope_size(self, rv):

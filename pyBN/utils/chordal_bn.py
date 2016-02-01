@@ -6,6 +6,7 @@ three random variables.
 
 """
 from copy import copy
+import networkx as nx
 
 def make_chordal(bn, v=None,e=None):
 	"""
@@ -47,7 +48,7 @@ def make_chordal(bn, v=None,e=None):
 	chordal_E = bn.moralized_edges() # start with moral graph
 
 	# if moral graph is already chordal, no need to alter it
-	if not self.is_chordal(chordal_E):            
+	if not is_chordal(chordal_E):            
 		temp_E = copy.copy(chordal_E)
 		temp_V = []
 
@@ -79,13 +80,13 @@ def make_chordal(bn, v=None,e=None):
 					temp_E2.append(edge)
 			temp_E = temp_E2
 
-	# use set_structure instead ?
+	
 	G = nx.Graph()
 	G.add_edges_from(chordal_E)
 	return G
 
 
-def is_chordal(G):
+def is_chordal(edge_list):
 	"""
 	Check if the graph is chordal/triangulated.
 
@@ -109,4 +110,5 @@ def is_chordal(G):
 	write this check on our own.
 
 	"""
+	G = nx.Graph(list(edge_list))
 	return nx.is_chordal(G)

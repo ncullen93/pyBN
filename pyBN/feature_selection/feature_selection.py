@@ -28,11 +28,7 @@ variable is independent of those variables.
 
 """
 
-from pyBN.structure_learn.fast_iamb import fast_iamb
-from pyBN.structure_learn.grow_shrink import gs
-from pyBN.structure_learn.iamb import iamb
-from pyBN.structure_learn.lambda_iamb import lambda_iamb
-from pyBN.structure_learn.path_condition import pc
+from pyBN.structure_learn.constraint_based import *
 
 
 def fs_gambit(data, target):
