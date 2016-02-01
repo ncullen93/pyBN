@@ -12,6 +12,7 @@ for Optimal Feature Selection"
 
 """
 from __future__ import division
+from copy import copy
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 

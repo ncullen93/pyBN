@@ -64,24 +64,28 @@ def mle_estimator(bn, data):
 	- Do not want to alter bn.data directly!
 
 	"""
-	obs_dict = dict.fromkeys(bn.nodes())
+	obs_dict = dict([(rv,[]) for rv in bn.nodes()])
+	#dict.fromkeys(bn.nodes())
 	# set empty conditional probability table for each RV
 	for rv in bn.nodes():
 		# get number of values in the CPT = product of scope vars' cardinalities
 		p_idx = int(np.prod([bn.card(p) for p in bn.parents(rv)])*bn.card(rv))
 		bn.F[rv]['cpt'] = [-1]*p_idx
+
+	# good up to here
 	
 	# loop through each row of data
 	for row in data:
-
+		# store the observation of each variable in the row
+		obs_dict = dict([(rv,row[rv]) for rv in bn.nodes()])
 		# loop through each RV and increment its observed parent-self value
 		for rv in bn.nodes():
-			obs_dict[rv] = row[rv]
+			#obs_dict[rv] = row[rv]
 
-			value_indices = np.empty(bn.scope_size(rv))
+			value_indices = np.empty(bn.scope_size(rv),dtype=np.int32)
 			value_indices[0] = bn.value_idx(rv, obs_dict[rv])
 
-			strides = np.empty(bn.scope_size(rv))
+			strides = np.empty(bn.scope_size(rv), dtype=np.int32)
 			strides[0] = 1
 
 			for i,p in enumerate(bn.parents(rv)):

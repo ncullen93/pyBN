@@ -222,6 +222,33 @@ class BayesNet(object):
         cpt = np.array([val for rv in self.nodes() for val in self.cpt(rv)])
         return cpt
 
+    def cpt_value_indices(self, target, val_dict):
+        """
+        Get the index of the CPT which corresponds
+        to a dictionary of rv=val sets. This can be
+        used for parameter learning to increment the
+        appropriate cpt frequency value based on
+        observations in the data.
+
+        """
+        stride = dict([(n,self.stride(target,n)) for n in val_dict])
+        card = dict([(n,self.card(n)) for n in val_dict])
+        idx_set = range(len(self.cpt(target)))
+
+        for rv, val in val_dict.items():
+            rv_stride = stride[rv]
+            rv_card = card[rv]
+            value_idx = self.bn.value_idx(rv,value)
+
+            value_indices = []
+            idx=rv_stride*value_idx         
+            while idx < len(self.cpt):
+                value_indices.extend(range(idx,idx+rv_stride))
+                idx+=rv_card*rv_stride
+            idx_set.intersection(set(value_indices))
+
+        return idx_set
+
     def set_structure(self, edge_dict, value_dict):
         """
         Set the structure of a BayesNet object. This
