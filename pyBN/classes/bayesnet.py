@@ -211,7 +211,7 @@ class BayesNet(object):
         else:
             card_list = [self.card(rv)]
             card_list.extend([self.card(p) for p in self.parents(rv)])
-            n_idx = self.parents(rv).index(n)
+            n_idx = self.parents(rv).index(n) + 1
             return int(np.prod(card_list[0:n_idx]))
 
     def flat_cpt(self):
@@ -230,29 +230,37 @@ class BayesNet(object):
         appropriate cpt frequency value based on
         observations in the data.
 
+        There is definitely a fast way to do this.
+
+        Arguments
+        ---------
+        *target* : a string
+            Main RV
+
+        *val_dict* : a dictionary, where
+            key=rv,val=rv value
+
         """
         stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
-        print stride
         card = dict([(n,self.card(n)) for n in self.scope(target)])
         idx_set = set(range(len(self.cpt(target))))
         _cpt = self.cpt(target)
         for rv, val in val_dict.items():
             rv_stride = stride[rv]
-            print rv_stride
             rv_card = card[rv]
-            print rv_card
             value_idx = self.value_idx(rv,val)
-            print value_idx
 
             value_indices = []
             idx=rv_stride*value_idx
-            print idx
             while idx < len(_cpt):
                 value_indices.extend(range(idx,idx+rv_stride))
                 idx+=rv_card*rv_stride
             idx_set = idx_set.intersection(set(value_indices))
 
-        return list(idx_set)
+        if len(idx_set)==1:
+            return list(idx_set)[0]
+        else:            
+            return list(idx_set)
 
     def set_structure(self, edge_dict, value_dict):
         """
