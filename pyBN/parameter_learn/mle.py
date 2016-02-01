@@ -52,6 +52,8 @@ def mle_estimator(bn, data):
 
 	Notes
 	-----
+	- Currently doesn't return correct solution
+
 	data attributes:
 		"numoutcomes" : an integer
 	    "vals" : a list
