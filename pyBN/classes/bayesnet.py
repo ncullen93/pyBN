@@ -222,7 +222,7 @@ class BayesNet(object):
         cpt = np.array([val for rv in self.nodes() for val in self.cpt(rv)])
         return cpt
 
-    def cpt_value_indices(self, target, val_dict):
+    def cpt_indices(self, target, val_dict):
         """
         Get the index of the CPT which corresponds
         to a dictionary of rv=val sets. This can be
@@ -231,6 +231,7 @@ class BayesNet(object):
         observations in the data.
 
         There is definitely a fast way to do this.
+            -- check if (idx - rv_stride*value_idx) % (rv_card*rv_stride) == 0
 
         Arguments
         ---------
