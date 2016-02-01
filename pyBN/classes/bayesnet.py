@@ -212,7 +212,7 @@ class BayesNet(object):
             card_list = [self.card(rv)]
             card_list.extend([self.card(p) for p in self.parents(rv)])
             n_idx = self.parents(rv).index(n)
-            return np.prod(card_list[0:n_idx])
+            return int(np.prod(card_list[0:n_idx]))
 
     def flat_cpt(self):
         """
@@ -231,23 +231,28 @@ class BayesNet(object):
         observations in the data.
 
         """
-        stride = dict([(n,self.stride(target,n)) for n in val_dict])
-        card = dict([(n,self.card(n)) for n in val_dict])
-        idx_set = range(len(self.cpt(target)))
-
+        stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
+        print stride
+        card = dict([(n,self.card(n)) for n in self.scope(target)])
+        idx_set = set(range(len(self.cpt(target))))
+        _cpt = self.cpt(target)
         for rv, val in val_dict.items():
             rv_stride = stride[rv]
+            print rv_stride
             rv_card = card[rv]
-            value_idx = self.bn.value_idx(rv,value)
+            print rv_card
+            value_idx = self.value_idx(rv,val)
+            print value_idx
 
             value_indices = []
-            idx=rv_stride*value_idx         
-            while idx < len(self.cpt):
+            idx=rv_stride*value_idx
+            print idx
+            while idx < len(_cpt):
                 value_indices.extend(range(idx,idx+rv_stride))
                 idx+=rv_card*rv_stride
-            idx_set.intersection(set(value_indices))
+            idx_set = idx_set.intersection(set(value_indices))
 
-        return idx_set
+        return list(idx_set)
 
     def set_structure(self, edge_dict, value_dict):
         """
