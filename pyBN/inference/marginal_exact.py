@@ -26,6 +26,7 @@ References
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.classes.factor import Factor
+from pyBN.classes.factorization import Factorization
 from copy import deepcopy, copy
 import numpy as np
 import json
@@ -56,22 +57,19 @@ def marginal_ve_e(bn, target, evidence={}):
 	- Mutliple pieces of evidence often returns "nan"...numbers too small?
 		- dividing by zero -> perturb values in Factor class
 	"""
-	_phi = [Factor(bn,var) for var in bn.nodes()]
+	_phi = Factorization(bn)
 
-	val_idx = dict([(rv,None) for rv in bn.nodes()])
-	order = deepcopy(list(bn.nodes()))
+	order = copy(list(bn.nodes()))
 	order.remove(target)
+
 	#### EVIDENCE PROCESSING ####
 	for E, e in evidence.items():
-		val_idx[E] = e
-		for phi in _phi:
-			if E in phi.scope:
-				phi -= (E,e) # reduce by evidence
+		_phi -= (E,e)
 		order.remove(E)
 
-	#### ALGORITHM ####
+	#### SUM-PRODUCT ELIMINATE VAR ####
 	for var in order:
-		_phi = sum_prod_eliminate_var(_phi, var)
+		_phi /= var
 
 	# multiply phi's together if there is evidence
 	final_phi = _phi[0]
@@ -80,21 +78,6 @@ def marginal_ve_e(bn, target, evidence={}):
 	final_phi.normalize()
 
 	return np.round(final_phi.cpt,4)
-
-def sum_prod_eliminate_var(_phi, Z):
-	relevant_factors = [f for f in _phi if Z in f.scope]
-	irrelevant_factors = [f for f in _phi if Z not in f.scope]
-
-	# mutliply all relevant factors
-	psi = relevant_factors[0]
-	for i in range(1,len(relevant_factors)):
-		psi *= relevant_factors[i]
-
-	# Take Max over psi for Z
-	psi /= Z # sumout
-	irrelevant_factors.append(psi) # add sum-prod factor back in
-
-	return irrelevant_factors
 
 
 def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):

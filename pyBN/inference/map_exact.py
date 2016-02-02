@@ -24,11 +24,11 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
-from copy import deepcopy
+from copy import copy
 import numpy as np
-from collections import OrderedDict
 
 from pyBN.classes.factor import Factor
+from pyBN.classes.factorization import Factorization
 
 
 def map_ve_e(bn,
@@ -42,27 +42,20 @@ def map_ve_e(bn,
     This has been validated w/ and w/out evidence
     
     """
+    _phi = Factorization(bn)
 
-    _phi = [Factor(bn,var) for var in bn.nodes()]
-    
-    val_idx = dict([(rv,None) for rv in bn.nodes()])
-    order = deepcopy(list(bn.nodes()))
+    order = copy(list(bn.nodes()))
     #### EVIDENCE PROCESSING ####
     for E, e in evidence.items():
-        val_idx[E] = e
-        for phi in _phi:
-            if E in phi.scope:
-                phi -= (E,e) # reduce by evidence
+        _phi -= (E,e)
         order.remove(E)
-    
-    traceback = OrderedDict([(rv,None) for rv in order])
 
-    #### ALGORITHM ####
+    #### MAX-PRODUCT ELIMINATE VAR ####
     for var in order:
-        _phi, traceback[var] = max_prod_eliminate_var(_phi, var)
+        _phi //= var 
     
     #### TRACEBACK MAP ASSIGNMENT ####
-    max_assignment = traceback_map(traceback,bn, evidence)
+    max_assignment = _phi.traceback_map()
     
     #### RETURN ####
     if prob:
@@ -81,36 +74,6 @@ def map_ve_e(bn,
             return max_assignment[target]
         else:
             return max_assignment
-
-def max_prod_eliminate_var(_phi, Z):
-    relevant_factors = [f for f in _phi if Z in f.scope]
-    irrelevant_factors = [f for f in _phi if Z not in f.scope]
-
-    # mutliply all relevant factors
-    psi = relevant_factors[0]
-    for i in range(1,len(relevant_factors)):
-        psi *= relevant_factors[i]
-    
-    _psi = deepcopy(psi)
-    # Take Max over psi for Z
-    psi //= Z # maxout
-    irrelevant_factors.append(psi) # add sum-prod factor back in
-    
-    return irrelevant_factors, _psi
-
-def traceback_map(traceback, bn, val_idx):
-    nodes = traceback.keys()
-    idx = len(traceback)
-    for rv in reversed(traceback.keys()):
-        f = traceback[rv]
-        # reduce factor by variables upstream
-        for i in range(idx,len(traceback)):
-            if nodes[i] in f.scope:
-                f -= (nodes[i],val_idx[nodes[i]])
-        # choose maximizing assignment conditioned on upstream vars
-        val_idx[rv] = bn.values(rv)[np.argmax(traceback[rv].cpt)]
-        idx-=1
-    return val_idx
     
 
 def map_opt_e(bn, evidence={}):
