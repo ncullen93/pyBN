@@ -36,29 +36,33 @@ def map_ve_e(bn,
     """
     Perform Max-Sum Variable Elimination over a BayesNet object
     for exact maximum a posteriori inference.
+
+    This has been validated w/ no evidence.
     
     """
 
     _phi = [Factor(bn,var) for var in bn.nodes()]
-    
+    traceback = OrderedDict([(rv,None) for rv in bn.nodes()])
+    val_idx = dict([(rv,None) for rv in bn.nodes()])
+    order = deepcopy(list(bn.nodes()))
     #### EVIDENCE PROCESSING ####
     for E, e in evidence.items():
+        val_idx[E] = e
         for phi in _phi:
             if E in phi.scope:
                 phi.reduce_factor(E,e)
-        #order.remove(E)
-    traceback = OrderedDict([(rv,None) for rv in bn.nodes()])
+        order.remove(E)
+
     #### ALGORITHM ####
-    for var in bn.nodes():
+    for var in order:
         _phi, traceback[var] = max_prod_eliminate_var(_phi, var)
     
     max_prob = round(_phi[0].cpt[0],5)
-    max_assignment = traceback_map(traceback,bn)
+    max_assignment = traceback_map(traceback,bn, evidence)
     return max_prob, max_assignment
     
-def traceback_map(traceback,bn):
+def traceback_map(traceback, bn, val_idx):
     nodes = traceback.keys()
-    val_idx = dict([(rv,None) for rv in traceback])
     idx=len(traceback)
     for rv in reversed(traceback.keys()):
         f = traceback[rv]
