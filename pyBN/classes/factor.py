@@ -462,11 +462,11 @@ class Factor(object):
         del self.stride[rv]
         self.scope.remove(rv)
 
-        if rv == self.var:
-            self.var = [k for k,v in self.stride.items() if v==1][0]
+        #if rv == self.var:
+            #self.var = [k for k,v in self.stride.items() if v==1][0]
 
-        if len(self.scope) > 0:
-            self.normalize()
+        #if len(self.scope) > 0:
+            #self.normalize()
 
     def reduce_factor_by_list(self, evidence):
         """

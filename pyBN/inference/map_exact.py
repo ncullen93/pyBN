@@ -24,71 +24,66 @@ References
 
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
-import copy
+from copy import deepcopy
 import numpy as np
+from collections import OrderedDict
 
 from pyBN.classes.factor import Factor
 
 
 def map_ve_e(bn,
-            target=None,
             evidence={}):
     """
     Perform Max-Sum Variable Elimination over a BayesNet object
     for exact maximum a posteriori inference.
-
-    Parameters
-    ----------
-
-
-    Returns
-    -------
-
-
-    Effects
-    -------
-
-
-    Notes
-    -----
-
+    
     """
-    assert (target not in evidence.keys()), 'Target is already in Evidence..'
 
     _phi = [Factor(bn,var) for var in bn.nodes()]
-
-    #### ORDER HANDLING ####
-    order = copy.copy(list(bn.nodes()))
-    order.remove(target)
     
     #### EVIDENCE PROCESSING ####
     for E, e in evidence.items():
         for phi in _phi:
             if E in phi.scope:
                 phi.reduce_factor(E,e)
-        order.remove(E)
-
+        #order.remove(E)
+    traceback = OrderedDict([(rv,None) for rv in bn.nodes()])
     #### ALGORITHM ####
-    for var in order:
-        phi_bold, traceback[var] = max_prod_eliminate_var(phi_bold, var)
+    for var in bn.nodes():
+        _phi, traceback[var] = max_prod_eliminate_var(_phi, var)
     
-    x_star = traceback_map(traceback)
+    max_prob = round(_phi[0].cpt[0],5)
+    max_assignment = traceback_map(traceback,bn)
+    return max_prob, max_assignment
     
-    return bn.values(target)[np.argmax(marginal)]
-    
-        
+def traceback_map(traceback,bn):
+    nodes = traceback.keys()
+    val_idx = dict([(rv,None) for rv in traceback])
+    idx=len(traceback)
+    for rv in reversed(traceback.keys()):
+        f = traceback[rv]
+        # reduce factor by variables before it
+        for i in range(idx,len(traceback)):
+            if nodes[i] in f.scope:
+                f.reduce_factor(nodes[i],val_idx[nodes[i]])
+        # choose the maximizing assignment to the variables
+        # eliminated before Xi
+        val_idx[rv] = bn.values(rv)[np.argmax(traceback[rv].cpt)]
+        idx-=1
+    return val_idx
 
 def max_prod_eliminate_var(_phi, Z):
-    relevant_factors = [f for f in temp_F if var in f.scope]
-    irrelevant_factors = [f for f in temp_F if var not in f.scope]
+    relevant_factors = [f for f in _phi if Z in f.scope]
+    irrelevant_factors = [f for f in _phi if Z not in f.scope]
 
     # mutliply all relevant factors
     psi = relevant_factors[0]
-    for i in range(1,len(psi)):
+    for i in range(1,len(relevant_factors)):
         psi.multiply_factor(relevant_factors[i])
     
     _psi = deepcopy(psi)
-    psi.maxout_var(var)
+    # Take Max over psi for Z
+    psi.maxout_var(Z)
     irrelevant_factors.append(psi) # add sum-prod factor back in
     
     return irrelevant_factors, _psi
@@ -128,7 +123,7 @@ def map_opt_e(bn, evidence={}):
         - intersection of variables between cpt must agree
     """
     if evidence:
-            assert isinstance(evidence, dict), 'Evidence must be in dictionary form'
+        assert isinstance(evidence, dict), 'Evidence must be in dictionary form'
 
     model = LpProblem("MAP Inference",LpMinimize)
     var_dict = {} # maps variable string name to actual variable
@@ -179,7 +174,7 @@ def map_opt_e(bn, evidence={}):
             
     model.solve()
     max_inference = dict([(v.name,v.varValue) for v in model.variables() if v.varValue == 1])
-       return max_inference
+    return max_inference
 
     
 
