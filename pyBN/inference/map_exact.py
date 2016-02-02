@@ -32,13 +32,14 @@ from pyBN.classes.factor import Factor
 
 
 def map_ve_e(bn,
-            evidence={}):
+            evidence={},
+            target=None,
+            prob=False):
     """
     Perform Max-Sum Variable Elimination over a BayesNet object
     for exact maximum a posteriori inference.
 
-    This has been validated w/ no evidence and
-    w/ one variable of evidence.
+    This has been validated w/ and w/out evidence
     
     """
 
@@ -51,35 +52,46 @@ def map_ve_e(bn,
         val_idx[E] = e
         for phi in _phi:
             if E in phi.scope:
-                phi.reduce_factor(E,e)
+                phi -= (E,e) # reduce by evidence
         order.remove(E)
+    
     traceback = OrderedDict([(rv,None) for rv in order])
 
     #### ALGORITHM ####
     for var in order:
         _phi, traceback[var] = max_prod_eliminate_var(_phi, var)
     
-    # multiply phi's together if there is evidence
-    return _phi
-    #final_phi = _phi[-1]
-    #final_phi = _phi[0]
-    #for i in range(1,len(_phi)):
-        #final_phi.multiply_factor(_phi[i])
-    max_prob = round(final_phi.cpt[0],5)
+    #### TRACEBACK MAP ASSIGNMENT ####
     max_assignment = traceback_map(traceback,bn, evidence)
-    return max_prob, max_assignment
+    
+    #### RETURN ####
+    if prob:
+        # multiply phi's together if there is evidence
+        final_phi = _phi[0]
+        for i in range(1,len(_phi)):
+            final_phi *= _phi[i]
+        max_prob = round(final_phi.cpt[0],5)
+
+        if target is not None:
+            return max_prob, max_assignment[target]
+        else:
+            return max_prob, max_assignment
+    else:
+        if target is not None:
+            return max_assignment[target]
+        else:
+            return max_assignment
     
 def traceback_map(traceback, bn, val_idx):
     nodes = traceback.keys()
-    idx=len(traceback)
+    idx = len(traceback)
     for rv in reversed(traceback.keys()):
         f = traceback[rv]
-        # reduce factor by variables before it
+        # reduce factor by variables upstream
         for i in range(idx,len(traceback)):
             if nodes[i] in f.scope:
-                f.reduce_factor(nodes[i],val_idx[nodes[i]])
-        # choose the maximizing assignment to the variables
-        # eliminated before Xi
+                f -= (nodes[i],val_idx[nodes[i]])
+        # choose maximizing assignment conditioned on upstream vars
         val_idx[rv] = bn.values(rv)[np.argmax(traceback[rv].cpt)]
         idx-=1
     return val_idx
@@ -91,11 +103,11 @@ def max_prod_eliminate_var(_phi, Z):
     # mutliply all relevant factors
     psi = relevant_factors[0]
     for i in range(1,len(relevant_factors)):
-        psi.multiply_factor(relevant_factors[i])
+        psi *= relevant_factors[i]
     
     _psi = deepcopy(psi)
     # Take Max over psi for Z
-    psi.maxout_var(Z)
+    psi //= Z # maxout
     irrelevant_factors.append(psi) # add sum-prod factor back in
     
     return irrelevant_factors, _psi

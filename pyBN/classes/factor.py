@@ -149,14 +149,55 @@ class Factor(object):
 
 
     def __repr__(self):
+        """
+        Internal representation of the factor,
+        to be used when the object is called
+        in the console without print.
+        """
         s = self.var + ' | '
         s += ', '.join(self.parents())
         return s
 
     def __str__(self):
+        """
+        String representation of the factor,
+        to be used when print is called.
+        """
         s = self.var + ' | '
         s += ', '.join(self.parents())
         return s
+
+    def __mul__(self, other_factor):
+        """
+        Overloads multiplication operator to
+        be used as multiplying two factors together.
+        """
+        self.multiply_factor(other_factor)
+        return self
+
+    def __sub__(self, rv_val):
+        """
+        Overloads subtraction operator to
+        be used as reducing a factor by evidence.
+        """
+        self.reduce_factor(rv_val[0],rv_val[1])
+        return self
+
+    def __div__(self, rv):
+        """
+        Overloads division operator to
+        be used as summing out a variable.
+        """
+        self.sumout_var(rv)
+        return self
+
+    def __floordiv__(self, rv):
+        """
+        Overloads floor division operator to
+        be used as maxing out a variable
+        """
+        self.maxout_var(rv)
+        return self
 
 
     def parents(self):
