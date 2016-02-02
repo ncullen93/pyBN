@@ -76,6 +76,7 @@ def predict(data, target, classifier=None, method='nb'):
 	-----
 	"""
 	if classifier is None:
+		print 'Learning structure..'
 		classifier = learn_structure(data, method)
 		learn_parameters(classifier)
 
@@ -84,14 +85,17 @@ def predict(data, target, classifier=None, method='nb'):
 	yp = np.empty(data.shape[0],dtype=np.int32)
 	### CLASSIFIER PREDICTION FROM INFERENCE ###
 	for row in range(data.shape[0]):
+		if row % 100 == 0:
+			print 'Iteration: ' , row
 		vals = [data[row,i] for i in non_target_cols]
 		evidence = dict(zip(non_target_cols,vals))
 		y[row] = data[row,target] # true value
 		predicted_val = max(marginal_lws_a(bn=classifier,
+									n=100,
 									evidence=evidence,
 									target=target))
 		yp[row] = predicted_val
-
+		
 	acc = np.sum(y==yp)/data.shape[0]
 	return y, yp, acc
 
