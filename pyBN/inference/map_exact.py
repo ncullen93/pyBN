@@ -81,20 +81,6 @@ def map_ve_e(bn,
             return max_assignment[target]
         else:
             return max_assignment
-    
-def traceback_map(traceback, bn, val_idx):
-    nodes = traceback.keys()
-    idx = len(traceback)
-    for rv in reversed(traceback.keys()):
-        f = traceback[rv]
-        # reduce factor by variables upstream
-        for i in range(idx,len(traceback)):
-            if nodes[i] in f.scope:
-                f -= (nodes[i],val_idx[nodes[i]])
-        # choose maximizing assignment conditioned on upstream vars
-        val_idx[rv] = bn.values(rv)[np.argmax(traceback[rv].cpt)]
-        idx-=1
-    return val_idx
 
 def max_prod_eliminate_var(_phi, Z):
     relevant_factors = [f for f in _phi if Z in f.scope]
@@ -111,6 +97,20 @@ def max_prod_eliminate_var(_phi, Z):
     irrelevant_factors.append(psi) # add sum-prod factor back in
     
     return irrelevant_factors, _psi
+
+def traceback_map(traceback, bn, val_idx):
+    nodes = traceback.keys()
+    idx = len(traceback)
+    for rv in reversed(traceback.keys()):
+        f = traceback[rv]
+        # reduce factor by variables upstream
+        for i in range(idx,len(traceback)):
+            if nodes[i] in f.scope:
+                f -= (nodes[i],val_idx[nodes[i]])
+        # choose maximizing assignment conditioned on upstream vars
+        val_idx[rv] = bn.values(rv)[np.argmax(traceback[rv].cpt)]
+        idx-=1
+    return val_idx
     
 
 def map_opt_e(bn, evidence={}):

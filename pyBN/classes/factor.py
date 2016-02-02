@@ -293,7 +293,6 @@ class Factor(object):
         psi = np.zeros(np.product(phi1.card.values()))
 
         for i in range(len(psi)):
-            #psi[i] = round(phi1.cpt[j]*phi2.cpt[k],4)
             psi[i] = phi1.cpt[j]*phi2.cpt[k]
             for rv in rv_order:
                 assignment[rv] += 1
@@ -369,7 +368,7 @@ class Factor(object):
         self.scope = [rv]
         self.var = rv
 
-        self.normalize()
+        #self.normalize()
 
     def sumout_var_list(self, var_list):
         """
@@ -449,7 +448,7 @@ class Factor(object):
                 self.var = l[0]
 
         #if len([k for k,v in self.stride.items() if v==1]) > 0:
-        self.normalize()
+        #self.normalize()
 
     def maxout_var(self, rv):
         """

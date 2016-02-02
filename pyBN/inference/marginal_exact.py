@@ -26,7 +26,7 @@ References
 __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.classes.factor import Factor
-import copy
+from copy import deepcopy, copy
 import numpy as np
 import json
 
@@ -56,49 +56,45 @@ def marginal_ve_e(bn, target, evidence={}):
 	- Mutliple pieces of evidence often returns "nan"...numbers too small?
 		- dividing by zero -> perturb values in Factor class
 	"""
-	temp_F = [Factor(bn,var) for var in bn.nodes()] # topsort order
+	_phi = [Factor(bn,var) for var in bn.nodes()]
 
-	#### ORDER HANDLING ####
-	order = copy.copy(list(bn.nodes()))
+	val_idx = dict([(rv,None) for rv in bn.nodes()])
+	order = deepcopy(list(bn.nodes()))
 	order.remove(target)
-
-	##### EVIDENCE #####
-
-	if len(evidence)>0:
-		assert isinstance(evidence, dict), 'Evidence must be Dictionary'
-		temp=[]
-		for obs in evidence.items():
-			for f in temp_F:
-				if len(f.scope)>1 or obs[0] not in f.scope:
-					temp.append(f)
-				if obs[0] in f.scope:
-					f.reduce_factor(obs[0],obs[1])
-			order.remove(obs[0])
-		temp_F=temp
+	#### EVIDENCE PROCESSING ####
+	for E, e in evidence.items():
+		val_idx[E] = e
+		for phi in _phi:
+			if E in phi.scope:
+				phi -= (E,e) # reduce by evidence
+		order.remove(E)
 
 	#### ALGORITHM ####
 	for var in order:
-		relevant_factors = [f for f in temp_F if var in f.scope]
-		irrelevant_factors = [f for f in temp_F if var not in f.scope]
+		_phi = sum_prod_eliminate_var(_phi, var)
 
-		# mutliply all relevant factors
-		fmerge = relevant_factors[0]
-		for i in range(1,len(relevant_factors)):
-			fmerge.multiply_factor(relevant_factors[i])
-		
-		fmerge.sumout_var(var) # remove var from factor
+	# multiply phi's together if there is evidence
+	final_phi = _phi[0]
+	for i in range(1,len(_phi)):
+		final_phi *= _phi[i]
+	final_phi.normalize()
 
-		irrelevant_factors.append(fmerge) # add sum-prod factor back in
-		temp_F = irrelevant_factors
+	return np.round(final_phi.cpt,4)
 
-	marginal = temp_F[0]
-	# multiply final factors in factor_list
-	if len(temp_F) > 1:
-		for i in range(1,len(temp_F)):
-			marginal.multiply_factor(temp_F[i])
-	marginal.normalize()
+def sum_prod_eliminate_var(_phi, Z):
+	relevant_factors = [f for f in _phi if Z in f.scope]
+	irrelevant_factors = [f for f in _phi if Z not in f.scope]
 
-	return marginal.cpt
+	# mutliply all relevant factors
+	psi = relevant_factors[0]
+	for i in range(1,len(relevant_factors)):
+		psi *= relevant_factors[i]
+
+	# Take Max over psi for Z
+	psi /= Z # sumout
+	irrelevant_factors.append(psi) # add sum-prod factor back in
+
+	return irrelevant_factors
 
 
 def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):
