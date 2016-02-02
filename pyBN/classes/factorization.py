@@ -22,6 +22,9 @@ class Factorization(object):
 		self.map_prob = -1
 
 	def refresh(self):
+		"""
+		Refresh Factorization attributes.
+		"""
 		self._phi = [Factor(self.bn,rv) for rv in self.bn.nodes()]
 		self.map_factors = OrderedDict()
 		self.map_assignment = dict()
