@@ -176,29 +176,15 @@ class Factor(object):
         """
         Return the indices in the cpt
         where RV=Value in val_dict
+        For accessing the flattened array based 
+        on RV values/indices
+        and respective strides, use this formula:
+        sum( value_index[i]*stride[i] for i = all 
+            variables in the scope )
         """
-        target = self.var
-
-        stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
-        card = dict([(n,self.card(n)) for n in self.scope(target)])
-        idx_set = set(range(len(self.cpt(target))))
-        _cpt = self.cpt(target)
-        for rv, val in val_dict.items():
-            rv_stride = stride[rv]
-            rv_card = card[rv]
-            value_idx = self.value_idx(rv,val)
-
-            value_indices = []
-            idx=rv_stride*value_idx
-            while idx < len(_cpt):
-                value_indices.extend(range(idx,idx+rv_stride))
-                idx+=rv_card*rv_stride
-            idx_set = idx_set.intersection(set(value_indices))
-
-        if len(idx_set)==1:
-            return list(idx_set)[0]
-        else:            
-            return list(idx_set)
+        idx = sum([self.bn.value_idx(rv,val)*self.stride[rv] \
+            for rv,val in val_dict.items()])
+        return idx
 
     def sepset(self, other_factor):
         """

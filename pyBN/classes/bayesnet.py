@@ -243,25 +243,10 @@ class BayesNet(object):
 
         """
         stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
-        card = dict([(n,self.card(n)) for n in self.scope(target)])
-        idx_set = set(range(len(self.cpt(target))))
-        _cpt = self.cpt(target)
-        for rv, val in val_dict.items():
-            rv_stride = stride[rv]
-            rv_card = card[rv]
-            value_idx = self.value_idx(rv,val)
+        idx = sum([self.value_idx(rv,val)*stride[rv] \
+                    for rv,val in val_dict.items()])
+        return value_idx
 
-            value_indices = []
-            idx=rv_stride*value_idx
-            while idx < len(_cpt):
-                value_indices.extend(range(idx,idx+rv_stride))
-                idx+=rv_card*rv_stride
-            idx_set = idx_set.intersection(set(value_indices))
-
-        if len(idx_set)==1:
-            return list(idx_set)[0]
-        else:            
-            return list(idx_set)
 
     def set_structure(self, edge_dict, value_dict):
         """
