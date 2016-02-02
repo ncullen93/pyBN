@@ -91,7 +91,7 @@ def map_ve_e(bn,
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
 		temp_F = irrelevant_factors
-
+		
 	# Traceback MAP
 	assignment={}
 	for m in reversed(map_list):

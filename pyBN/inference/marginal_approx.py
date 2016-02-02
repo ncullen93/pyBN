@@ -96,7 +96,7 @@ def marginal_fs_a(bn, n=1000):
 	
 	return sample_dict
 
-def marginal_lws_a(bn, n=1000, evidence={}):
+def marginal_lws_a(bn, evidence={}, target=None, n=1000):
 	"""
 	Approximate Marginal probabilities from
 	likelihood weighted sample algorithm on
@@ -169,7 +169,10 @@ def marginal_lws_a(bn, n=1000, evidence={}):
 	        sample_dict[rv][val] /= weight_sum
 	        sample_dict[rv][val] = round(sample_dict[rv][val],4)
 	
-	return sample_dict
+	if target is not None:
+		return sample_dict[target]
+	else:
+		return sample_dict
 
 
 def marginal_gs_a(bn, n=1000, burn=200):

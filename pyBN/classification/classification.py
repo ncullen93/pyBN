@@ -11,7 +11,7 @@ classifiers.
 from __future__ import division
 
 import numpy as np
-
+from pyBN.inference.marginal_approx import marginal_lws_a
 
 
 def predict(data, target, classifier=None, method='nb'):
@@ -80,16 +80,16 @@ def predict(data, target, classifier=None, method='nb'):
 		learn_parameters(classifier)
 
 	non_target_cols = list(set(range(data.shape[1]))-{target})
-	y = np.empty(data.shape[0])
-	yp = np.empty(data.shape[0])
+	y = np.empty(data.shape[0],dtype=np.int32)
+	yp = np.empty(data.shape[0],dtype=np.int32)
 	### CLASSIFIER PREDICTION FROM INFERENCE ###
 	for row in range(data.shape[0]):
 		vals = [data[row,i] for i in non_target_cols]
 		evidence = dict(zip(non_target_cols,vals))
 		y[row] = data[row,target] # true value
-		predicted_val = marginal_ve_e(bn=classifier,
-									target=target,
-									evidence=evidene)
+		predicted_val = max(marginal_lws_a(bn=classifier,
+									evidence=evidence,
+									target=target))
 		yp[row] = predicted_val
 
 	acc = np.sum(y==yp)/data.shape[0]
