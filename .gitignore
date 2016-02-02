@@ -3,3 +3,5 @@
 .ipynb_checkpoints/
 *.ipynb_checkpoints/
 *.bkbn
+.spyderworkspace
+.spyderproject

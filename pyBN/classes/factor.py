@@ -28,7 +28,6 @@ from __future__ import division
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-import itertools
 import numpy as np
 
 class Factor(object):

@@ -39,8 +39,6 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 import numpy as np
-from itertools import product
-import copy
 from pyBN.utils.class_equivalence import are_class_equivalent
 from pyBN.utils.topsort import topsort
 
