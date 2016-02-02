@@ -72,10 +72,7 @@ def marginal_ve_e(bn, target, evidence={}):
 		_phi /= var
 
 	# multiply phi's together if there is evidence
-	final_phi = _phi[0]
-	for i in range(1,len(_phi)):
-		final_phi *= _phi[i]
-	final_phi.normalize()
+	final_phi = _phi.consolidate()
 
 	return np.round(final_phi.cpt,4)
 

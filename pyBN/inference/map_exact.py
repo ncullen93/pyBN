@@ -60,9 +60,7 @@ def map_ve_e(bn,
     #### RETURN ####
     if prob:
         # multiply phi's together if there is evidence
-        final_phi = _phi[0]
-        for i in range(1,len(_phi)):
-            final_phi *= _phi[i]
+        final_phi = _phi.consolidate()
         max_prob = round(final_phi.cpt[0],5)
 
         if target is not None:

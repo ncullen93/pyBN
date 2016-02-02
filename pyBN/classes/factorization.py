@@ -108,6 +108,13 @@ class Factorization(object):
 			idx-=1
 		return self.map_assignment
 
+	def consolidate(self):
+		final_phi = self._phi[0]
+		for i in range(1,len(self._phi)):
+			final_phi *= _phi[i]
+		final_phi.normalize()
+		return final_phi
+
 	def relevant_factors(self, rv):
 		return [f for f in self._phi if rv in f.scope]
 
