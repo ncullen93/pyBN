@@ -12,10 +12,6 @@ The Joint Probability Distribution of a Bayesian Network is
 simply a product of its factors. Much of the functionality
 is derived from algorithms presented in [1].
 
-This class is a great candidate for using Numba JIT compilation
-for manipulation and Numba's JIT functionality for the 
-class itself.
-
 The tests for this class are found in "test_factor.py".
 
 For accessing the flattened array based on RV values/indices
@@ -28,6 +24,7 @@ References
 [1] Koller, Friedman (2009). "Probabilistic Graphical Models."
 
 """
+from __future__ import division
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
@@ -175,21 +172,33 @@ class Factor(object):
     def values(self, rv):
         return self.bn.values(rv)
 
-    def value_indices(self, rv, value):
+    def value_indices(self, val_dict):
         """
         Return the indices in the cpt
-        where RV=Value
+        where RV=Value in val_dict
         """
-        rv_stride = self.stride[rv]
-        rv_card = self.card[rv]
-        value_idx = self.bn.value_idx(rv,value)
+        target = self.var
 
-        value_indices = []
-        idx=rv_stride*value_idx         
-        while idx < len(self.cpt):
-            value_indices.extend(range(idx,idx+rv_stride))
-            idx+=rv_card*rv_stride
-        return value_indices
+        stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
+        card = dict([(n,self.card(n)) for n in self.scope(target)])
+        idx_set = set(range(len(self.cpt(target))))
+        _cpt = self.cpt(target)
+        for rv, val in val_dict.items():
+            rv_stride = stride[rv]
+            rv_card = card[rv]
+            value_idx = self.value_idx(rv,val)
+
+            value_indices = []
+            idx=rv_stride*value_idx
+            while idx < len(_cpt):
+                value_indices.extend(range(idx,idx+rv_stride))
+                idx+=rv_card*rv_stride
+            idx_set = idx_set.intersection(set(value_indices))
+
+        if len(idx_set)==1:
+            return list(idx_set)[0]
+        else:            
+            return list(idx_set)
 
     def sepset(self, other_factor):
         """
@@ -258,7 +267,8 @@ class Factor(object):
         psi = np.zeros(np.product(phi1.card.values()))
 
         for i in range(len(psi)):
-            psi[i] = round(phi1.cpt[j]*phi2.cpt[k],4)
+            #psi[i] = round(phi1.cpt[j]*phi2.cpt[k],4)
+            psi[i] = phi1.cpt[j]*phi2.cpt[k]
             for rv in rv_order:
                 assignment[rv] += 1
                 if assignment[rv] == phi1.card[rv]:
@@ -281,6 +291,8 @@ class Factor(object):
         for v in rv_order:
             self.stride[v]=s
             s*=phi1.card[v]
+
+        #self.normalize()
 
 
     def sumover_var(self, rv):
@@ -384,7 +396,7 @@ class Factor(object):
         -----     
         
         """
-        exp_len = len(self.cpt)/self.card[rv]
+        exp_len = int(len(self.cpt)/self.card[rv])
         new_cpt = np.zeros(exp_len)
         
         rv_card = self.card[rv]
@@ -441,7 +453,7 @@ class Factor(object):
         
         """
         #self.cpt += 0.00002
-        exp_len = len(self.cpt)/self.card[rv]
+        exp_len = int(len(self.cpt)/self.card[rv])
         new_cpt = np.zeros(exp_len)
 
         rv_card = self.card[rv]
@@ -468,8 +480,8 @@ class Factor(object):
         if rv == self.var:
             self.var = [k for k,v in self.stride.items() if v==1][0]
 
-        #if len(self.scope) > 0:
-            #self.normalize()
+        if len(self.scope) > 0:
+            self.normalize()
 
     def reduce_factor_by_list(self, evidence):
         """
@@ -619,8 +631,7 @@ class Factor(object):
             for i in range(0,len(self.cpt),self.card[var]):
                 temp_sum = float(np.sum(self.cpt[i:(i+self.card[var])]))
                 for j in range(self.card[var]):
-                    self.cpt[i+j] /= (temp_sum)
-                    self.cpt[i+j] = round(self.cpt[i+j],5)
+                    self.cpt[i+j] /= temp_sum
         else:
             for i in range(len(self.cpt)):
                 self.cpt[i] /= (np.sum(self.cpt))

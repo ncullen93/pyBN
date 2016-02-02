@@ -64,17 +64,31 @@ def map_ve_e(bn,
 	order.remove(target)
 	
 	##### EVIDENCE #####
+	#if len(evidence)>0:
+	#	assert isinstance(evidence, dict), 'Evidence must be Dictionary'
+	#	temp=[]
+	#	for f in temp_F:
+	#		for rv, val in evidence.items():
+	#			#if len(f.scope)>1 or rv not in f.scope:
+	#				#temp.append(f)
+	#			if rv in f.scope:
+	#				f.reduce_factor(rv,val)
+	#		order.remove(rv)
+	#		temp.append(f)
+	#	temp_F=temp
+
 	if len(evidence)>0:
 		assert isinstance(evidence, dict), 'Evidence must be Dictionary'
 		temp=[]
-		for rv, val in evidence.items():
+		for obs in evidence.items():
 			for f in temp_F:
-				if len(f.scope)>1 or rv not in f.scope:
+				if len(f.scope)>1 or obs[0] not in f.scope:
 					temp.append(f)
-				if rv in f.scope:
-					f.reduce_factor(rv,val)
-			order.remove(rv)
+				if obs[0] in f.scope:
+					f.reduce_factor(obs[0],obs[1])
+			order.remove(obs[0])
 		temp_F=temp
+
 	
 	#### ALGORITHM ####
 	for var in order:
@@ -86,26 +100,19 @@ def map_ve_e(bn,
 		for i in range(1,len(relevant_factors)):
 			fmerge.multiply_factor(relevant_factors[i])
 		
-		map_list.append(copy.deepcopy(fmerge))
 		fmerge.maxout_var(var)
 
 		irrelevant_factors.append(fmerge) # add sum-prod factor back in
 		temp_F = irrelevant_factors
-		
-	# Traceback MAP
-	assignment={}
-	for m in reversed(map_list):
-		#var = m.var
-		var = list(set(m.scope) - set(assignment.keys()))[0]
-		m.reduce_factor_by_list([[k,v] for k,v in assignment.items() \
-									if k in m.scope and k!=var])
-		assignment[var] = bn.values(var)[(np.argmax(m.cpt) / m.stride[var]) % m.card[var]]
 	
-	sol = assignment
-	sol.update(evidence)
-	#print json.dumps(sol,indent=2)
-	val=round(temp_F[0].cpt[0],4)
-	return sol[target], val
+	marginal = temp_F[0]
+	# multiply final factors in factor_list
+	if len(temp_F) > 1:
+		for i in range(1,len(temp_F)):
+			marginal.multiply_factor(temp_F[i])
+	marginal.normalize()
+	
+	return bn.values(target)[np.argmax(marginal)]
 
 def map_opt_e(bn, evidence={}):
 	"""
