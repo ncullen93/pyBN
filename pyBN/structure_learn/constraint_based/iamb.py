@@ -21,15 +21,7 @@ classification or general dimensionality reduction - simply return
 the markov blanket of a given node, which has been shown by Daphne
 Koller to be theoretically optimal for prediction [3]. 
 
-IAMB for Feature Selection (from [1]):
-	"A principled solution to the feature selection problem is
-	to determine a subset of attributes that can "shield" (render
-	independent) the attribute of interest from the effect of
-	the remaining attributes in the domain. Koller and Sahami
-	[4] first showed that the Markov blanket of a given target attribute
-	is the theoretically optimal set of attributes to predict
-	its value...
-	
+IAMB for Feature Selection (from [1]):	
 	Because the Markov blanket of a target attribute T renders
 	it statistically independent from all the remaining attributes
 	(see the Markov blanket definition below), all information
@@ -38,7 +30,7 @@ IAMB for Feature Selection (from [1]):
 	from the feature set outside its Markov blanket can be effectively
 	ignored from the feature set without adversely affecting
 	the performance of any classifier that predicts the
-	value of T"
+	value of T
 
 References
 ----------
@@ -65,18 +57,17 @@ def iamb(data, alpha=0.05, feature_selection=None):
 	---------
 	*data* : a nested numpy array
 
-	*dag* : a boolean
-		Whether to return a Directed graph
-
-	*pdag* : a boolean
-		Whether to return a Partially Directed Graph.
-
 	*alpha* : a float
 		The type II error rate.
 
+	*feature_selection* : None or a string
+		Whether to use IAMB as a structure learning
+		or feature selection algorithm.
+
 	Returns
 	-------
-	*bn* : a BayesNet object
+	*bn* : a BayesNet object or
+	*mb* : the markov blanket of a node
 
 	Effects
 	-------
