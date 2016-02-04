@@ -103,7 +103,7 @@ def feature_selection(data, target, method='iamb'):
 		method is given, "iamb" is called.
 
 	"""
-	features = learn_structure(data, method=method, fs=target)
+	features = learn_structure(data, method=method, feature_selection=target)
 	return features
 
 

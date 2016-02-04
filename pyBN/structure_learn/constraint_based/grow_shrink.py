@@ -44,7 +44,7 @@ from copy import copy
 import numpy as np
 import itertools
 
-def gs(data, alpha=0.05, fs=None):
+def gs(data, alpha=0.05, feature_selection=None):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
@@ -85,11 +85,11 @@ def gs(data, alpha=0.05, fs=None):
 	value_dict = dict(zip(range(n_rv),
 		[list(np.unique(col)) for col in data.T]))
 
-	if fs is None:
+	if feature_selection is None:
 		_T = range(n_rv)
 	else:
-		assert (not isinstance(fs, list)), 'fs must be only one value'
-		_T = [fs]
+		assert (not isinstance(feature_selection, list)), 'feature_selection must be only one value'
+		_T = [feature_selection]
 
 	# STEP 1 : COMPUTE MARKOV BLANKETS
 	Mb = dict([(rv,[]) for rv in range(n_rv)])
@@ -130,7 +130,7 @@ def gs(data, alpha=0.05, fs=None):
 		
 		Mb[X] = TEMP_S
 	
-	if fs is None:
+	if feature_selection is None:
 		# STEP 2: COMPUTE GRAPH STRUCTURE
 		# i.e. Resolve Markov Blanket
 		edge_dict = resolve_markov_blanket(Mb,data)

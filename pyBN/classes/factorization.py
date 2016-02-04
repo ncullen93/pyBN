@@ -12,9 +12,22 @@ import numpy as np
 
 class Factorization(object):
 
-	def __init__(self, bn):
+	def __init__(self, bn, nodes=None):
+		"""
+		Initialize a Factorization object.
+
+		The *nodes* argument allows you to make a Factorization object
+		that includes only a subset of the random variables in the
+		passed-in BayesNet object. This is mostly useful for CliqueTree
+		algorithms.
+		
+		"""
 		self.bn = bn
-		self._phi = [Factor(bn,rv) for rv in bn.nodes()]
+
+		if nodes is not None:
+			self._phi = [Factor(bn,rv) for rv in nodes]
+		else:
+			self._phi = [Factor(bn,rv) for rv in bn.nodes()]
 
 		## MAP-BASED ATTRIBUTES ##
 		self.map_factors = OrderedDict()
@@ -32,6 +45,10 @@ class Factorization(object):
 
 	def __getitem__(self, idx):
 		return self._phi[idx]
+
+	def __iter__(self):
+		for phi in _phi:
+			yield phi
 
 	def __len__(self):
 		return len(self._phi)
@@ -115,7 +132,7 @@ class Factorization(object):
 		final_phi = self._phi[0]
 		for i in range(1,len(self._phi)):
 			final_phi *= _phi[i]
-		final_phi.normalize()
+		#final_phi.normalize()
 		return final_phi
 
 	def relevant_factors(self, rv):

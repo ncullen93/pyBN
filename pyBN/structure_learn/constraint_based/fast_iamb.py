@@ -38,7 +38,7 @@ from __future__ import division
 import numpy as np
 from pyBN.utils.independence_tests import are_independent, mi_test
 
-def fast_iamb(data, k=5, alpha=0.05, fs=None):
+def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 	"""
 	From [1]:
 		"A novel algorithm for the induction of
@@ -72,11 +72,11 @@ def fast_iamb(data, k=5, alpha=0.05, fs=None):
 	N = data.shape[0]
 	card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
 
-	if fs is None:
+	if feature_selection is None:
 		_T = range(n_rv)
 	else:
-		assert (not isinstance(fs, list)), 'fs must be only one value'
-		_T = [fs]
+		assert (not isinstance(feature_selection, list)), 'feature_selection must be only one value'
+		_T = [feature_selection]
 	# LEARN MARKOV BLANKET
 	for T in _T:
 		S = set(range(n_rv)) - {T}
@@ -119,7 +119,7 @@ def fast_iamb(data, k=5, alpha=0.05, fs=None):
 					if are_independent(data[:,cols]):
 						S.add(a)
 	
-	if fs is None:
+	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
 		edge_dict = resolve_markov_blanket(Mb, data)
 

@@ -27,6 +27,8 @@ __author__ = """N. Cullen <ncullen.th@dartmouth.edu>"""
 
 from pyBN.classes.factor import Factor
 from pyBN.classes.factorization import Factorization
+from pyBN.utils.graph import *
+
 from copy import deepcopy, copy
 import numpy as np
 import json
@@ -77,9 +79,11 @@ def marginal_ve_e(bn, target, evidence={}):
 	return np.round(final_phi.cpt,4)
 
 
-def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):
+def marginal_ctbp_e(bn, target=None, evidence=None):
 	"""
-	Perform Message Passing (Belief Propagation) over a Clique Tree.
+	Perform Belief Propagation (Message Passing) over a Clique Tree. This
+	is sometimes referred to as the "Junction Tree Algorithm" or
+	the "Hugin Algorithm".
 
 	It involves an Upward Pass (see [1] pg. 353) along with
 	Downward Pass (Calibration) ([1] pg. 357) if the target involves
@@ -96,7 +100,6 @@ def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):
 
 	Notes
 	-----
-	- Copied directly from CliqueTree class... not tested.
 
 	"""
 	# 1: Moralize the graph
@@ -106,36 +109,42 @@ def marginal_bp_e(bn, target=None, evidence=None, downward_pass=True):
 
 	# creates clique tree and assigns factors, thus satisfying steps 1-3
 	ctree = CliqueTree(bn) # might not be initialized?
-	G = ctree.G # ugh
+	#G = ctree.G
 	#cliques = copy.copy(ctree.V)
 
 	# select a clique as root where target is in scope of root
-	root=np.random.randint(0,len(ctree.V))
-	if target:
-		root = [node for node in G.nodes() if target in ctree.V[node].scope][0]
+	root = bn.V[0]
+	if target is not None:
+		for v, c in ctree:
+			if target in c.scope:
+				root = v
+				break
 
-	tree_graph = nx.dfs_tree(G,root)
-	clique_ordering = list(nx.dfs_postorder_nodes(tree_graph,root))
+	#tree_graph = nx.dfs_tree(G,root)
+	#clique_ordering = list(nx.dfs_postorder_nodes(tree_graph,root))
+	clique_ordering = dfs_postorder(ctree.E, root=root)
 
-	# SEND MESSAGES UP THE TREE FROM THE LEAVES TO THE SINGLE ROOT
+	# UPWARD PASS
+	# send messages up the tree from the leaves to the single root
 	for i in clique_ordering:
-		clique = ctree.V[i]
-		for j in tree_graph.predecessors(i):
-			clique.send_message(ctree.V[j])
+		#clique = ctree[i]
+		for j in ctree.parents(i):
+			ctree[i] >> ctree[j]
+			#clique.send_message(ctree[j])
 		# if root node, collect its beliefs
-		if len(tree_graph.predecessors(i)) == 0:
-			ctree.V[root].collect_beliefs()
+		if len(ctree.parents(i)) == 0:
+			ctree[root].collect_beliefs()
 
-	if downward_pass:
-		# if target is a list, run downward pass
-		new_ordering = list(reversed(clique_ordering))
-		for j in new_ordering:
-			clique = ctree.V[j]
-			for i in tree_graph.successors(j):
-				clique.send_message(ctree.V[i])
-			# if leaf node, collect its beliefs
-			if len(tree_graph.successors(j)) == 0:                    
-				ctree.V[j].collect_beliefs()
+	# DOWNWARD PASS
+	# send messages down the tree from the root to the leaves
+	# (not needed unless *target* involves more than one variable)
+	new_ordering = list(reversed(clique_ordering))
+	for j in new_ordering:
+		for i in ctree.children(j):
+			ctree[j] >> ctree[i]
+		# if leaf node, collect its beliefs
+		if len(ctree.children(j)) == 0:                    
+			ctree[j].collect_beliefs()
 
 	return ctree.beliefs
 

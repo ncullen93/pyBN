@@ -10,7 +10,7 @@ Blanket Discovery"
 import numpy as np
 from pyBN.utils.independence_tests import are_independent, entropy
 
-def lamba_iamb(data, L=1.5, alpha=0.05):
+def lamba_iamb(data, L=1.5, alpha=0.05, feature_selection=None):
 	"""
 	Lambda IAMB Algorithm for learning the structure of a
 	Discrete Bayesian Network from data. This Algorithm
@@ -52,11 +52,11 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 	n_rv = data.shape[1]
 	Mb = dict([(rv,{}) for rv in range(n_rv)])
 
-	if fs is None:
+	if feature_selection is None:
 		_T = range(n_rv)
 	else:
-		assert (not isinstance(fs, list)), 'fs must be only one value'
-		_T = [fs]
+		assert (not isinstance(feature_selection, list)), 'feature_selection must be only one value'
+		_T = [feature_selection]
 
 	# LEARN MARKOV BLANKET
 	for T in _T:
@@ -101,7 +101,7 @@ def lamba_iamb(data, L=1.5, alpha=0.05):
 			if mi_test(data[:,cols]) > alpha:
 				Mb(T).remove(X)
 
-	if fs is None:
+	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
 		edge_dict = resolve_markov_blanket(Mb, data)
 

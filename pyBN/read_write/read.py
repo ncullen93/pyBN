@@ -18,7 +18,7 @@ import copy
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
-from pyBN.utils.topsort import topsort
+from pyBN.utils.graph import topsort
 
 
 def read_bn(path):

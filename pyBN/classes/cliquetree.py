@@ -36,15 +36,14 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 
 import numpy as np
-import pandas as pd
 import networkx as nx
-import copy
+from copy import copy, deepcopy
 
 from pyBN.classes.bayesnet import BayesNet
 from pyBN.classes.factor import Factor
+from pyBN.classes.factorization import Factorization
 
-from pyBN.utils.chordal_bn import make_chordal
-from pyBN.utils.mst import minimum_spanning_tree
+from pyBN.utils.graph import *
 
 
 
@@ -68,7 +67,8 @@ class CliqueTree(object):
         - Edges -> dictionary
 
     - C
-        - Cliques -> a list of Clique objects
+        - Cliques -> a dictionary where key = vertex idx,
+                value = Clique object
 
     """
 
@@ -88,7 +88,28 @@ class CliqueTree(object):
         
         """
         self.bn = bn
-        self.V,self.E,self.C = self.initialize_tree()
+        self._F = Factorization(bn)
+        self.initialize_tree()
+
+    def __iter__(self):
+        for vertex, clique in self.C.items():
+            yield vertex, clique
+
+    def __getitem__(self, rv):
+        """
+        Returns Clique of passed-in rv
+        """
+        return self.C[rv]
+
+    def parents(self, v):
+        p = []
+        for rv in self.V:
+            if v in self.E[rv]:
+                p.append(v)
+        return p
+
+    def children(self, n):
+        return self.E[n]
 
     def initialize_tree(self):
         """
@@ -125,103 +146,34 @@ class CliqueTree(object):
         # set E, V
         self.E = mst_G # dictionary
         self.V = mst_G.keys() # list
+        self.C = C
 
-        # set C - key = rv, value = clique object
-        self.assign_factors() # factors who have a var in clique's scope
+        # ASSIGN FACTORS TO A UNIQUE CLIQUE
+        v_a = dict([(rv, False) for rv in self.V])
+        for clique in self.C.values():
+            temp_scope = []
+            for var in self.V:
+                if v_a[var] == False and self.bn.scope(var).issubset(clique.scope):
+                    temp_scope.append(var)
+                    v_a[var] = True
+            clique._F = Factorization(temp_scope)
+
         for clique in self.V.values():
             clique.compute_psi()
 
-        return V, E, C
-
-    def assign_factors(self):
-        """
-        This clearly needs to be changed       
-
-        """
-        factor_list = [Factor(bn,var) for var in self.bn.nodes()]
-        for factor in factor_list:
-            assigned=False
-            for v in self.C.values():
-                if f.scope.issubset(v.scope):
-                    if assigned==False:
-                        v.factors.append(f)
-                        assigned=True
-
-    def message_passing(self, target=None, evidence=None, downward_pass=True):
-        """
-        Perform Message Passing (Belief Propagation) over a clique tree. This
-        includes an Upward Pass as shown in Koller p.353 along with
-        Downward Pass (Calibration) from Koller p.357 if target is list.
-
-        The result is a marginal distribution over the target rv(s).
 
 
-        Arguments
-        ---------
-        *target* : a string or a list of strings
-            The variables for which the marginal probabilities
-            are to be computed.
 
-        *evidence* : a dictionary, where
-            key = rv and value = rv's instantiation
-
-        Returns
-        -------
-        None
-
-        Effects
-        -------
-        - Sends messages
-
-        Notes
-        -----
-
-        """
-        # 1: Moralize the graph
-        # 2: Triangluate
-        # 3: Build a clique tree using max spanning
-        # 4: Propagation of probabilities using message passing
-
-        # creates clique tree and assigns factors, thus satisfying steps 1-3
-        ctree = copy.copy(self)
-        G = ctree.G
-        #cliques = copy.copy(ctree.V)
-
-        # select a clique as root where target is in scope of root
-        root=np.random.randint(0,len(ctree.V))
-        if target:
-            root = [node for node in G.nodes() if target in ctree.V[node].scope][0]
-
-        tree_graph = nx.dfs_tree(G,root)
-        clique_ordering = list(nx.dfs_postorder_nodes(tree_graph,root))
-
-        # SEND MESSAGES UP THE TREE FROM THE LEAVES TO THE SINGLE ROOT
-        for i in clique_ordering:
-            clique = ctree.V[i]
-            for j in tree_graph.predecessors(i):
-                clique.send_message(ctree.V[j])
-            # if root node, collect its beliefs
-            if len(tree_graph.predecessors(i)) == 0:
-                ctree.V[root].collect_beliefs()
-
-        if downward_pass:
-            # if target is a list, run downward pass
-            new_ordering = list(reversed(clique_ordering))
-            for j in new_ordering:
-                clique = ctree.V[j]
-                for i in tree_graph.successors(j):
-                    clique.send_message(ctree.V[i])
-                # if leaf node, collect its beliefs
-                if len(tree_graph.successors(j)) == 0:                    
-                    ctree.V[j].collect_beliefs()
-
-        self.bn.ctree = self
-
-        # beliefs hold the answers
 
 class Clique(object):
     """
     Clique Class
+
+    *scope* : a set of variables in the clique's scope
+
+    *_f* : a factorization object that contains only the
+        factors of variables in the clique's scope
+
     """
 
     def __init__(self, scope):
@@ -236,27 +188,57 @@ class Clique(object):
 
 
         """
-        self.scope=scope
-        self.factors=[]
+        self.scope = scope
+        self._F = None
+        
         self.psi = None # Psi should never change -> Factor object
         self.belief = None
+        
         self.messages_received = []
         self.is_ready = False
 
     def __repr__(self):
         return str(self.scope)
 
+    def __rshift__(self, other_clique):
+        """
+        Send a message from self to other_clique
+        """
+        self.send_message(other_clique)
+
+    def __lshift__(self, other_clique):
+        """
+        Send a message from other_clique to self
+        """
+        other_clique.send_message(self)
+
+    def compute_psi(self):
+        """
+        Compute a new psi (cpt) in order to 
+        set the clique's belief. This involves
+        multiplying the factors in the Clique together.
+        """
+        assert (len(self.factors) != 0), 'No Factors assigned to this clique.'
+
+        if len(self.factors) == 1:
+            self.psi = copy(self.factors[0])
+        else:
+            self.psi = max(self.factors, key=lambda x: len(x.cpt))
+            for f in self.factors:
+                self.psi *= f
+            #self.psi.merge_multiply(self.factors)
+            self.belief = copy(self.psi)
+
     def send_initial_message(self, other_clique):
         """
         Send the first message to another clique.
-
 
         Arguments
         ---------
         *other_clique* : a different Clique object
 
         """
-        psi_copy = copy.copy(self.psi)
+        psi_copy = copy(self.psi)
         sepset = self.sepset(other_clique)
         sumout_vars = self.scope.difference(sepset)
         # sum out variables not in the sepset of other_clique
@@ -268,7 +250,7 @@ class Clique(object):
         print 'Init Msg: \n', psi_copy.cpt
         other_clique.messages_received.append(psi_copy)
 
-        self.belief = copy.copy(self.psi)
+        self.belief = copy(self.psi)
 
     def sepset(self, other_clique):
         """
@@ -282,24 +264,6 @@ class Clique(object):
 
         """
         return self.scope.intersection(other_clique.scope)
-
-    def compute_psi(self):
-        """
-        Compute a new psi (cpt) in order to 
-        set the clique's belief.
-        """
-        if len(self.factors) == 0:
-            print 'No factors assigned to this clique!'
-            return None
-
-        if len(self.factors) == 1:
-            self.psi = copy.copy(self.factors[0])
-        else:
-            self.psi = max(self.factors, key=lambda x: len(x.cpt))
-            for f in self.factors:
-                self.psi.multiply(f)
-            #self.psi.merge_multiply(self.factors)
-            self.belief = copy.copy(self.psi)
 
     def send_message(self, parent):
         """
@@ -316,17 +280,17 @@ class Clique(object):
         if len(self.messages_received) > 0:
             # if there are messages received, mutliply them in to psi first
             if not self.belief:
-                self.belief = copy.copy(self.psi)
+                self.belief = copy(self.psi)
             for msg in self.messages_received:
                 self.belief.multiply(msg)
             #self.belief.merge_multiply(self.messages_received)
         else:
             # if there are no messages received, simply move on with psi
             if not self.belief:
-                self.belief = copy.copy(self.psi)
+                self.belief = copy(self.psi)
         # generate message as belief with Ci - Sij vars summed out
         vars_to_sumout = list(self.scope.difference(self.sepset(parent)))
-        message_to_send = copy.copy(self.belief)
+        message_to_send = copy(self.belief)
         message_to_send.sumout_var_list(vars_to_sumout)
         parent.messages_received.append(message_to_send)
 
@@ -351,7 +315,7 @@ class Clique(object):
         since the main algorithm is just sending messages for a while.
         """
         if len(self.messages_received) > 0:
-            self.belief = copy.copy(self.psi)
+            self.belief = copy(self.psi)
             for msg in self.messages_received:
                 self.belief.cpt.merge(msg.cpt)
                 #self.belief.normalize()
@@ -361,7 +325,7 @@ class Clique(object):
             #self.belief.normalize()
             self.messages_received = []
         else:
-            self.belief = copy.copy(self.belief)
+            self.belief = copy(self.belief)
             #print 'No Messages Received - Belief is just original Psi'
 
 

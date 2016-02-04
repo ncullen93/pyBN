@@ -5,7 +5,7 @@ Wrapper for Structure Learning
 from pyBN.structure_learn import *
 
 
-def learn_structure(data, method, fs=None):
+def learn_structure(data, method, feature_selection=None):
 	"""
 	Wrapper for Bayesian network structure learning.
 
@@ -16,11 +16,11 @@ def learn_structure(data, method, fs=None):
 	*method* : a string
 		Which structure learning algorithm to use.
 
-	*fs* : an integer (optional - default "None")
-		If *fs* argument is supplied with an integer,
+	*feature_selection* : an integer (optional - default "None")
+		If *feature_selection* argument is supplied with an integer,
 		it will assume that structure learning is
 		being used for feature selection only - so the 
-		markov blanket of the *fs* passed-in value will
+		markov blanket of the *feature_selection* passed-in value will
 		be calculated and returned. Note, this is only
 		relevant for a few constraint-based structure
 		learning algorithms
@@ -35,16 +35,16 @@ def learn_structure(data, method, fs=None):
 		bn = chow_liu(data)
 
 	elif method == 'fast_iamb':
-		bn = fast_iamb(data, fs) # learn structure
+		bn = fast_iamb(data, feature_selection) # learn structure
 
 	elif method == 'gs' or method == 'grow_shrink':
-		bn = gs(data, fs)
+		bn = gs(data, feature_selection)
 
 	elif method == 'iamb':
-		bn = iamb(data, fs)
+		bn = iamb(data, feature_selection)
 
 	elif method == 'lambda_iamb':
-		bn = lambda_iamb(data, fs)
+		bn = lambda_iamb(data, feature_selection)
 
 	elif method == 'nb' or method == 'naive_bayes':
 		bn = naive_bayes(data)

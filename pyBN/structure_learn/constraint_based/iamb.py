@@ -10,7 +10,7 @@ import numpy as np
 from pyBN.utils.independence_tests import are_independent
 from pyBN.utils.orient_edges import orient_edges_MB
 
-def iamb(data, alpha=0.05):
+def iamb(data, alpha=0.05, feature_selection=None):
 	"""
 	IAMB Algorithm for learning the structure of a
 	Discrete Bayesian Network from data.
@@ -43,11 +43,11 @@ def iamb(data, alpha=0.05):
 	Mb = dict([(rv,{}) for rv in range(n_rv)])
 	
 
-	if fs is None:
+	if feature_selection is None:
 		_T = range(n_rv)
 	else:
-		assert (not isinstance(fs, list)), 'fs must be only one value'
-		_T = [fs]
+		assert (not isinstance(feature_selection, list)), 'feature_selection must be only one value'
+		_T = [feature_selection]
 
 	# LEARN MARKOV BLANKET
 	for T in _T:
@@ -82,7 +82,7 @@ def iamb(data, alpha=0.05):
 			if are_independent(data[:,cols],alpha):
 				Mb(T).remove(X)
 
-	if fs is None:
+	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
 		edge_dict = resolve_markov_blanket(Mb, data)
 

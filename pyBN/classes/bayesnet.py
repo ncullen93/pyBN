@@ -40,7 +40,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 from pyBN.utils.class_equivalence import are_class_equivalent
-from pyBN.utils.topsort import topsort
+from pyBN.utils.graph import topsort
 
 class BayesNet(object):
     """
@@ -241,9 +241,40 @@ class BayesNet(object):
 
         """
         stride = dict([(n,self.stride(target,n)) for n in self.scope(target)])
-        idx = sum([self.value_idx(rv,val)*stride[rv] \
-                    for rv,val in val_dict.items()])
-        return value_idx
+        #if len(val_dict)==len(self.parents(target)):
+        #    idx = sum([self.value_idx(rv,val)*stride[rv] \
+        #            for rv,val in val_dict.items()])
+        #else:
+        card = dict([(n, self.card(n)) for n in self.scope(target)])
+        idx = set(range(len(self.cpt(target))))
+        for rv, val in val_dict.items():
+            val_idx = self.value_idx(rv,val)
+            rv_idx = []
+            s_idx = val_idx*stride[rv]
+            while s_idx < len(self.cpt(target)):
+                rv_idx.extend(range(s_idx,(s_idx+stride[rv])))
+                s_idx += stride[rv]*card[rv]
+            idx = idx.intersection(set(rv_idx))
+
+        return list(idx)
+
+    def cpt_str_idx(self, rv, idx):
+        """
+        Return string representation of RV=VAL and
+        Parents=Val for the given idx of the given rv's cpt.
+        """
+        rv_val = self.values(rv)[idx % self.card(rv)]
+        s = str(rv)+'='+str(rv_val) + '|'
+        _idx=1
+        for parent in self.parents(rv):
+            for val in self.values(parent):
+                if idx in self.cpt_indices(rv,{rv:rv_val,parent:val}):
+                    s += str(parent)+'='+str(val)
+                    if _idx < len(self.parents(rv)):
+                        s += ','
+                    _idx+=1
+        return s
+
 
 
     def set_structure(self, edge_dict, value_dict):
