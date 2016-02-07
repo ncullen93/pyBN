@@ -87,13 +87,24 @@ class CliqueTree(object):
         just a watered down version of the Factor class)        
         
         """
+        ####
+        self.V = None
+        self.E = None
+        self.C = None
+        ###
+
         self.bn = bn
         self._F = Factorization(bn)
         self.initialize_tree()
 
+        
+
+    #def __repr__(self):
+       # return self.C
+
     def __iter__(self):
-        for vertex, clique in self.C.items():
-            yield vertex, clique
+        for clique in self.C.values():
+            yield clique
 
     def __getitem__(self, rv):
         """
@@ -111,6 +122,12 @@ class CliqueTree(object):
     def children(self, n):
         return self.E[n]
 
+    def dfs_postorder(self, root):
+        G = nx.Graph(self.E)
+        tree_graph = nx.dfs_tree(G,root)
+        clique_ordering = list(nx.dfs_postorder_nodes(tree_graph,root))
+        return clique_ordering
+
     def initialize_tree(self):
         """
         Initialize the structure of a clique tree, using
@@ -121,48 +138,46 @@ class CliqueTree(object):
             - Max spanning tree over sepset cardinality (i.e. create tree)
         
         """
-        #self.V = []
-        #self.E = dict
-        C = {} # key = vertex, value = clique object
-
-        # get chordal/triangulated graph
+        ### MORALIZE GRAPH & MAKE IT CHORDAL ###
         chordal_G = make_chordal(self.bn) # must return a networkx object
         V = chordal_G.nodes()
-        # get max cliques from chordal graph
+
+        ### GET MAX CLIQUES FROM CHORDAL GRAPH ###
+        C = {} # key = vertex, value = clique object
         max_cliques = reversed(list(nx.chordal_graph_cliques(chordal_G)))
         for v_idx,clique in enumerate(max_cliques):
             C[v_idx] = Clique(set(clique))
 
-        # find edges used maximum spanning tree
+        ### MAXIMUM SPANNING TREE OVER COMPLETE GRAPH TO MAKE A TREE ###
         weighted_edge_dict = dict([(c_idx,{}) for c_idx in xrange(len(C))])
         for i in range(len(C)):
             for j in range(len(C)):
                 if i!=j:
                     intersect_cardinality = len(C[i].sepset(C[j]))
                     weighted_edge_dict[i][j] = -1*intersect_cardinality
-        
-        mst_G = minimum_spanning_tree(weighted_edge_dict)
-
-        # set E, V
+        mst_G = mst(weighted_edge_dict)
+        ### SET V,E,C ###
         self.E = mst_G # dictionary
         self.V = mst_G.keys() # list
         self.C = C
 
-        # ASSIGN FACTORS TO A UNIQUE CLIQUE
-        v_a = dict([(rv, False) for rv in self.V])
+        
+        ### ASSIGN EACH FACTOR TO ONE CLIQUE ONLY ###
+        v_a = dict([(rv, False) for rv in self.bn.nodes()])
         for clique in self.C.values():
             temp_scope = []
-            for var in self.V:
-                if v_a[var] == False and self.bn.scope(var).issubset(clique.scope):
+            for var in v_a:
+                if v_a[var] == False and set(self.bn.scope(var)).issubset(clique.scope):
                     temp_scope.append(var)
                     v_a[var] = True
-            clique._F = Factorization(temp_scope)
+            clique._F = Factorization(self.bn, temp_scope)
 
-        for clique in self.V.values():
-            clique.compute_psi()
-
-
-
+        ### COMPUTE INITIAL POTENTIAL FOR EACH FACTOR ###
+        # - i.e. multiply all of its assigned factors together
+        for i, clique in self.C.items():
+            if len(self.parents(i)) == 0:
+                clique.is_ready = True
+            clique.initialize_psi()
 
 
 class Clique(object):
@@ -173,6 +188,23 @@ class Clique(object):
 
     *_f* : a factorization object that contains only the
         factors of variables in the clique's scope
+
+    *psi* : a factor
+        The potential of the clique.
+
+    *belief* : a factor
+        The factor which holds the marginal/conditional
+        probabilities of the relevant nodes after 
+        belief propagation, etc
+
+    *messages_received* : a list of Factors
+        The messages the clique has received from its neighbors -
+        stored so that the beliefs can be calculated after
+        belief propagation, etc.
+
+    *is_ready* : a boolean
+        Whether the clique is ready to send a message -> must
+        have RECEIVED messages from all of its neighbors first.
 
     """
 
@@ -212,25 +244,70 @@ class Clique(object):
         """
         other_clique.send_message(self)
 
-    def compute_psi(self):
+    def send_message(self, parent):
+        """
+        Send a message to the parent clique.
+
+        To send a message from X to Y, you
+        must first take the potential (self.psi) of
+        X and sum out the variables NOT in the sepset
+        of Y.
+
+        THEN, if X has received any messages, the
+        potential (self.psi) must be multiplied by
+        all of the received messaged.
+
+        Arguments
+        ---------
+        *parent* : a string
+            The parent to which the message will
+            be sent.
+
+        """
+
+
+        # First generate Belief = Original_Psi * all received messages
+        if len(self.messages_received) > 0:
+            # if there are messages received, mutliply them in to psi first
+            if not self.belief:
+                self.belief = copy(self.psi)
+            for msg in self.messages_received:
+                self.belief *= msg
+            #self.belief.merge_multiply(self.messages_received)
+        else:
+            # if there are no messages received, simply move on with psi
+            if not self.belief:
+                self.belief = copy(self.psi)
+        # generate message as belief with Ci - Sij vars summed out
+        #vars_to_sumout = list(self.scope.difference(self.sepset(parent)))
+        msg_to_send = copy(self.belief)
+        for var_to_sumout in self.scope.difference(self.sepset(parent)):
+            msg_to_send /= var_to_sumout
+        #message_to_send = copy(self.belief)
+        #message_to_send.sumout_var_list(vars_to_sumout)
+        parent.messages_received.append(msg_to_send)
+
+    def initialize_psi(self):
         """
         Compute a new psi (cpt) in order to 
         set the clique's belief. This involves
         multiplying the factors in the Clique together.
         """
-        assert (len(self.factors) != 0), 'No Factors assigned to this clique.'
+        assert (len(self._F) != 0), 'No Factors assigned to this clique.'
 
-        if len(self.factors) == 1:
-            self.psi = copy(self.factors[0])
+        if len(self._F) == 1:
+            self.psi = copy(self._F[0])
+            self.belief = copy(self.psi)
         else:
-            self.psi = max(self.factors, key=lambda x: len(x.cpt))
-            for f in self.factors:
+            self.psi = max(self._F, key=lambda x: len(x.cpt))
+            for f in self._F:
                 self.psi *= f
-            #self.psi.merge_multiply(self.factors)
             self.belief = copy(self.psi)
 
     def send_initial_message(self, other_clique):
         """
+        NOT SURE IF THIS IS NEEDED.
+
         Send the first message to another clique.
 
         Arguments
@@ -252,6 +329,32 @@ class Clique(object):
 
         self.belief = copy(self.psi)
 
+    def collect_beliefs(self):
+        """
+        Collecting beliefs is done by taking the
+        potential (self.psi) of X and multiplying by all of
+        the messages which X has received.
+
+        NOTE: once beliefs are collected, the messages
+        which the Clique has received are cleared out.
+
+        Notes
+        -----
+        A root node (i.e. one that doesn't send a message) must run collect_beliefs
+        since they are only collected at send_message()
+
+        Also, we collect beliefs at the end of loopy belief propagation (approx. inference)
+        since the main algorithm is just sending messages for a while.
+        """
+        if len(self.messages_received) > 0:
+            self.belief = copy(self.psi)
+            for msg in self.messages_received:
+                self.belief *= msg
+            self.belief 
+            self.messages_received = []
+        else:
+            self.belief = copy(self.belief)
+
     def sepset(self, other_clique):
         """
         The sepset of two cliques is the set of
@@ -265,35 +368,6 @@ class Clique(object):
         """
         return self.scope.intersection(other_clique.scope)
 
-    def send_message(self, parent):
-        """
-        Send a message to the parent clique.
-
-        Arguments
-        ---------
-        *parent* : a string
-            The parent to which the message will
-            be sent.
-
-        """
-        # First generate Belief = Original_Psi * all received messages
-        if len(self.messages_received) > 0:
-            # if there are messages received, mutliply them in to psi first
-            if not self.belief:
-                self.belief = copy(self.psi)
-            for msg in self.messages_received:
-                self.belief.multiply(msg)
-            #self.belief.merge_multiply(self.messages_received)
-        else:
-            # if there are no messages received, simply move on with psi
-            if not self.belief:
-                self.belief = copy(self.psi)
-        # generate message as belief with Ci - Sij vars summed out
-        vars_to_sumout = list(self.scope.difference(self.sepset(parent)))
-        message_to_send = copy(self.belief)
-        message_to_send.sumout_var_list(vars_to_sumout)
-        parent.messages_received.append(message_to_send)
-
     def marginalize_over(self, target):
         """
         Marginalize the cpt (belief) over a target variable.
@@ -304,32 +378,9 @@ class Clique(object):
             The target random variable.
 
         """
-        self.belief.sumout_var_list(list(self.scope.difference({target})))
-
-    def collect_beliefs(self):
-        """        
-        A root node (i.e. one that doesn't send a message) must run collect_beliefs
-        since they are only collected at send_message()
-
-        Also, we collect beliefs at the end of loopy belief propagation (approx. inference)
-        since the main algorithm is just sending messages for a while.
-        """
-        if len(self.messages_received) > 0:
-            self.belief = copy(self.psi)
-            for msg in self.messages_received:
-                self.belief.cpt.merge(msg.cpt)
-                #self.belief.normalize()
-            self.belief.multiply_factor()
-            print self.belief.cpt
-            #self.belief.merge_multiply(self.messages_received)
-            #self.belief.normalize()
-            self.messages_received = []
-        else:
-            self.belief = copy(self.belief)
-            #print 'No Messages Received - Belief is just original Psi'
-
-
-
+        blf = copy(self.belief)
+        blf.sumover_var(target)
+        return blf
 
 
 

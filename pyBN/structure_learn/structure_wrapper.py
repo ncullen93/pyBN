@@ -5,7 +5,7 @@ Wrapper for Structure Learning
 from pyBN.structure_learn import *
 
 
-def learn_structure(data, method, feature_selection=None):
+def learn_structure(data, method, target=None, feature_selection=None):
 	"""
 	Wrapper for Bayesian network structure learning.
 
@@ -33,6 +33,9 @@ def learn_structure(data, method, feature_selection=None):
 	### LEARN STRUCTURE OF BN ###
 	if method == 'chow_liu':
 		bn = chow_liu(data)
+
+	elif method == 'TAN' or method == 'tan':
+		bn = TAN(data, target)
 
 	elif method == 'fast_iamb':
 		bn = fast_iamb(data, feature_selection) # learn structure

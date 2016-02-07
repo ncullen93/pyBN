@@ -47,7 +47,7 @@ class Factorization(object):
 		return self._phi[idx]
 
 	def __iter__(self):
-		for phi in _phi:
+		for phi in self._phi:
 			yield phi
 
 	def __len__(self):

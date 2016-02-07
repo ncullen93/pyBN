@@ -41,8 +41,9 @@ Discovery for Optimal Feature Selection"
 Markov Blanket Discovery" 
 
 [3] Koller "Toward Optimal Feature Selection."
-
 """
+
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 from pyBN.utils.independence_tests import are_independent

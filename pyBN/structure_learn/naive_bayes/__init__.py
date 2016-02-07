@@ -1,1 +1,0 @@
-from pyBN.structure_learn.naive_bayes import *

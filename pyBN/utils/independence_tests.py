@@ -20,12 +20,85 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 import numpy as np
 from scipy import stats
 
-def are_independent(data, method='mi_test',alpha=0.05):
+def are_independent(data, alpha=0.05, method='mi_test'):
 	pval = mi_test(data)
 	if pval < alpha:
 		return True
 	else:
 		return False
+
+def mutual_information(data, conditional=False):
+	bins = np.amax(data, axis=0) # read levels for each variable
+	if len(bins) == 1:
+		hist,_ = np.histogramdd(data, bins=(bins)) # frequency counts
+		Px = hist/hist.sum()
+		MI = -1 * np.sum( Px * np.log( Px ) )
+		return round(MI, 4)
+		
+	if len(bins) == 2:
+		hist,_ = np.histogramdd(data, bins=bins[0:2]) # frequency counts
+
+		Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
+		Px = np.sum(Pxy, axis = 1) # P(X,Z)
+		Py = np.sum(Pxy, axis = 0) # P(Y,Z)	
+
+		PxPy = np.outer(Px,Py)
+		Pxy += 1e-7
+		PxPy += 1e-7
+		MI = np.sum(Pxy * np.log(Pxy / (PxPy)))
+		return round(MI,4)
+	elif len(bins) > 2 and conditional==True:
+		# CHECK FOR > 3 COLUMNS -> concatenate Z into one column
+		if len(bins) > 3:
+			data = data.astype('str')
+			ncols = len(bins)
+			for i in xrange(len(data)):
+				data[i,2] = ''.join(data[i,2:ncols])
+			data = data.astype('int')[:,0:3]
+
+		bins = np.amax(data,axis=0)
+		hist,_ = np.histogramdd(data, bins=bins) # frequency counts
+
+		Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
+		Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
+		Pxz = np.sum(Pxyz, axis = 1) # P(X,Z)
+		Pyz = np.sum(Pxyz, axis = 0) # P(Y,Z)	
+
+		Pxy_z = Pxyz / (Pz+1e-7) # P(X,Y | Z) = P(X,Y,Z) / P(Z)
+		Px_z = Pxz / (Pz+1e-7) # P(X | Z) = P(X,Z) / P(Z)	
+		Py_z = Pyz / (Pz+1e-7) # P(Y | Z) = P(Y,Z) / P(Z)
+
+		Px_y_z = np.empty((Pxy_z.shape)) # P(X|Z)P(Y|Z)
+		for i in xrange(bins[0]):
+			for j in xrange(bins[1]):
+				for k in xrange(bins[2]):
+					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
+		Pxyz += 1e-7
+		Pxy_z += 1e-7
+		Px_y_z += 1e-7
+		MI = np.sum(Pxyz * np.log(Pxy_z / (Px_y_z)))
+		
+		return round(MI,4)
+	elif len(bins) > 2 and conditional == False:
+		data = data.astype('str')
+		ncols = len(bins)
+		for i in xrange(len(data)):
+			data[i,1] = ''.join(data[i,1:ncols])
+		data = data.astype('int')[:,0:2]
+
+		hist,_ = np.histogramdd(data, bins=bins[0:2]) # frequency counts
+
+		Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
+		Px = np.sum(Pxy, axis = 1) # P(X,Z)
+		Py = np.sum(Pxy, axis = 0) # P(Y,Z)	
+
+		PxPy = np.outer(Px,Py)
+		Pxy += 1e-7
+		PxPy += 1e-7
+		MI = np.sum(Pxy * np.log(Pxy / (PxPy)))
+		return round(MI,4)
+
+
 
 def mi_test(data, test=True):
 	"""

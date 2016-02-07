@@ -19,7 +19,7 @@ import numpy as np
 from numba import jit
 
 
-def chow_liu(data):
+def chow_liu(data,edges_only=False):
 	"""
 	Perform Chow-Liu structure learning algorithm
 	over an entire dataset, and return the BN-tree.
@@ -64,7 +64,9 @@ def chow_liu(data):
 			mst[j].append(i)
 			vertex_cache.add(i)
 	
-	
+	if edges_only == True:
+		return mst, value_dict
+
 	bn=BayesNet(mst,value_dict)
 	return bn
 

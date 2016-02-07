@@ -36,7 +36,7 @@ Notes
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-
+from copy import copy, deepcopy
 
 import numpy as np
 from pyBN.utils.class_equivalence import are_class_equivalent
@@ -48,7 +48,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self,E=None,value_dict=None):
+    def __init__(self, E=None):
         """
         Initialize the BayesNet class.
 
@@ -71,8 +71,8 @@ class BayesNet(object):
         
         """
         if E is not None:
-            assert (value_dict is not None), 'Must set values if E is set.'
-            self.set_structure(E,value_dict)
+            #assert (value_dict is not None), 'Must set values if E is set.'
+            self.set_structure(E)
         else:
             self.V = list
             self.E = dict
@@ -94,20 +94,48 @@ class BayesNet(object):
         """
         return hash((str(self.V),str(self.E)))
 
-    def add_node(self, rv, values=None):
+    def copy(self):
+        V = deepcopy(self.V)
+        E = deepcopy(self.E)
+        F = {}
+        for v in V:
+            F[v] = {}
+            F[v]['cpt'] = deepcopy(self.F[v]['cpt'])
+            F[v]['parents'] = deepcopy(self.F[v]['parents'])
+            F[v]['values'] = deepcopy(self.F[v]['values'])
+        bn = BayesNet()
+        bn.V = V
+        bn.E = E
+        bn.F = F
+
+        return bn
+
+    def add_node(self, rv, cpt=[], parents=[], values=[]):
         self.V.append(rv)
-        if values is not None:
-            self.F[rv] = {'cpt':[],'parents':[],'values':values}
-        else:
-            self.F[rv] = {'cpt':[],'parents':[],'values':[]}
+        self.F[rv] = {'cpt':cpt,'parents':parents,'values':values}
 
     def add_edge(self, u, v):
         if not self.has_node(u):
             self.add_node(u)
         if not self.has_node(v):
             self.add_node(v)
-        self.E[u].append(v)
-        self.V = topsort(self.E)
+        if self.has_edge(u,v):
+            print 'Edge already exists'
+        else:
+            self.E[u].append(v)
+            self.F[v]['parents'].append(u)
+        #self.V = topsort(self.E)
+        # HOW DO I RECALCULATE CPT?
+
+
+    def remove_edge(self, u, v):
+        self.E[u].remove(v)
+        self.F[v]['parents'].remove(u)
+
+    def reverse_arc(self, u, v):
+        if self.has_edge(u,v):
+            self.E[u].remove(v)
+            self.E[v].append(u)
 
     def set_data(self, rv, data):
         assert (isinstance(data, dict)), 'data must be dictionary'
@@ -136,36 +164,23 @@ class BayesNet(object):
         return rv in self.V
 
     def has_edge(self, u, v):
-        return u in self.E[v]
+        return v in self.E[u]
 
     def edges(self):
         for u in self.nodes():
-            for v in self.children(u):
+            for v in self.E[u]:
                 yield (u,v)
-
-    def moralized_edges(self):
-        """
-        Moralized graph is the original graph PLUS
-        an edge between every set of common effect
-        structures -
-            i.e. all parents of a node are connected.
-
-        This function has be validated.
-
-        Returns
-        -------
-        *e* : a python list of parent-child tuples.
-
-        """
-        e = set()
+    def num_edges(self):
+        num = 0
         for u in self.nodes():
-            for p1 in self.parents(u):
-                e.add((p1,u))
-                for p2 in self.parents(u):
-                    if p1!=p2 and (p2,p1) not in e:
-                        e.add((p1,p2))
-        return list(e)
+            num += len(self.E[u])
+        return num
 
+    def num_params(self):
+        num = 0
+        for u in self.nodes():
+            num += len(self.F[u]['cpt'])
+        return num
 
     def scope_size(self, rv):
         return len(self.F[rv]['parents'])+1
@@ -277,7 +292,7 @@ class BayesNet(object):
 
 
 
-    def set_structure(self, edge_dict, value_dict):
+    def set_structure(self, edge_dict):
         """
         Set the structure of a BayesNet object. This
         function is mostly used to instantiate a BN
@@ -319,7 +334,7 @@ class BayesNet(object):
             self.F[rv] = {
                 'parents':[p for p in self.nodes() if rv in self.children(p)],
                 'cpt': [],
-                'values': value_dict[rv]
+                'values': []
             }
 
     def adj_list(self):
@@ -333,6 +348,29 @@ class BayesNet(object):
         for u,v in self.edges():
             adj_list[vi_map[u]].append(vi_map[v])
         return adj_list
+
+    def moralized_edges(self):
+        """
+        Moralized graph is the original graph PLUS
+        an edge between every set of common effect
+        structures -
+            i.e. all parents of a node are connected.
+
+        This function has be validated.
+
+        Returns
+        -------
+        *e* : a python list of parent-child tuples.
+
+        """
+        e = set()
+        for u in self.nodes():
+            for p1 in self.parents(u):
+                e.add((p1,u))
+                for p2 in self.parents(u):
+                    if p1!=p2 and (p2,p1) not in e:
+                        e.add((p1,p2))
+        return list(e)
 
 
     

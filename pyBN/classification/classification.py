@@ -77,7 +77,7 @@ def predict(data, target, classifier=None, method='nb'):
 	"""
 	if classifier is None:
 		print 'Learning structure..'
-		classifier = learn_structure(data, method)
+		classifier = learn_structure(data=data, target=target, method=method)
 		learn_parameters(classifier)
 
 	non_target_cols = list(set(range(data.shape[1]))-{target})

@@ -1,13 +1,36 @@
-<h1>Bayesian Networks in Python</h1>
+# Bayesian Networks for Neuroscience
 
 <h2>Overview</h2>
-This module provides a convenient and intuitive interface for reading, writing, plotting, performing inference, parameter learning, structure learning, and classification over Discrete Bayesian Networks - along with some other utility functions. There seems to be a lack of many high-quality options for BNs in Python, so I hope this project will be a useful addition.
+Many research fields have benefit from the flexibility and expressiveness of the Bayesian Network framework - medicine, economics, artificial intelligence, social science, and many more. Still, Bayesian networks have failed to penetrate the field of neuroscience, where they could be of incredible use. With that in mind, this project is aimed at making Bayesian Networks more accessible to neuroscientists. The motivation for this project is very much derived from the review paper by Bielza and Larranaga - "Bayesian networks in neuroscience: a survey."
 
-I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would love to collaborate on this project with anyone who has an interest in graphical models - Send me an email at ncullen.th@dartmouth.edu. If you're a researcher or student and want to use this module for any reason, I am happy to give an overview of the code/functionality or answer any questions.
+As it relates to neuroscience, this code base aims to perform the following general tasks:
+- <b><i>Function Connectivity Mapping</i></b>
+	- looking for network-based relationships among variables of interest. This is
+known in the more general case as "Association Discovery".
+- <b><i>Feature Selection</i></b> 
+	- choosing the appropriate features (variables) to use in classifying a target variable, or otherwise
+reducing the dimensionality of a large dataset.
+- <b><i>Supervised Classification</i></b>
+	- predict class labels of new data from training data.
+- <b><i>Unsupervised Classification</i></b>
+	- learning from data where the ground truth is unknown. One example of this task is "clustering" - assigning data into clusters of similar observations.
+- <b><i>Inference</i></b>
+	- answering marginal or conditional probability queries, such as "what is the probability a person will develop dimentia given that he/she is 60 years old and had a stroke within the last five years?"
 
-For an up-to-date list of issues, go to the "issues" tab in this repository. Below is an updated list of features, along with information on usage/examples:
+<h2>Data</h2>
 
-<h2>Current features:</h2>
+The goal is to achieve full availability of state-of-the-art Bayesian network functionality for seamless use with all types of neuroscience data.
+- Morphological Data
+- Electrophysiological Data
+- Genomics/Proteomics/Transcriptomics Data
+- Neuroimaging Data
+	- fMRI
+	- MRI
+	- EEG
+- Others
+	- ECoG, EMG, JME, TCD, DTI, PET
+
+<h2>Current features</h2>
 
 <h4>FileIO and Drawing</h4>
 | Reading BNs   | Drawing BNs   |
@@ -16,22 +39,42 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | JSON format   | Networkx      |
 
 
-<h4>Inference</h4>
-| Exact Marginal Inference  | Approximate Marginal Inference  | Exact MAP Inference |
+<h4>Marginal Inference</h4>
+| Exact Marginal Inference  | Approximate Marginal Inference  | 
 | ------------- | ------------- | ----------------- |
-| Sum-Product Variable Elimination   | Forward Sampling    | Max-Sum Variable Elimination   |
-| Clique Tree Message Passing  | Likelihood Weighted Sampling     |     
-|				|		Gibbs (MCMC) Sampling 		| 			|
-|				|		Loopy Belief Propagation			| 		|
+| Sum-Product Variable Elimination   | Forward Sampling    |
+| Clique Tree Message Passing  | Likelihood Weighted Sampling     |  
+|				|		Gibbs (MCMC) Sampling 		|
+|				|		Loopy Belief Propagation			| 
 
-<h4>Structure Learning</h4>
-| Constraint-Based  | Tree-Based | Independence Tests |
-| ------------- | ------------- | ----------------- |
-| Path Condition (PC) Algorithm   | Naive Bayes   | Marginal Mutual Information (KL-Divergence)    |
-| Grow-Shrink (GS) Algorithm   | Tree-Augmented Naive Bayes    | Conditional Mutual Information (Cross Entropy)     |
-| 	IAMB Algorithm		|		Chow-Liu Algorithm		| Pearsion Chi-Square|
-| 	Lambda-IAMB Algorithm		|				| 			|
-| 	Fast-IAMB Algorithm		|				|			|
+<h4>MAP Inference</h4>
+| Exact MAP Inference | Approximate MAP Inference |
+| ------------------- | ------------------------- |
+| Max-Product Variable Elimination | LP Relaxation |
+| Integer Linear Programming	|			|
+
+<h4>Constraint-Based Structure Learning</h4>
+| Algorithms  | Independence Tests |
+| ------------- | ----------------- |
+| Path Condition (PC)   | Marginal Mutual Information (KL-Divergence)    |
+| Grow-Shrink (GS)  | Conditional Mutual Information (Cross Entropy)     |
+| 	IAMB 	| Pearsion Chi-Square|
+| 	Lambda-IAMB 	|				| 	
+| 	Fast-IAMB 	|				|		
+
+<h4>Score-Based Structure Learning</h4>
+| Algorithms | Score Metrics |
+| ---------- | ------------- |
+| Hill Climbing | Log-Likelihood |
+| Tabu List	| AIC/BIC	|
+| Random Restarts | 		|
+
+<h4>Tree-Based Structure Learning</h4>
+| Algorithms |
+| ---------- |
+| Naive Bayes |
+| Tree-Augmented Naive Bayes |
+| Chow-Liu	|
 
 <h4>Parameter Learning</h4>
 | Frequentist | Bayesian |
@@ -63,28 +106,19 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | Markov Blanket Fitness Metric |
 | Make a Chordal or Moral BN |
 
+<h2>Call for Researchers</h2>
+If you are a neuroscience researcher or student who thinks the incredible learning/classification/inference functionality of Bayesian networks can add value to your work or want to see support for a specific type of data, please contact me and I will either a) answer questions or give advice on how to get the most out of pyBN or b) work with you to build custom functionality that integrates your work with the pyBN code. Email me at ncullen.th@dartmouth.edu.
+
+<h2>References</h2>
+- [1] Bielza, C., Larranaga, P. "Bayesian networks in neuroscience: a survey"
+- [2] Daly, R., Shen, Q., Aitken, S. "Learning Bayesian networks: approaches and issues"
+- [3] Bielza, C., Li, G., Larranaga, P. "Multi-dimensional classification with Bayesian networks"
+- [4] Pham, D., Ruz, G. "Unsupervised training of Bayesian networks for data clustering"
 
 
-<h2>Examples</h2>
-This package includes a number of examples to help users get acquainted with the intuitive syntax and functionality of pyBN. For an updated list of examples, check out the collection of ipython notebooks in the "examples" folder located in the master directory.
 
-Here is a list of current examples:
-- ReadWrite : an introduction to reading (writing) BayesNet object from (to) files, along with an overview of the attributes and data structures inherit to BayesNet objects.
-- Drawing : an introduction to the drawing/plotting capabilities of pyBN with both small and large Bayesian networks.
-- FactorOperations : an introduction to the Factor class, an exploration of the numerous attributes belonging to a Factor in
-pyBN, an overview of every Factor operation function at the users' hands, and a short discussion of what makes Factor operations
-so fast and efficient in pyBN.
 
-<h2>Usage</h2>
-Getting up-and-running with this package is simple:
 
-1. Click "Download ZIP" button towards the upper right corner of the page.
-2. Unpack the ZIP file wherever you want on your local machine. You should now have a folder called "pyBN-master"
-3. In your python terminal, change directories to be IN pyBN-master. Typing "ls" should show you "data", "examples" and "pyBN" folders. Stay in the "pyBN-master" directory for now!
-4. In your python terminal, simply type "from pyBN import ". This will load all of the module's functions, classes, etc.
-5. You are now free to use the package! Perhaps you want to start by creating a BayesNet object using "bn = BayesNet()" and so on.
 
-<h4>Unit Tests</h4>
-If you want to test the functionality to make sure it all works on your local machine, navigate to the pybn-master directory and run the following command from the normal command-line (NOT ipython console):
-- python -m unittest discover
+
 

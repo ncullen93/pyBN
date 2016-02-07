@@ -49,6 +49,8 @@ def read_bn(path):
         return read_bif(path)
     elif '.bn' in path:
         return read_json(path)
+    elif '.mat' in path:
+        return read_mat(path)
     else:
         print "Path Extension not recognized"
 
@@ -212,4 +214,42 @@ def read_json(path):
     bn.V = topsort(bn.E)
 
     return bn
+
+def read_mat(path):
+    """
+    Read an adjacency matrix into a BayesNet object.
+
+    NOTE: This is for reading the structure only, and
+    therefore no parameters for the BayesNet object will
+    be set - they must be learned by calling "mle_estimator"
+    or "bayes_estimator" on the object.
+    """
+    _V = []
+    _E = {}
+    _F = {}
+    with open(path, 'r') as f:
+        for line in f:
+            line = line.split(' ')
+            rv = line[0]
+            _E[rv] = []
+
+    bn = BayesNet(_E)
+
+    return bn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
