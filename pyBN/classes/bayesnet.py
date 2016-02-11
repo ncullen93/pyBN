@@ -48,7 +48,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self, E=None):
+    def __init__(self, E=None, value_dict=None):
         """
         Initialize the BayesNet class.
 
@@ -72,7 +72,7 @@ class BayesNet(object):
         """
         if E is not None:
             #assert (value_dict is not None), 'Must set values if E is set.'
-            self.set_structure(E)
+            self.set_structure(E, value_dict)
         else:
             self.V = list
             self.E = dict
@@ -227,12 +227,17 @@ class BayesNet(object):
             n_idx = self.parents(rv).index(n) + 1
             return int(np.prod(card_list[0:n_idx]))
 
-    def flat_cpt(self):
+    def flat_cpt(self, by_var=False, by_parents=False):
         """
         Return all cpt values in the BN as a flattened
         numpy array ordered by bn.nodes() - i.e. topsort
         """
-        cpt = np.array([val for rv in self.nodes() for val in self.cpt(rv)])
+        if by_var:
+            cpt = np.array([sum(self.cpt(rv)) for rv in self.nodes()])
+        elif by_parents:
+            cpt = np.array([sum(self.cpt(rv)[i:(i+self.card(rv))]) for rv in self.nodes() for i in range(len(self.cpt(rv))/self.card(rv))])
+        else:
+            cpt = np.array([val for rv in self.nodes() for val in self.cpt(rv)])
         return cpt
 
     def cpt_indices(self, target, val_dict):
@@ -292,7 +297,7 @@ class BayesNet(object):
 
 
 
-    def set_structure(self, edge_dict):
+    def set_structure(self, edge_dict, value_dict=None):
         """
         Set the structure of a BayesNet object. This
         function is mostly used to instantiate a BN
@@ -336,6 +341,8 @@ class BayesNet(object):
                 'cpt': [],
                 'values': []
             }
+            if value_dict is not None:
+                self.F[rv]['values'] = value_dict[rv]
 
     def adj_list(self):
         """

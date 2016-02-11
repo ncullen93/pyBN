@@ -26,6 +26,7 @@ doi=10.1.1.127.7570&rep=rep1&type=pdf
 from __future__ import division
 
 import numpy as np
+from copy import copy, deepcopy
 
 
 class EmpiricalDistribution(object):
@@ -45,18 +46,22 @@ class EmpiricalDistribution(object):
 		
 
 		hist,_ = np.histogramdd(data, bins=self.bins)
+		self.counts = hist
 		self.joint = (hist / hist.sum()) + 1e-3
 
 		## COMPUTE MARGINAL FOR EACH VARIABLE ##
-		_range = range(self.NVAR)
-		for i,rv in enumerate(self.names()):
-			_axis = copy(_range)
-			_axis.remove(i)
-			self.marginal[rv] = np.sum(self.joint,axis=_axis)
+		#_range = range(self.NVAR)
+		#for i,rv in enumerate(self.names):
+		#	_axis = copy(_range)
+		#	_axis.remove(i)
+		#	self.marginal[rv] = np.sum(self.joint,axis=_axis)
 
-		self.marginal = dict([(rv, np.sum(self.joint,axis=i)) for i,rv in enumerate(self.names)])
+		#self.marginal = dict([(rv, np.sum(self.joint,axis=i)) for i,rv in enumerate(self.names)])
 
 		self.cache = {}
+
+	def bayes_counts(self, bn):
+		pass
 
 	def idx_map(self, rvs):
 		assert (isinstance(args, tuple)), "passed-in rvs must be a tuple"
@@ -79,7 +84,7 @@ class EmpiricalDistribution(object):
 		else:
 			_axis = range(self.NVAR)
 			_axis.remove(self.idx(rv))
-			mpd = np.sum(self.join, axis=tuple(_axis)) # CORRECT
+			mpd = np.sum(self.joint, axis=tuple(_axis)) # CORRECT
 			self.cache[rv] = mpd
 
 		return mpd

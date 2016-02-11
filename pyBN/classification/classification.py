@@ -10,9 +10,13 @@ classifiers.
 """
 from __future__ import division
 
+__author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
+
 import numpy as np
 from pyBN.inference.marginal_approx import marginal_lws_a
 
+def mbc_predict(data, targets, classifier=None, c_struct='DAG',f_struct='DAG', wrapper=False):
+	pass
 
 def predict(data, target, classifier=None, method='nb'):
 	"""
