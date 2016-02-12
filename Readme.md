@@ -14,7 +14,7 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 
 For an up-to-date list of issues, go to the "issues" tab in this repository. Below is an updated list of features, along with information on usage/examples:
 
-<h2>Current features:</h2>
+<h2>Current features</h2>
 
 <h4>FileIO and Drawing</h4>
 | Reading BNs   | Drawing BNs   |
@@ -23,22 +23,53 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | JSON format   | Networkx      |
 
 
-<h4>Inference</h4>
-| Exact Marginal Inference  | Approximate Marginal Inference  | Exact MAP Inference |
+<h4>Marginal Inference</h4>
+| Exact Marginal Inference  | Approximate Marginal Inference  | 
 | ------------- | ------------- | ----------------- |
-| Sum-Product Variable Elimination   | Forward Sampling    | Max-Sum Variable Elimination   |
-| Clique Tree Message Passing  | Likelihood Weighted Sampling     |     
-|				|		Gibbs (MCMC) Sampling 		| 			|
-|				|		Loopy Belief Propagation			| 		|
+| Sum-Product Variable Elimination   | Forward Sampling    |
+| Clique Tree Message Passing  | Likelihood Weighted Sampling     |  
+|				|		Gibbs (MCMC) Sampling 		|
+|				|		Loopy Belief Propagation			| 
 
-<h4>Structure Learning</h4>
-| Constraint-Based  | Tree-Based | Independence Tests |
-| ------------- | ------------- | ----------------- |
-| Path Condition (PC) Algorithm   | Naive Bayes   | Marginal Mutual Information (KL-Divergence)    |
-| Grow-Shrink (GS) Algorithm   | Tree-Augmented Naive Bayes    | Conditional Mutual Information (Cross Entropy)     |
-| 	IAMB Algorithm		|		Chow-Liu Algorithm		| Pearsion Chi-Square|
-| 	Lambda-IAMB Algorithm		|				| 			|
-| 	Fast-IAMB Algorithm		|				|			|
+<h4>MAP Inference</h4>
+| Exact MAP Inference | Approximate MAP Inference |
+| ------------------- | ------------------------- |
+| Max-Product Variable Elimination | LP Relaxation |
+| Integer Linear Programming	|			|
+
+<h4>Constraint-Based Structure Learning</h4>
+| Algorithms  | Independence Tests |
+| ------------- | ----------------- |
+| Path Condition (PC)   | Marginal Mutual Information (KL-Divergence)    |
+| Grow-Shrink (GS)  | Conditional Mutual Information (Cross Entropy)     |
+| 	IAMB 	| Pearsion Chi-Square|
+| 	Lambda-IAMB 	|				| 	
+| 	Fast-IAMB 	|				|		
+
+<h4>Score-Based Structure Learning</h4>
+| Algorithms | Score Metrics |
+| ---------- | ------------- |
+| Hill Climbing | Log-Likelihood |
+| Tabu List	| AIC/BIC	|
+| Random Restarts | 		|
+
+<h4>Tree-Based Structure Learning</h4>
+| Algorithms |
+| ---------- |
+| Naive Bayes |
+| Tree-Augmented Naive Bayes |
+| Chow-Liu	|
+
+<h4>Hybrid Structure Leanring</h4>
+| Algorithms |
+| --------- |
+| MMPC		|
+| MMHC		|
+
+<h4>Exact Structure Learning</h4>
+| Algorithms |
+| ---------- |
+| GOBNILP Solver |
 
 <h4>Parameter Learning</h4>
 | Frequentist | Bayesian |
@@ -51,6 +82,13 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 | ------------- | --------- |
 | Naive Bayes    | MAP Inference Classification |
 | Tree-Augmented Naive Bayes   |  |
+
+<h4>Multi-Dimensional Classification</h4>
+| Class/Feature Subgraphs |
+| ---------------------- |
+| Empty |
+| Tree/Polytree/Forest |
+| General DAG |
 
 <h4>Comparing Two Bayesian Networks</h4>
 | Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  | 
