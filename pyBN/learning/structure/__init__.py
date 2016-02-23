@@ -6,4 +6,3 @@ from pyBN.learning.structure.score import *
 from pyBN.learning.structure.tree import *
 
 from pyBN.learning.structure.mdbn import *
-from pyBN.learning.structure.structure_wrapper import *

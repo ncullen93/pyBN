@@ -84,6 +84,10 @@ def pc(data, alpha=0.05):
 
 	Notes
 	-----
+
+	Speed Test:
+		** 5 vars, 624 obs ***
+			- 90.9 ms
 	"""
 	n_rv = data.shape[1]
 	##### FIND EDGES #####

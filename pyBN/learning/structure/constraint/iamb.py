@@ -80,6 +80,10 @@ def iamb(data, alpha=0.05, feature_selection=None, debug=False):
 	Notes
 	-----
 	- Works but there are definitely some bugs.
+
+	Speed Test:
+		*** 5 vars, 624 obs ***
+			- 196 ms
 	"""
 	n_rv = data.shape[1]
 	Mb = dict([(rv,[]) for rv in range(n_rv)])

@@ -45,7 +45,7 @@ from copy import copy
 import numpy as np
 import itertools
 
-def grow_shrink(data, alpha=0.05, feature_selection=None, debug=False):
+def gs(data, alpha=0.05, feature_selection=None, debug=False):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
@@ -84,7 +84,6 @@ def grow_shrink(data, alpha=0.05, feature_selection=None, debug=False):
 	Speed Test:
 		*** 5 variables, 624 observations ***
 		- 63.7 ms
-		*** 5 variables, 1248 observations ***
 
 	"""
 	n_rv = data.shape[1]
