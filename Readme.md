@@ -1,11 +1,9 @@
 <h1>Bayesian Networks in Python</h1>
 
 <h2>NEW FEATURE!</h2>
-I just wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure 
-learning that can find the EXACT Global Maximum of any score-based objective function! It also links to CPLEX for incredible speed.
+I just wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure learning that can find the EXACT Global Maximum of any score-based objective function. It also links to CPLEX for incredible speed.
 The wrappers can be found in the "pyGOBN" project at www.github.com/ncullen93/pyGOBN. For an overview of GOBNILP or to see its
-unbelievable benchmarks on even the most massive Bayesian networks, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/. A big thanks
-to Drs. James Cussens and Mark Bartlett for the development of GOBNILP.
+great benchmarks on even the most massive datasets, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/.
 
 <h2>Overview</h2>
 This module provides a convenient and intuitive interface for reading, writing, plotting, performing inference, parameter learning, structure learning, and classification over Discrete Bayesian Networks - along with some other utility functions. There seems to be a lack of many high-quality options for BNs in Python, so I hope this project will be a useful addition.
