@@ -32,14 +32,14 @@ import numpy as np
 from copy import copy, deepcopy
 
 from pyBN.classes.bayesnet import BayesNet
-from pyBN.parameter_learn.mle import mle_estimator
-from pyBN.parameter_learn.bayes import bayes_estimator
-from pyBN.structure_learn.score_based.scores import structure_score
+from pyBN.learning.parameter.mle import mle_estimator
+from pyBN.learning.parameter.bayes import bayes_estimator
+from pyBN.learning.structure.score.info_scores import info_score
 from pyBN.utils.independence_tests import mutual_information
 from pyBN.utils.graph import would_cause_cycle
 
 
-def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=None):
+def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 	"""
 	Greedy Hill Climbing search proceeds by choosing the move
 	which maximizes the increase in fitness of the
@@ -114,7 +114,7 @@ def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=Non
 	value_dict = dict([(n, np.unique(data[:,i])) for i,n in enumerate(names)])
 	bn = BayesNet(c_dict)
 	mle_estimator(bn, data)
-	max_score = structure_score(bn, nrow, metric)
+	max_score = info_score(bn, nrow, metric)
 
 	# CREATE EMPIRICAL DISTRIBUTION OBJECT FOR CACHING
 	#ED = EmpiricalDistribution(data,names)
@@ -145,9 +145,9 @@ def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=Non
 						delta_score = nrow * (mi_old - mi_new)
 
 						if delta_score > max_delta:
-							if debug:
-								print 'Improved Arc Addition: ' , (u,v)
-								print 'Delta Score: ' , delta_score
+							#if debug:
+							#	print 'Improved Arc Addition: ' , (u,v)
+							#	print 'Delta Score: ' , delta_score
 							max_delta = delta_score
 							max_operation = 'Addition'
 							max_arc = (u,v)
@@ -164,9 +164,9 @@ def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=Non
 					delta_score = nrow * (mi_old - mi_new)
 
 					if delta_score > max_delta:
-						if debug:
-							print 'Improved Arc Deletion: ' , (u,v)
-							print 'Delta Score: ' , delta_score
+						#if debug:
+						#	print 'Improved Arc Deletion: ' , (u,v)
+						#	print 'Delta Score: ' , delta_score
 						max_delta = delta_score
 						max_operation = 'Deletion'
 						max_arc = (u,v)
@@ -191,9 +191,9 @@ def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=Non
 					delta_score = delta1 + delta2
 
 					if delta_score > max_delta:
-						if debug:
-							print 'Improved Arc Reversal: ' , (u,v)
-							print 'Delta Score: ' , delta_score
+						#if debug:
+						#	print 'Improved Arc Reversal: ' , (u,v)
+						#	print 'Delta Score: ' , delta_score
 						max_delta = delta_score
 						max_operation = 'Reversal'
 						max_arc = (u,v)
@@ -233,133 +233,6 @@ def hill_climbing(data, metric='AIC', max_iter=100, debug=False, restriction=Non
 
 	
 	bn = BayesNet(c_dict)
-
-	return bn
-
-
-def hc(data, metric='BIC', max_iter=20, debug=False):
-	"""
-	SLOWER VERSION OF HILL CLIMBING THAT COMPARES TOTAL
-	SCORES DIRECTLY AND UPDATES ENTIRE DISTRIBUTION EACH
-	ITERATION - CAN BE IMPROVED BY ONLY CHECKING FAMILY SCORES,
-	AND ONLY PERFORMING PARAMETER LEARNING OVER THE NEW FAMILY.
-		-> FIX "mle_estimator" and "structure_score" for this.
-
-	Arguments
-	---------
-	*data* : a nested numpy array
-		The data from which the Bayesian network
-		structure will be learned.
-
-	*metric* : a string
-		Which score metric to use.
-		Options:
-			- AIC
-			- BIC / MDL
-			- LL (log-likelihood)
-
-	*max_iter* : an integer
-		The maximum number of iterations of the
-		hill-climbing algorithm to run. Note that
-		the algorithm will terminate on its own if no
-		improvement is made in a given iteration.
-
-	*debug* : boolean
-		Whether to print the scores/moves of the
-		algorithm as its happening.
-		
-	"""
-	nrow = data.shape[0]
-	ncol = data.shape[1]
-	
-	names = range(ncol)
-
-	# INITIALIZE NETWORK W/ NO EDGES
-	# maintain children and parents dict for fast lookups
-	c_dict = dict([(n,[]) for n in names])
-	p_dict = dict([(n,[]) for n in names])
-	
-	# COMPUTE INITIAL LIKELIHOOD SCORE	
-	value_dict = dict([(n, np.unique(data[:,i])) for i,n in enumerate(names)])
-	bn = BayesNet(c_dict)
-	mle_estimator(bn, data)
-	max_score = structure_score(bn, nrow, metric)
-
-	_iter = 0
-	improvement = True
-
-	while improvement:
-		improvement = False
-
-		_benchmark = max_score
-
-		if debug:
-			print 'ITERATION: ' , _iter
-
-		### TEST ARC DELETIONS ###
-		for u in bn.nodes():
-			for v in bn.nodes():
-				if bn.has_edge(u,v):
-					# SCORE FOR 'V' -> gaining a parent
-					bn1 = bn.copy()
-					bn1.remove_edge(u,v)
-					mle_estimator(bn1, data)
-					new_score = structure_score(bn1, nrow, metric)
-					if new_score > max_score:
-						if debug:
-							print 'Improved Arc Deletion: ' , (u,v)
-							print 'New Max Score: ' , new_score
-						max_score = new_score
-						max_operation = 'Deletion'
-						max_arc = (u,v)
-
-		### TEST ARC ADDITIONS ###
-		for u in bn.nodes():
-			for v in bn.nodes():
-				if not bn.has_edge(u,v) and u!=v and not would_cause_cycle(bn.E, u, v):
-					# SCORE FOR 'V' -> gaining a parent
-					bn1 = bn.copy()
-					bn1.add_edge(u,v)
-					mle_estimator(bn1, data)
-					new_score = structure_score(bn1, nrow, metric)
-					if new_score > max_score:
-						if debug:
-							print 'Improved Arc Addition: ' , (u,v)
-							print 'New Max Score: ' , new_score
-						max_score = new_score
-						max_operation = 'Addition'
-						max_arc = (u,v)
-
-
-
-		### DETERMINE IF/WHERE IMPROVEMENT WAS MADE ###
-		if max_score > _benchmark:
-			improvement = True
-			u,v = max_arc
-			if max_operation == 'Addition':
-				if debug:
-					print 'ADDING: ' , max_arc , '\n'
-				bn.add_edge(u,v)
-				mle_estimator(bn, data)
-
-			elif max_operation == 'Deletion':
-				if debug:
-					print 'DELETING: ' , max_arc , '\n'
-				bn.remove_edge(u,v)
-				mle_estimator(bn, data)
-		else:
-			if debug:
-				print 'No Improvement on Iter: ' , _iter
-
-		### TEST FOR MAX ITERATION ###
-		_iter += 1
-		if _iter > max_iter:
-			if debug:
-				print 'Max Iteration Reached'
-			break
-
-	
-	#bn = BayesNet(c_dict)
 
 	return bn
 

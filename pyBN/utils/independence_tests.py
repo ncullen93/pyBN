@@ -19,6 +19,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
 from scipy import stats
+from pyBN.utils.data import unique_bins
 
 def are_independent(data, alpha=0.05, method='mi_test'):
 	pval = mi_test(data)
@@ -28,7 +29,8 @@ def are_independent(data, alpha=0.05, method='mi_test'):
 		return False
 
 def mutual_information(data, conditional=False):
-	bins = np.amax(data, axis=0) # read levels for each variable
+	#bins = np.amax(data, axis=0)+1 # read levels for each variable
+	bins = unique_bins(data)
 	if len(bins) == 1:
 		hist,_ = np.histogramdd(data, bins=(bins)) # frequency counts
 		Px = hist/hist.sum()
@@ -162,11 +164,13 @@ def mi_test(data, test=True):
 
 	"""
 	
-	bins = np.amax(data, axis=0) # read levels for each variable
+	#bins = np.amax(data, axis=0)+1 # read levels for each variable
+	bins = unique_bins(data)
 	if len(bins)==2:
 		hist,_ = np.histogramdd(data, bins=bins[0:2]) # frequency counts
 
-		Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
+		#Pxy = hist / hist.sum()# joint probability distribution over X,Y,Z
+		Pxy = hist / data.shape[0]
 		Px = np.sum(Pxy, axis = 1) # P(X,Z)
 		Py = np.sum(Pxy, axis = 0) # P(Y,Z)	
 
@@ -190,10 +194,12 @@ def mi_test(data, test=True):
 				data[i,2] = ''.join(data[i,2:ncols])
 			data = data.astype('int')[:,0:3]
 
-		bins = np.amax(data,axis=0)
+		#bins = np.amax(data,axis=0)
+		bins = unique_bins(data)
 		hist,_ = np.histogramdd(data, bins=bins) # frequency counts
 
-		Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
+		#Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z
+		Pxyz = hist / data.shape[0]
 		Pz = np.sum(Pxyz, axis = (0,1)) # P(Z)
 		Pxz = np.sum(Pxyz, axis = 1) # P(X,Z)
 		Pyz = np.sum(Pxyz, axis = 0) # P(Y,Z)	
@@ -260,7 +266,8 @@ def entropy(data):
 	except IndexError:
 		cols = 1
 
-	bins = np.amax(data,axis=0)
+	#bins = np.amax(data,axis=0)
+	bins = unique_bins(data)
 
 	if cols == 1:
 		hist,_ = np.histogramdd(data, bins=(bins)) # frequency counts
@@ -377,7 +384,8 @@ def chi2_test(data):
 
 	"""
 	# compress extra Z variables at the start.. not implemented yet
-	bins = np.amax(data, axis=0)
+	#bins = np.amax(data, axis=0)+1
+	bins = unique_bins(data)
 	hist,_ = np.histogramdd(data,bins=bins)
 
 	Pxyz = hist / hist.sum()# joint probability distribution over X,Y,Z

@@ -39,12 +39,13 @@ from pyBN.utils.independence_tests import mi_test
 from pyBN.utils.orient_edges import orient_edges_MB
 from pyBN.utils.markov_blanket import resolve_markov_blanket
 from pyBN.classes.bayesnet import BayesNet
+from pyBN.utils.data import replace_strings
 
 from copy import copy
 import numpy as np
 import itertools
 
-def gs(data, alpha=0.05, feature_selection=None):
+def grow_shrink(data, alpha=0.05, feature_selection=None, debug=False):
 	"""
 	Perform growshink algorithm over dataset to learn
 	Bayesian network structure.
@@ -67,7 +68,7 @@ def gs(data, alpha=0.05, feature_selection=None):
 		Data from which you wish to learn structure
 
 	*alpha* : a float
-		Type II error rate for independence test
+		Type I error rate for independence test
 
 	Returns
 	-------
@@ -80,10 +81,15 @@ def gs(data, alpha=0.05, feature_selection=None):
 	Notes
 	-----
 
+	Speed Test:
+		*** 5 variables, 624 observations ***
+		- 63.7 ms
+		*** 5 variables, 1248 observations ***
+
 	"""
 	n_rv = data.shape[1]
-	value_dict = dict(zip(range(n_rv),
-		[list(np.unique(col)) for col in data.T]))
+	data, value_dict = replace_strings(data, return_values=True)
+	
 
 	if feature_selection is None:
 		_T = range(n_rv)
@@ -129,14 +135,21 @@ def gs(data, alpha=0.05, feature_selection=None):
 					shrink_condition=True
 		
 		Mb[X] = TEMP_S
+		if debug:
+			print 'Markov Blanket for %s : %s' % (X, str(TEMP_S))
 	
 	if feature_selection is None:
 		# STEP 2: COMPUTE GRAPH STRUCTURE
 		# i.e. Resolve Markov Blanket
 		edge_dict = resolve_markov_blanket(Mb,data)
+		if debug:
+			print 'Unoriented edge dict:\n %s' % str(edge_dict)
 		
 		# STEP 3: ORIENT EDGES
 		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
+		if debug:
+			print 'Oriented edge dict:\n %s' % str(oriented_edge_dict)
+		
 
 		# CREATE BAYESNET OBJECT
 		bn=BayesNet(oriented_edge_dict,value_dict)

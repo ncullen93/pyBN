@@ -46,9 +46,9 @@ Network Classifiers."
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
-from pyBN.structure_learn.score_based.hill_climbing import hc
-from pyBN.structure_learn.score_based.random_restarts import hc_rr
-from pyBN.structure_learn.score_based.tabu import tabu
+from pyBN.learning.structure.score.hill_climbing import hc
+from pyBN.learning.structure.score.random_restarts import hc_rr
+from pyBN.learning.structure.score.tabu import tabu
 
 from pyBN.classes.bayesnet import BayesNet
 

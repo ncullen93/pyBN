@@ -13,7 +13,7 @@ from __future__ import division
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
-from pyBN.inference.marginal_approx import marginal_lws_a
+from pyBN.inference.marginal_approx import *
 
 def mbc_predict(data, targets, classifier=None, c_struct='DAG',f_struct='DAG', wrapper=False):
 	pass

@@ -46,10 +46,13 @@ Markov Blanket Discovery"
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
-from pyBN.utils.independence_tests import are_independent
-from pyBN.utils.orient_edges import orient_edges_MB
+from pyBN.utils.independence_tests import are_independent, mi_test
+from pyBN.utils.orient_edges import orient_edges_MB, orient_edges_gs2
+from pyBN.utils.markov_blanket import resolve_markov_blanket
+from pyBN.classes.bayesnet import BayesNet
+from copy import copy
 
-def iamb(data, alpha=0.05, feature_selection=None):
+def iamb(data, alpha=0.05, feature_selection=None, debug=False):
 	"""
 	IAMB Algorithm for learning the structure of a
 	Discrete Bayesian Network from data.
@@ -76,10 +79,10 @@ def iamb(data, alpha=0.05, feature_selection=None):
 
 	Notes
 	-----
+	- Works but there are definitely some bugs.
 	"""
 	n_rv = data.shape[1]
-	Mb = dict([(rv,{}) for rv in range(n_rv)])
-	
+	Mb = dict([(rv,[]) for rv in range(n_rv)])
 
 	if feature_selection is None:
 		_T = range(n_rv)
@@ -101,31 +104,39 @@ def iamb(data, alpha=0.05, feature_selection=None):
 			# i.e. max of mi_test(data[:,(X,T,Mb(T))])
 			max_val = -1
 			max_x = None
-			for X in V - Mb(T) - {T}:
-				cols = (X,T)+tuple(Mb(T))
+			for X in V - set(Mb[T]) - {T}:
+				cols = (X,T)+tuple(Mb[T])
 				mi_val = mi_test(data[:,cols],test=False)
 				if mi_val > max_val:
 					max_val = mi_val
 					max_x = X
 			# if Xmax is dependent on T given Mb(T)
-			cols = (max_x,T) + tuple(Mb(T))
-			if are_independent(data[:,cols]):
-				Mb(T).add(X)
+			cols = (max_x,T) + tuple(Mb[T])
+			if max_x is not None and are_independent(data[:,cols]):
+				Mb[T].append(X)
 				Mb_change = True
+				if debug:
+					print 'Adding %s to MB of %s' % (str(X), str(T))
 
 		# SHRINKING PHASE
-		for X in Mb(T):
-			# if x is indepdent of t given Mb(T) - {x}
-			cols = (X,T) + tuple(Mb(T)-{X})
+		for X in Mb[T]:
+			# if x is independent of t given Mb(T) - {x}
+			cols = (X,T) + tuple(set(Mb[T]) - {X})
 			if are_independent(data[:,cols],alpha):
-				Mb(T).remove(X)
+				Mb[T].remove(X)
+				if debug:
+					print 'Removing %s from MB of %s' % (str(X), str(T))
 
 	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
 		edge_dict = resolve_markov_blanket(Mb, data)
-
+		if debug:
+			print 'Unoriented edge dict:\n %s' % str(edge_dict)
+			print 'MB: %s' % str(Mb)
 		# ORIENT EDGES
-		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
+		oriented_edge_dict = orient_edges_gs2(edge_dict,Mb,data,alpha)
+		if debug:
+			print 'Oriented edge dict:\n %s' % str(oriented_edge_dict)
 
 		# CREATE BAYESNET OBJECT
 		value_dict = dict(zip(range(data.shape[1]),

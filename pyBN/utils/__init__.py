@@ -1,4 +1,5 @@
 from pyBN.utils.class_equivalence import *
+from pyBN.utils.data import *
 from pyBN.utils.discretize import *
 from pyBN.utils.graph import *
 from pyBN.utils.hybrid_distance import *

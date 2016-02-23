@@ -28,7 +28,7 @@ from __future__ import division
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import numpy as np
-from pyBN.classes.bayesnet import BayesNet
+#from pyBN.classes.bayesnet import BayesNet
 
 
 

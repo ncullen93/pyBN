@@ -37,8 +37,9 @@ from __future__ import division
 
 import numpy as np
 from pyBN.utils.independence_tests import are_independent, mi_test
+from pyBN.utils.data import unique_bins, replace_strings
 
-def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
+def fast_iamb(data, k=5, alpha=0.05, feature_selection=None, debug=False):
 	"""
 	From [1]:
 		"A novel algorithm for the induction of
@@ -53,8 +54,12 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 	---------
 	*data* : a nested numpy array
 
+	*k* : an integer
+		The max number of edges to add at each iteration of 
+		the algorithm.
+
 	*alpha* : a float
-		Probability of Type II error
+		Probability of Type I error
 
 	Returns
 	-------
@@ -66,11 +71,20 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 
 	Notes
 	-----
+	- Currently does not work. I think it's stuck in an infinite loop...
+
 	"""
+	# get values
+	value_dict = dict(zip(range(data.shape[1]),
+			[list(np.unique(col)) for col in data.T]))
+	# replace strings
+	data = replace_strings(data)
+
 	n_rv = data.shape[1]
-	Mb = dict([(rv,{}) for rv in range(n_rv)])
+	Mb = dict([(rv,[]) for rv in range(n_rv)])
 	N = data.shape[0]
-	card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
+	card = dict(zip(range(n_rv),unique_bins(data)))
+	#card = dict(zip(range(data.shape[1]),np.amax(data,axis=0)))
 
 	if feature_selection is None:
 		_T = range(n_rv)
@@ -93,7 +107,7 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 			mi_dict = dict([(s,mi_test(data[:,(s,T)+tuple(Mb[T])])) for s in S])
 			for x_i in sorted(mi_dict, key=mi_dict.get,reverse=True):
 				# Add top MI-score variables until there isn't enough data for bins
-				if (N / card[x_i]*card[T]*np.prod([card[b] for b in Mb(T)])) >= k:
+				if (N / card[x_i]*card[T]*np.prod([card[b] for b in Mb[T]])) >= k:
 					Mb[T].append(x_i)
 				else:
 					insufficient_data = True
@@ -110,14 +124,19 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 
 			#### FINALIZE BLANKET FOR "T" OR MAKE ANOTHER PASS ####
 			if insufficient_data and not removed_vars:
+				if debug:
+					print 'Breaking..'
 				break
 			else:
-				A = set(nodes) - {T} - set(Mb[T])
-				S = {}
+				A = set(range(n_rv)) - {T} - set(Mb[T])
+				#A = set(nodes) - {T} - set(Mb[T])
+				S = set()
 				for a in A:
-					cols = (A,T) + tuple(Mb[T])
+					cols = (a,T) + tuple(Mb[T])
 					if are_independent(data[:,cols]):
 						S.add(a)
+		if debug:
+			print 'Done with %s' % T
 	
 	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
@@ -127,8 +146,6 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None):
 		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
 
 		# CREATE BAYESNET OBJECT
-		value_dict = dict(zip(range(data.shape[1]),
-			[list(np.unique(col)) for col in data.T]))
 		bn=BayesNet(oriented_edge_dict,value_dict)
 
 		return BN

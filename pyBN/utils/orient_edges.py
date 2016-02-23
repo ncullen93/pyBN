@@ -105,13 +105,14 @@ def orient_edges_gs2(edge_dict, Mb, data, alpha):
 		for Y in edge_dict[X]:
 			nxy = set(edge_dict[X]) - set(edge_dict[Y]) - {Y}
 			for Z in nxy:
-				d_edge_dict[Y].append(X) # SET Y -> X
+				if Y not in d_edge_dict[X]:
+					d_edge_dict[X].append(Y) # SET Y -> X
 				B = min(set(Mb[Y]) - {X} - {Z},set(Mb[Z]) - {X} - {Y})
-				for i in range(len(T)):
-					for S in itertools.combinations(T,i):
+				for i in range(len(B)):
+					for S in itertools.combinations(B,i):
 						cols = (Y,Z,X) + tuple(S)
 						pval = mi_test(data[:,cols])
-						if pval < alpha: # Y IS independent of Z given S+X
+						if pval < alpha and X in d_edge_dict[Y]: # Y IS independent of Z given S+X
 							d_edge_dict[Y].remove(X)
 				if X in d_edge_dict[Y]:
 					break

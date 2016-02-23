@@ -48,7 +48,7 @@ class BayesNet(object):
 
     """
 
-    def __init__(self, E=None, value_dict=None):
+    def __init__(self, E=None, value_dict=None, file=None):
         """
         Initialize the BayesNet class.
 
@@ -70,13 +70,20 @@ class BayesNet(object):
         -----
         
         """
-        if E is not None:
-            #assert (value_dict is not None), 'Must set values if E is set.'
-            self.set_structure(E, value_dict)
+        if file is not None:
+            import pyBN.io.read as ior
+            bn = ior.read_bn(file)
+            self.V = bn.V
+            self.E = bn.E
+            self.F = bn.F        
         else:
-            self.V = list
-            self.E = dict
-            self.F = dict
+            if E is not None:
+                #assert (value_dict is not None), 'Must set values if E is set.'
+                self.set_structure(E, value_dict)
+            else:
+                self.V = []
+                self.E = {}
+                self.F = {}
 
     def __eq__(self, y):
         """
@@ -330,7 +337,6 @@ class BayesNet(object):
         -----
 
         """
-        from pyBN.utils.topsort import topsort
 
         self.V = topsort(edge_dict)
         self.E = edge_dict

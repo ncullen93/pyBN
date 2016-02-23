@@ -13,6 +13,9 @@ for Optimal Feature Selection"
 """
 from __future__ import division
 from copy import copy
+import itertools
+from pyBN.utils.independence_tests import are_independent, mi_test
+
 
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
@@ -45,7 +48,7 @@ def markov_blanket(bn):
 					mb[rv].append(c_parent) # add spouse
 	return mb
 
-def resolve_markov_blanket(Mb, data):
+def resolve_markov_blanket(Mb, data,alpha=0.05):
 	"""
 	Resolving the Markov blanket is the process
 	by which a PDAG is constructed from the collection

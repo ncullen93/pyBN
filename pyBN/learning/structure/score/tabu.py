@@ -19,9 +19,9 @@ import numpy as np
 from copy import copy, deepcopy
 
 from pyBN.classes.bayesnet import BayesNet
-from pyBN.parameter_learn.mle import mle_estimator
-from pyBN.parameter_learn.bayes import bayes_estimator
-from pyBN.structure_learn.score_based.scores import structure_score
+from pyBN.learning.parameter.mle import mle_estimator
+from pyBN.learning.parameter.bayes import bayes_estimator
+from pyBN.learning.structure.score.info_scores import info_score
 from pyBN.utils.independence_tests import mutual_information
 from pyBN.utils.graph import would_cause_cycle
 
@@ -82,7 +82,7 @@ def tabu(data, k=5, metric='AIC', max_iter=100, debug=False, restriction=None):
 	value_dict = dict([(n, np.unique(data[:,i])) for i,n in enumerate(names)])
 	bn = BayesNet(c_dict)
 	mle_estimator(bn, data)
-	max_score = structure_score(bn, nrow, metric)
+	max_score = info_score(bn, nrow, metric)
 
 	tabu_list = [None]*k
 

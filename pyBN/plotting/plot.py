@@ -1,9 +1,9 @@
 """
-*******
-Drawing 
-*******
+********
+Plotting 
+********
 
-Code for drawing BayesNet objects, built on
+Code for plotting BayesNet objects, built on
 the graphviz framework.
 """
 
@@ -21,6 +21,8 @@ import subprocess
 import sys
 from PIL import Image
 		
+def plot(bn, save=False):
+	plot_gv(bn, save=save)
 
 def plot_nx(bn,**kwargs):
 	"""
@@ -33,7 +35,10 @@ def plot_nx(bn,**kwargs):
 	plt.axis('off')
 	plt.show()
 
-def plot_inline(bn, h=350, w=450):
+def iplot(bn, h=350, w=450):
+	"""
+	Inline Plotting of a BayesNet object
+	"""
 	def execute(command):
 		command = ' '.join(command)
 		process = subprocess.Popen(command, 
@@ -49,26 +54,26 @@ def plot_inline(bn, h=350, w=450):
 		else:
 			return False, output
 
-	cmd = ['mkdir' , 'pyBN/drawing/images']
+	cmd = ['mkdir' , 'pyBN/plotting/images']
 	p = execute(cmd)
 
 	G = nx.DiGraph(bn.E)
-	write_dot(G,"pyBN/drawing/images/bn.dot")
+	write_dot(G,"pyBN/plotting/images/bn.dot")
 
 	cmd = ['/usr/local/bin/dot', '-Tpng' , 
-	'pyBN/drawing/images/bn.dot', 
-	'>pyBN/drawing/images/bn.png']
+	'pyBN/plotting/images/bn.dot', 
+	'>pyBN/plotting/images/bn.png']
 	p = execute(cmd)
 	
-	im = Image.open("pyBN/drawing/images/bn.png")
+	im = Image.open("pyBN/plotting/images/bn.png")
 	out = im.resize((w,h))
 
-	cmd = ['rm' , '-r', 'pyBN/drawing/images']
+	cmd = ['rm' , '-r', 'pyBN/plotting/images']
 	p = execute(cmd)
 
 	return out
 
-def plot_gv(bn):
+def plot_gv(bn, save=False):
 	def execute(command):
 		command = ' '.join(command)
 		process = subprocess.Popen(command, 
@@ -84,25 +89,29 @@ def plot_gv(bn):
 		else:
 			return False, output
 
-	cmd = ['mkdir' , 'pyBN/drawing/images']
+	cmd = ['mkdir' , 'pyBN/plotting/images']
 	p = execute(cmd)
 
 	G = nx.DiGraph(bn.E)
-	write_dot(G,"pyBN/drawing/images/bn.dot")
+	write_dot(G,"pyBN/plotting/images/bn.dot")
 
 	cmd = ['/usr/local/bin/dot', '-Tpng' , 
-	'pyBN/drawing/images/bn.dot', 
-	'>pyBN/drawing/images/bn.png']
+	'pyBN/plotting/images/bn.dot', 
+	'>pyBN/plotting/images/bn.png']
 
 	p = execute(cmd)
 	plt.figure(facecolor="white")
-	img=mpimg.imread('pyBN/drawing/images/bn.png')
+	img=mpimg.imread('pyBN/plotting/images/bn.png')
 	_img = plt.imshow(img, aspect='auto')
 	plt.axis('off')
 	plt.show(_img)
 
-	cmd = ['rm' , '-r', 'pyBN/drawing/images']
-	p = execute(cmd)
+	if not save:
+		cmd = ['rm' , '-r', 'pyBN/plotting/images']
+		p = execute(cmd)
+	else:
+		cmd = ['rm', '-r', 'pyBN/plotting/images/bn.dot']
+		p = execute(cmd)
 
 
 
