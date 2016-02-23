@@ -16,7 +16,6 @@ from pyBN.utils.independence_tests import mi_test
 from pyBN.classes.bayesnet import BayesNet
 import operator
 import numpy as np
-from numba import jit
 
 
 def chow_liu(data,edges_only=False):

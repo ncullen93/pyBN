@@ -10,12 +10,9 @@ the graphviz framework.
 __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu>"""
 
 import networkx as nx
-import pydot
-import graphviz as gv
 from graphviz import dot
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import pylab
 from networkx.drawing.nx_agraph import write_dot, graphviz_layout
 import subprocess
 import sys
