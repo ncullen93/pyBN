@@ -16,97 +16,85 @@ For an up-to-date list of issues, go to the "issues" tab in this repository. Bel
 
 <h2>Current features</h2>
 
-<h4>FileIO and Drawing</h4>
-| Reading BNs   | Drawing BNs   |
-| ------------- | ------------- | 
-| BIF format    | Graphviz Engine  |
-| JSON format   | Networkx      |
-
-
 <h4>Marginal Inference</h4>
-| Exact Marginal Inference  | Approximate Marginal Inference  | 
-| ------------- | ------------- | ----------------- |
-| Sum-Product Variable Elimination   | Forward Sampling    |
-| Clique Tree Message Passing  | Likelihood Weighted Sampling     |  
-|				|		Gibbs (MCMC) Sampling 		|
-|				|		Loopy Belief Propagation			| 
+- Exact Marginal Inference
+	- Sum-Product Variable Elimination 
+	- Clique Tree Message Passing
+- Approximate Marginal Inference
+	- Forward Sampling  
+	- Likelihood Weighted Sampling
+	- Gibbs (MCMC) Sampling
+	- Loopy Belief Propagation
 
-<h4>MAP Inference</h4>
-| Exact MAP Inference | Approximate MAP Inference |
-| ------------------- | ------------------------- |
-| Max-Product Variable Elimination | LP Relaxation |
-| Integer Linear Programming	|			|
+<h4>MAP/MPE Inference</h4>
+- Exact MAP Inference
+	- Max-Product Variable Elimination
+	- Integer Linear Programming
+- Approximate MAP Inference
+	- LP Relaxation
 
 <h4>Constraint-Based Structure Learning</h4>
-| Algorithms  | Independence Tests |
-| ------------- | ----------------- |
-| Path Condition (PC)   | Marginal Mutual Information (KL-Divergence)    |
-| Grow-Shrink (GS)  | Conditional Mutual Information (Cross Entropy)     |
-| 	IAMB 	| Pearsion Chi-Square|
-| 	Lambda-IAMB 	|				| 	
-| 	Fast-IAMB 	|				|		
+- Algorithms
+	- PC
+	- Grow-Shrink
+	- IAMB/Lambda-IAMB/Fast-IAMB
+- Independence Tests
+	- Marginal Mutual Information
+	- Conditional Mutual Information
+	- Pearson Chi-Square
 
 <h4>Score-Based Structure Learning</h4>
-| Algorithms | Score Metrics |
-| ---------- | ------------- |
-| Hill Climbing | Log-Likelihood |
-| Tabu List	| AIC/BIC	|
-| Random Restarts | 		|
+- Algorithms
+	- Greedy Hill Climbing
+	- Tabu Search
+	- Random Restarts
+- Scoring Functions
+	- BIC/AIC/MDL
+	- BDe/BDeu/K2
 
 <h4>Tree-Based Structure Learning</h4>
-| Algorithms |
-| ---------- |
-| Naive Bayes |
-| Tree-Augmented Naive Bayes |
-| Chow-Liu	|
+- Naive Bayes
+- Tree-Augmented Naive Bayes
+- Chow-Liu
 
 <h4>Hybrid Structure Leanring</h4>
-| Algorithms |
-| --------- |
-| MMPC		|
-| MMHC		|
+- MMPC
+- MMHC
 
 <h4>Exact Structure Learning</h4>
-| Algorithms |
-| ---------- |
-| GOBNILP Solver |
+- GOBNILP Solver
 
 <h4>Parameter Learning</h4>
-| Frequentist | Bayesian |
-| ----------- | -------- |
-| Maximum Likelihood Estimation | Dirichlet-Multinomial Estimation |
-
+- Maximum Likelihood Estimation
+- Dirichlet-Multinomial Estimation
 
 <h4>Classification</h4>
-| Constrained (Tree) BNs  | General BNs
-| ------------- | --------- |
-| Naive Bayes    | MAP Inference Classification |
-| Tree-Augmented Naive Bayes   |  |
+- Naive Bayes
+- Tree-Augmented Naive Bayes
+- General DAG
 
 <h4>Multi-Dimensional Classification</h4>
-| Class/Feature Subgraphs |
-| ---------------------- |
-| Empty |
-| Tree/Polytree/Forest |
-| General DAG |
+- Empty/Tree/Polytree/Forest
+- General DAG
 
 <h4>Comparing Two Bayesian Networks</h4>
-| Structure-Based Distance Metrics   | Parameter-Based Distance Metrics  | 
-| ------------- | ------------- | 
-| Missing Edges   | KL-Divergence and JS-Divergence|
-| Extra Edges  | Manhattan and Euclidean |
-| Incorrect Edge Orientation				|Hellinger				| 
-|	Hamming Distance			|		Minkowski	| 
+- Structure-Based Distance Metrics
+	- Missing Edges
+	- Extra Edges
+	- Incorrect Edge Orientation
+	- Hamming Distance
+- Parameter-Based Distance Metrics
+	- KL-Divergence and JS-Divergence
+	- Manhattan and Euclidean
+	- Hellinger
+	- Minkowski
 
 <h4>Utility Functionality</h4>
-| BN Utility | Other |
-| ---------- | ----- |
-| 	Determine Class Equivalence| Discretize continuous data  |
-| Orient a PDAG from Markov Blanket or Block Set | Generate random sample dataset from a BN |
-| Elimination Ordering Heuristics | Topological Sort Algorithm |
-| Get Markov Blanket of a BN | Minimum Spanning Tree Algorithm |
-| Markov Blanket Fitness Metric |
-| Make a Chordal or Moral BN |
+- Determine Class Equivalence
+- Discretize continuous data 
+- Orient a PDAG
+- Generate random sample dataset from a BN
+- Markov Blanket operations
 
 
 
