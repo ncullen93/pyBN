@@ -10,7 +10,7 @@ This module provides a convenient and intuitive interface for reading, writing, 
 
 I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would love to collaborate on this project with anyone who has an interest in graphical models - Send me an email at ncullen.th@dartmouth.edu. If you're a researcher or student and want to use this module, I am happy to give an overview of the code/functionality or answer any questions.
 
-Note: This code base is essentially the same as the "neuroBN" package found in www.github.com/ncullen93/neuroBN. I maintain two separate repositories because I expect the two projects to diverge sharply in the near future.
+This code base is essentially the same as the "neuroBN" package found in www.github.com/ncullen93/neuroBN. I maintain two separate repositories because I expect the two projects to diverge sharply in the near future.
 
 For an up-to-date list of issues, go to the "issues" tab in this repository. Below is an updated list of features, along with information on usage/examples:
 
