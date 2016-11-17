@@ -15,6 +15,7 @@ __author__ = """Nicholas Cullen <ncullen.th@dartmouth.edu"""
 
 
 import json
+from collections import OrderedDict
 
 def write_bn(bn, path):
     """
