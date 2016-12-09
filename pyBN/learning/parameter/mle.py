@@ -19,14 +19,14 @@ def mle_fast(bn, data, nodes=None, counts=False, np=False):
 	"""
 	def merge_cols(data, cols):
 		if len(cols) == 1:
-			return data[:,cols[0]]
+			return data[cols[0]]
 		elif len(cols) > 1:
-			data = data[:,cols].astype('str')
+			data = data[cols].astype('str')
 			ncols = len(cols)
 			for i in xrange(len(data)):
-				data[i,0] = ''.join(data[i,0:ncols])
+				data.ix[i,0] = ''.join(data.ix[i,0:ncols])
 			data = data.astype('int')
-			return data[:,0]
+			return data.ix[:,0]
 
 	if nodes is None:
 		nodes = list(bn.nodes())
@@ -36,22 +36,22 @@ def mle_fast(bn, data, nodes=None, counts=False, np=False):
 
 	F = dict([(rv, {}) for rv in nodes])
 	for i, n in enumerate(nodes):
-		F[n]['values'] = list(np.unique(data[:,i]))
-		bn.F[n]['values'] = list(np.unique(data[:,i]))
+		F[n]['values'] = list(np.unique(data.ix[:,i]))
+		bn.F[n]['values'] = list(np.unique(data.ix[:,i]))
 
 	for rv in nodes:
 		parents = bn.parents(rv)
 		if len(parents)==0:
 			if np:
-				F[rv]['cpt'] = np.histogram(data[:,rv], bins=bn.card(rv))[0]
+				F[rv]['cpt'] = np.histogram(data.ix[:,rv], bins=bn.card(rv))[0]
 			else:
-				F[rv]['cpt'] = list(np.histogram(data[:,rv], bins=bn.card(rv))[0])
+				F[rv]['cpt'] = list(np.histogram(data.ix[:,rv], bins=bn.card(rv))[0])
 		else:
 			if np:
-				F[rv]['cpt'] = np.histogram2d(merge_cols(data,parents),data[:,rv], 
+				F[rv]['cpt'] = np.histogram2d(merge_cols(data,parents),data.ix[:,rv], 
 				bins=[np.prod([bn.card(p) for p in parents]),bn.card(rv)])[0].flatten()
 			else:
-				F[rv]['cpt'] = list(np.histogram2d(merge_cols(data,parents),data[:,rv], 
+				F[rv]['cpt'] = list(np.histogram2d(merge_cols(data,parents),data.ix[:,rv], 
 					bins=[np.prod([bn.card(p) for p in parents]),bn.card(rv)])[0].flatten())
 	if counts:
 		return F
