@@ -11,10 +11,6 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 
 For an up-to-date list of issues, go to the "issues" tab in this repository. Below is an updated list of features, along with information on usage/examples:
 
-I previously wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure learning that can find the EXACT Global Maximum of any score-based objective function. It also links to CPLEX for incredible speed.
-The wrappers can be found in the "pyGOBN" project at www.github.com/ncullen93/pyGOBN. For an overview of GOBNILP or to see its
-great benchmarks on even the most massive datasets, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/.
-
 
 <h2>Current features</h2>
 
@@ -98,6 +94,9 @@ great benchmarks on even the most massive datasets, visit https://www.cs.york.ac
 - Generate random sample dataset from a BN
 - Markov Blanket operations
 
+I previously wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure learning that can find the EXACT Global Maximum of any score-based objective function. It also links to CPLEX for incredible speed.
+The wrappers can be found in the "pyGOBN" project at www.github.com/ncullen93/pyGOBN. For an overview of GOBNILP or to see its
+great benchmarks on even the most massive datasets, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/.
 
 
 <h2>Examples</h2>
