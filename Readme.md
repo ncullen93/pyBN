@@ -1,9 +1,8 @@
-<h1>Bayesian Networks in Python</h1>
+NOTE: I wrote this code to go along with Daphne Koller's book and no longer
+maintain the repository, although the code should be easily adaptable. 
+If you have any questions, please email me at ncullen at seas dot upenn dot edu.
 
-<h2>NEW FEATURE!</h2>
-I just wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure learning that can find the EXACT Global Maximum of any score-based objective function. It also links to CPLEX for incredible speed.
-The wrappers can be found in the "pyGOBN" project at www.github.com/ncullen93/pyGOBN. For an overview of GOBNILP or to see its
-great benchmarks on even the most massive datasets, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/.
+<h1>Bayesian Networks in Python</h1>
 
 <h2>Overview</h2>
 This module provides a convenient and intuitive interface for reading, writing, plotting, performing inference, parameter learning, structure learning, and classification over Discrete Bayesian Networks - along with some other utility functions. There seems to be a lack of many high-quality options for BNs in Python, so I hope this project will be a useful addition.
@@ -13,6 +12,11 @@ I am a graduate student in the Di2Ag laboratory at Dartmouth College, and would 
 This code base is essentially the same as the "neuroBN" package found in www.github.com/ncullen93/neuroBN. I maintain two separate repositories because I expect the two projects to diverge sharply in the near future.
 
 For an up-to-date list of issues, go to the "issues" tab in this repository. Below is an updated list of features, along with information on usage/examples:
+
+I previously wrote a Python wrapper for the GOBNILP project - a state-of-the-art integer programming solver for Bayesian network structure learning that can find the EXACT Global Maximum of any score-based objective function. It also links to CPLEX for incredible speed.
+The wrappers can be found in the "pyGOBN" project at www.github.com/ncullen93/pyGOBN. For an overview of GOBNILP or to see its
+great benchmarks on even the most massive datasets, visit https://www.cs.york.ac.uk/aig/sw/gobnilp/.
+
 
 <h2>Current features</h2>
 
