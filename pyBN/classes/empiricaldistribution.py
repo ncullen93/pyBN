@@ -149,7 +149,7 @@ class EmpiricalDistribution(object):
 			if len(bins) > 3:
 				data = data.astype('str')
 				ncols = len(bins)
-				for i in xrange(len(data)):
+				for i in range(len(data)):
 					data[i,2] = ''.join(data[i,2:ncols])
 				data = data.astype('int')[:,0:3]
 
@@ -166,9 +166,9 @@ class EmpiricalDistribution(object):
 			Py_z = Pyz / (Pz+1e-7) # P(Y | Z) = P(Y,Z) / P(Z)
 
 			Px_y_z = np.empty((Pxy_z.shape)) # P(X|Z)P(Y|Z)
-			for i in xrange(bins[0]):
-				for j in xrange(bins[1]):
-					for k in xrange(bins[2]):
+			for i in range(bins[0]):
+				for j in range(bins[1]):
+					for k in range(bins[2]):
 						Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 			Pxyz += 1e-7
 			Pxy_z += 1e-7
@@ -179,7 +179,7 @@ class EmpiricalDistribution(object):
 		elif len(bins) > 2 and conditional == False:
 			data = data.astype('str')
 			ncols = len(bins)
-			for i in xrange(len(data)):
+			for i in range(len(data)):
 				data[i,1] = ''.join(data[i,1:ncols])
 			data = data.astype('int')[:,0:2]
 

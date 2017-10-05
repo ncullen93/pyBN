@@ -23,7 +23,7 @@ def mle_fast(bn, data, nodes=None, counts=False, np=False):
 		elif len(cols) > 1:
 			data = data[cols].astype('str')
 			ncols = len(cols)
-			for i in xrange(len(data)):
+			for i in range(len(data)):
 				data.ix[i,0] = ''.join(data.ix[i,0:ncols])
 			data = data.astype('int')
 			return data.ix[:,0]

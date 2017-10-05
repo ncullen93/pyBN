@@ -33,8 +33,8 @@ def ilp(data, settings=None, edge_reqs=None, nonedge_reqs=None, ind_reqs=None):
 	try:
 		from pyGOBN import GOBN
 	except ImportError:
-		print 'You must download & install pyGOBN to use this functionality.\
-		 Visit github.com/ncullen93/pyGOBN'
+		print('You must download & install pyGOBN to use this functionality.\
+		 Visit github.com/ncullen93/pyGOBN')
 
 	gobn = GOBN()
 	gobn.set_settings(settings)

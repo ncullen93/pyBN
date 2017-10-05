@@ -115,7 +115,7 @@ class ClusterGraph(object):
         self.beliefs = {}
         for cluster in self.V:
             self.V[cluster].collect_beliefs()
-            #print 'Belief ' , cluster , ' : \n', self.V[cluster].belief.cpt
+            #print('Belief ' , cluster , ' : \n', self.V[cluster].belief.cpt)
             self.beliefs[cluster] = self.V[cluster].belief
 
 
@@ -148,7 +148,7 @@ class ClusterGraph(object):
             if iteration == max_iter:
                 break
             if iteration % 50 == 0:
-                print 'Iteration: ' , iteration
+                print('Iteration: ' , iteration)
                 for cluster in cgraph.V.values():
                     cluster.collect_beliefs()
             # select an edge
@@ -157,12 +157,12 @@ class ClusterGraph(object):
             p_idx = np.random.randint(0,2)
             parent_edge = edge_select[p_idx]
             child_edge = edge_select[np.abs(p_idx-1)]
-            print parent_edge , child_edge
+            print(parent_edge , child_edge)
 
             # send a message along that edge
             cgraph.V[parent_edge].send_message(cgraph.V[child_edge])
 
             iteration += 1
-        print 'Now Collecting Beliefs..'
+        print('Now Collecting Beliefs..')
         self.collect_beliefs()
         self.BN.ctree = self

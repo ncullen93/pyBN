@@ -37,7 +37,7 @@ def loopy_bp(target=None, evidence=None, max_iter=100):
 		cgraph.beliefs = {}
 		for cluster in self.V:
 			cgraph.V[cluster].collect_beliefs()
-			#print 'Belief ' , cluster , ' : \n', self.V[cluster].belief.cpt
+			#print('Belief ' , cluster , ' : \n', self.V[cluster].belief.cpt)
 			cgraph.beliefs[cluster] = cgraph.V[cluster].belief
 
 	# 1: Moralize the graph
@@ -55,7 +55,7 @@ def loopy_bp(target=None, evidence=None, max_iter=100):
 		if iteration == max_iter:
 			break
 		if iteration % 50 == 0:
-			print 'Iteration: ' , iteration
+			print('Iteration: ' , iteration)
 			for cluster in cgraph.V.values():
 				cluster.collect_beliefs()
 		# select an edge
@@ -64,12 +64,12 @@ def loopy_bp(target=None, evidence=None, max_iter=100):
 		p_idx = np.random.randint(0,2)
 		parent_edge = edge_select[p_idx]
 		child_edge = edge_select[np.abs(p_idx-1)]
-		print parent_edge , child_edge
+		print(parent_edge , child_edge)
 
 		# send a message along that edge
 		cgraph.V[parent_edge].send_message(cgraph.V[child_edge])
 
 		iteration += 1
-	print 'Now Collecting Beliefs..'
+	print('Now Collecting Beliefs..')
 	collect_beliefs(cgraph)
 	#bn.ctree = self

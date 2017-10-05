@@ -89,7 +89,7 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 		improvement is made in a given iteration.
 
 	*debug* : boolean
-		Whether to print the scores/moves of the
+		Whether to print(the scores/moves of the)
 		algorithm as its happening.
 
 	*restriction* : a list of 2-tuples
@@ -129,7 +129,7 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 		max_delta = 0
 
 		if debug:
-			print 'ITERATION: ' , _iter
+			print('ITERATION: ' , _iter)
 
 		### TEST ARC ADDITIONS ###
 		for u in bn.nodes():
@@ -146,8 +146,8 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 
 						if delta_score > max_delta:
 							#if debug:
-							#	print 'Improved Arc Addition: ' , (u,v)
-							#	print 'Delta Score: ' , delta_score
+							#	print('Improved Arc Addition: ' , (u,v))
+							#	print('Delta Score: ' , delta_score)
 							max_delta = delta_score
 							max_operation = 'Addition'
 							max_arc = (u,v)
@@ -165,8 +165,8 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 
 					if delta_score > max_delta:
 						#if debug:
-						#	print 'Improved Arc Deletion: ' , (u,v)
-						#	print 'Delta Score: ' , delta_score
+						#	print('Improved Arc Deletion: ' , (u,v))
+						#	print('Delta Score: ' , delta_score)
 						max_delta = delta_score
 						max_operation = 'Deletion'
 						max_arc = (u,v)
@@ -192,8 +192,8 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 
 					if delta_score > max_delta:
 						#if debug:
-						#	print 'Improved Arc Reversal: ' , (u,v)
-						#	print 'Delta Score: ' , delta_score
+						#	print('Improved Arc Reversal: ' , (u,v))
+						#	print('Delta Score: ' , delta_score)
 						max_delta = delta_score
 						max_operation = 'Reversal'
 						max_arc = (u,v)
@@ -205,30 +205,30 @@ def hc(data, metric='AIC', max_iter=100, debug=False, restriction=None):
 			u,v = max_arc
 			if max_operation == 'Addition':
 				if debug:
-					print 'ADDING: ' , max_arc , '\n'
+					print('ADDING: ' , max_arc , '\n')
 				c_dict[u].append(v)
 				p_dict[v].append(u)
 			elif max_operation == 'Deletion':
 				if debug:
-					print 'DELETING: ' , max_arc , '\n'
+					print('DELETING: ' , max_arc , '\n')
 				c_dict[u].remove(v)
 				p_dict[v].remove(u)
 			elif max_operation == 'Reversal':
 				if debug:
-					print 'REVERSING: ' , max_arc, '\n'
+					print('REVERSING: ' , max_arc, '\n')
 					c_dict[u].remove(v)
 					p_dict[v].remove(u)
 					c_dict[v].append(u)
 					p_dict[u].append(v)
 		else:
 			if debug:
-				print 'No Improvement on Iter: ' , _iter
+				print('No Improvement on Iter: ' , _iter)
 
 		### TEST FOR MAX ITERATION ###
 		_iter += 1
 		if _iter > max_iter:
 			if debug:
-				print 'Max Iteration Reached'
+				print('Max Iteration Reached')
 			break
 
 	

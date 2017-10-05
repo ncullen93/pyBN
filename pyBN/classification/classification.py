@@ -80,7 +80,7 @@ def predict(data, target, classifier=None, method='nb'):
 	-----
 	"""
 	if classifier is None:
-		print 'Learning structure..'
+		print('Learning structure..')
 		classifier = learn_structure(data=data, target=target, method=method)
 		learn_parameters(classifier)
 
@@ -90,7 +90,7 @@ def predict(data, target, classifier=None, method='nb'):
 	### CLASSIFIER PREDICTION FROM INFERENCE ###
 	for row in range(data.shape[0]):
 		if row % 100 == 0:
-			print 'Iteration: ' , row
+			print('Iteration: ' , row)
 		vals = [data[row,i] for i in non_target_cols]
 		evidence = dict(zip(non_target_cols,vals))
 		y[row] = data[row,target] # true value

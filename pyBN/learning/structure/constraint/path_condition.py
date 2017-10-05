@@ -99,7 +99,7 @@ def pc(data, alpha=0.05):
 	stop = False
 	i = 1
 	while not stop:
-		for x in xrange(n_rv):
+		for x in range(n_rv):
 			for y in edge_dict[x]:
 				if i == 0:
 					pval_xy_z = mi_test(data[:,(x,y)])
@@ -122,7 +122,7 @@ def pc(data, alpha=0.05):
 							
 		i += 1
 		stop = True
-		for x in xrange(n_rv):
+		for x in range(n_rv):
 			if (len(edge_dict[x]) > i-1):
 				stop = False
 				break

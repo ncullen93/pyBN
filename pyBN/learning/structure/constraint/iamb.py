@@ -120,7 +120,7 @@ def iamb(data, alpha=0.05, feature_selection=None, debug=False):
 				Mb[T].append(X)
 				Mb_change = True
 				if debug:
-					print 'Adding %s to MB of %s' % (str(X), str(T))
+					print('Adding %s to MB of %s' % (str(X), str(T)))
 
 		# SHRINKING PHASE
 		for X in Mb[T]:
@@ -129,18 +129,18 @@ def iamb(data, alpha=0.05, feature_selection=None, debug=False):
 			if are_independent(data[:,cols],alpha):
 				Mb[T].remove(X)
 				if debug:
-					print 'Removing %s from MB of %s' % (str(X), str(T))
+					print('Removing %s from MB of %s' % (str(X), str(T)))
 
 	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE
 		edge_dict = resolve_markov_blanket(Mb, data)
 		if debug:
-			print 'Unoriented edge dict:\n %s' % str(edge_dict)
-			print 'MB: %s' % str(Mb)
+			print('Unoriented edge dict:\n %s' % str(edge_dict))
+			print('MB: %s' % str(Mb))
 		# ORIENT EDGES
 		oriented_edge_dict = orient_edges_gs2(edge_dict,Mb,data,alpha)
 		if debug:
-			print 'Oriented edge dict:\n %s' % str(oriented_edge_dict)
+			print('Oriented edge dict:\n %s' % str(oriented_edge_dict))
 
 		# CREATE BAYESNET OBJECT
 		value_dict = dict(zip(range(data.shape[1]),

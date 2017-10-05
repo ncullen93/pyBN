@@ -57,7 +57,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 		improvement is made in a given iteration.
 
 	*debug* : boolean
-		Whether to print the scores/moves of the
+		Whether to print(the scores/moves of the)
 		algorithm as its happening.
 
 	*restriction* : a list of 2-tuples
@@ -93,7 +93,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 		max_delta = 0
 
 		if debug:
-			print 'ITERATION: ' , _iter
+			print('ITERATION: ' , _iter)
 
 		### TEST ARC ADDITIONS ###
 		for u in bn.nodes():
@@ -110,8 +110,8 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 
 						if delta_score > max_delta:
 							if debug:
-								print 'Improved Arc Addition: ' , (u,v)
-								print 'Delta Score: ' , delta_score
+								print('Improved Arc Addition: ' , (u,v))
+								print('Delta Score: ' , delta_score)
 							max_delta = delta_score
 							max_operation = 'Addition'
 							max_arc = (u,v)
@@ -129,8 +129,8 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 
 					if delta_score > max_delta:
 						if debug:
-							print 'Improved Arc Deletion: ' , (u,v)
-							print 'Delta Score: ' , delta_score
+							print('Improved Arc Deletion: ' , (u,v))
+							print('Delta Score: ' , delta_score)
 						max_delta = delta_score
 						max_operation = 'Deletion'
 						max_arc = (u,v)
@@ -156,8 +156,8 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 
 					if delta_score > max_delta:
 						if debug:
-							print 'Improved Arc Reversal: ' , (u,v)
-							print 'Delta Score: ' , delta_score
+							print('Improved Arc Reversal: ' , (u,v))
+							print('Delta Score: ' , delta_score)
 						max_delta = delta_score
 						max_operation = 'Reversal'
 						max_arc = (u,v)
@@ -169,30 +169,30 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 			u,v = max_arc
 			if max_operation == 'Addition':
 				if debug:
-					print 'ADDING: ' , max_arc , '\n'
+					print('ADDING: ' , max_arc , '\n')
 				c_dict[u].append(v)
 				p_dict[v].append(u)
 			elif max_operation == 'Deletion':
 				if debug:
-					print 'DELETING: ' , max_arc , '\n'
+					print('DELETING: ' , max_arc , '\n')
 				c_dict[u].remove(v)
 				p_dict[v].remove(u)
 			elif max_operation == 'Reversal':
 				if debug:
-					print 'REVERSING: ' , max_arc, '\n'
+					print('REVERSING: ' , max_arc, '\n')
 					c_dict[u].remove(v)
 					p_dict[v].remove(u)
 					c_dict[v].append(u)
 					p_dict[u].append(v)
 		else:
 			if debug:
-				print 'No Improvement on Iter: ' , _iter
+				print('No Improvement on Iter: ' , _iter)
 			#### RESTART WITH RANDOM MOVES ####
 			if _restarts < R:
 				improvement = True # make another pass of hill climbing
 				_iter=0 # reset iterations
 				if debug:
-					print 'Restart - ' , _restarts
+					print('Restart - ' , _restarts)
 				_restarts+=1
 				for _ in range(M):
 					# 0 = Addition, 1 = Deletion, 2 = Reversal
@@ -203,7 +203,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 							# IF EDGE DOESN'T EXIST, ADD IT
 							if u not in p_dict[v] and u!=v and not would_cause_cycle(c_dict,u,v):
 								if debug:
-									print 'RESTART - ADDING: ', (u,v)
+									print('RESTART - ADDING: ', (u,v))
 								c_dict[u].append(v)
 								p_dict[v].append(u)
 								break
@@ -213,7 +213,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 							# IF EDGE EXISTS, DELETE IT
 							if u in p_dict[v]:
 								if debug:
-									print 'RESTART - DELETING: ', (u,v)
+									print('RESTART - DELETING: ', (u,v))
 								c_dict[u].remove(v)
 								p_dict[v].remove(u)
 								break
@@ -223,7 +223,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 							# IF EDGE EXISTS, REVERSE IT
 							if u in p_dict[v] and not would_cause_cycle(c_dict,v,u, reverse=True):
 								if debug:
-									print 'RESTART - REVERSING: ', (u,v)
+									print('RESTART - REVERSING: ', (u,v))
 								c_dict[u].remove(v)
 								p_dict[v].remove(u)
 								c_dict[v].append(u)
@@ -234,7 +234,7 @@ def hc_rr(data, M=5, R=3, metric='AIC', max_iter=100, debug=False, restriction=N
 		_iter += 1
 		if _iter > max_iter:
 			if debug:
-				print 'Max Iteration Reached'
+				print('Max Iteration Reached')
 			break
 
 	

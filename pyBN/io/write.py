@@ -46,7 +46,7 @@ def write_bn(bn, path):
     if '.bn' in path:
         write_json(bn, path)
     else:
-        print "File Extension not supported"
+        print("File Extension not supported")
 
 def write_json(bn, path):
     """

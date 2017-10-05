@@ -52,7 +52,7 @@ def read_bn(path):
     elif '.mat' in path:
         return read_mat(path)
     else:
-        print "Path Extension not recognized"
+        print("Path Extension not recognized")
 
 def read_bif(path):
     """
@@ -210,7 +210,7 @@ def read_json(path):
         bn.F = data['F']
         success = True
     except ValueError:
-        print "Could not read file - check format"
+        print("Could not read file - check format")
     bn.V = topsort(bn.E)
 
     return bn

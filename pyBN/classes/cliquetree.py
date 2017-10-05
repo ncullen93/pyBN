@@ -149,7 +149,7 @@ class CliqueTree(object):
             C[v_idx] = Clique(set(clique))
 
         ### MAXIMUM SPANNING TREE OVER COMPLETE GRAPH TO MAKE A TREE ###
-        weighted_edge_dict = dict([(c_idx,{}) for c_idx in xrange(len(C))])
+        weighted_edge_dict = dict([(c_idx,{}) for c_idx in range(len(C))])
         for i in range(len(C)):
             for j in range(len(C)):
                 if i!=j:
@@ -324,7 +324,7 @@ class Clique(object):
 
         #psi_copy.cpt = psi_copy.cpt.loc[:,[c for c in psi_copy.cpt.columns if 'Prob' not in c]]
         #psi_copy.cpt[str('Prob-Val-' + str(np.random.randint(0,1000000)))] = 1
-        print 'Init Msg: \n', psi_copy.cpt
+        print('Init Msg: \n', psi_copy.cpt)
         other_clique.messages_received.append(psi_copy)
 
         self.belief = copy(self.psi)

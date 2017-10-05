@@ -135,19 +135,19 @@ def gs(data, alpha=0.05, feature_selection=None, debug=False):
 		
 		Mb[X] = TEMP_S
 		if debug:
-			print 'Markov Blanket for %s : %s' % (X, str(TEMP_S))
+			print('Markov Blanket for %s : %s' % (X, str(TEMP_S)))
 	
 	if feature_selection is None:
 		# STEP 2: COMPUTE GRAPH STRUCTURE
 		# i.e. Resolve Markov Blanket
 		edge_dict = resolve_markov_blanket(Mb,data)
 		if debug:
-			print 'Unoriented edge dict:\n %s' % str(edge_dict)
+			print('Unoriented edge dict:\n %s' % str(edge_dict))
 		
 		# STEP 3: ORIENT EDGES
 		oriented_edge_dict = orient_edges_MB(edge_dict,Mb,data,alpha)
 		if debug:
-			print 'Oriented edge dict:\n %s' % str(oriented_edge_dict)
+			print('Oriented edge dict:\n %s' % str(oriented_edge_dict))
 		
 
 		# CREATE BAYESNET OBJECT

@@ -54,7 +54,7 @@ def mutual_information(data, conditional=False):
 		if len(bins) > 3:
 			data = data.astype('str')
 			ncols = len(bins)
-			for i in xrange(len(data)):
+			for i in range(len(data)):
 				data[i,2] = ''.join(data[i,2:ncols])
 			data = data.astype('int')[:,0:3]
 
@@ -71,9 +71,9 @@ def mutual_information(data, conditional=False):
 		Py_z = Pyz / (Pz+1e-7) # P(Y | Z) = P(Y,Z) / P(Z)
 
 		Px_y_z = np.empty((Pxy_z.shape)) # P(X|Z)P(Y|Z)
-		for i in xrange(bins[0]):
-			for j in xrange(bins[1]):
-				for k in xrange(bins[2]):
+		for i in range(bins[0]):
+			for j in range(bins[1]):
+				for k in range(bins[2]):
 					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 		Pxyz += 1e-7
 		Pxy_z += 1e-7
@@ -84,7 +84,7 @@ def mutual_information(data, conditional=False):
 	elif len(bins) > 2 and conditional == False:
 		data = data.astype('str')
 		ncols = len(bins)
-		for i in xrange(len(data)):
+		for i in range(len(data)):
 			data[i,1] = ''.join(data[i,1:ncols])
 		data = data.astype('int')[:,0:2]
 
@@ -190,7 +190,7 @@ def mi_test(data, test=True):
 		if len(bins) > 3:
 			data = data.astype('str')
 			ncols = len(bins)
-			for i in xrange(len(data)):
+			for i in range(len(data)):
 				data[i,2] = ''.join(data[i,2:ncols])
 			data = data.astype('int')[:,0:3]
 
@@ -209,9 +209,9 @@ def mi_test(data, test=True):
 		Py_z = Pyz / (Pz+1e-7) # P(Y | Z) = P(Y,Z) / P(Z)
 
 		Px_y_z = np.empty((Pxy_z.shape)) # P(X|Z)P(Y|Z)
-		for i in xrange(bins[0]):
-			for j in xrange(bins[1]):
-				for k in xrange(bins[2]):
+		for i in range(bins[0]):
+			for j in range(bins[1]):
+				for k in range(bins[2]):
 					Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 		Pxyz += 1e-7
 		Pxy_z += 1e-7
@@ -288,7 +288,7 @@ def entropy(data):
 		if cols  > 3:
 			data = data.astype('str')
 			ncols = len(bins)
-			for i in xrange(len(data)):
+			for i in range(len(data)):
 				data[i,2] = ''.join(data[i,2:ncols])
 			data = data.astype('int')[:,0:3]
 
@@ -324,7 +324,7 @@ def mi_from_en(data):
 	ncols = data.shape[1]
 
 	if ncols == 1:
-		print "Need at least 2 columns"
+		print("Need at least 2 columns")
 
 	elif ncols==2:
 		MI = entropy(data[:,0]) - entropy(data)
@@ -336,7 +336,7 @@ def mi_from_en(data):
 		# join extra columns
 		data = data.astype('str')
 		ncols = data.shape[1]
-		for i in xrange(len(data)):
+		for i in range(len(data)):
 			data[i,2] = ''.join(data[i,2:ncols])
 		data = data.astype('int')[:,0:3]
 
@@ -400,9 +400,9 @@ def chi2_test(data):
 	observed_dist = Pxyz # Empirical distribution
 	#Not correct right now -> Pz is wrong dimension
 	Px_y_z = np.empty((Pxy_z.shape)) # P(Z)P(X|Z)P(Y|Z)
-	for i in xrange(bins[0]):
-		for j in xrange(bins[1]):
-			for k in xrange(bins[2]):
+	for i in range(bins[0]):
+		for j in range(bins[1]):
+			for k in range(bins[2]):
 				Px_y_z[i][j][k] = Px_z[i][k]*Py_z[j][k]
 	Px_y_z *= Pz
 

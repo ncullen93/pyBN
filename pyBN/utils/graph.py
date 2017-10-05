@@ -102,7 +102,7 @@ def mst(edge_dict):
 	reached = [0]
 	unreached = range(1,nrv)
 
-	for k in xrange(nrv):
+	for k in range(nrv):
 		source, sink = None, None
 		min_cost = np.inf
 		for rn in reached:

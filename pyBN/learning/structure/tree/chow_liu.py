@@ -49,11 +49,11 @@ def chow_liu(data,edges_only=False):
 	n_rv = data.shape[1]
 
 	edge_list = [(i,j,mi_test(data[:,(i,j)],chi2_test=False)) \
-					for i in xrange(n_rv) for j in xrange(i+1,n_rv)]
+					for i in range(n_rv) for j in range(i+1,n_rv)]
 	
 	edge_list.sort(key=operator.itemgetter(2), reverse=True) # sort by weight
 	vertex_cache = {edge_list[0][0]} # start with first vertex..
-	mst = dict((rv, []) for rv in xrange(n_rv))
+	mst = dict((rv, []) for rv in range(n_rv))
 
 	for i,j,w in edge_list:
 		if i in vertex_cache and j not in vertex_cache:

@@ -125,7 +125,7 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None, debug=False):
 			#### FINALIZE BLANKET FOR "T" OR MAKE ANOTHER PASS ####
 			if insufficient_data and not removed_vars:
 				if debug:
-					print 'Breaking..'
+					print('Breaking..')
 				break
 			else:
 				A = set(range(n_rv)) - {T} - set(Mb[T])
@@ -136,7 +136,7 @@ def fast_iamb(data, k=5, alpha=0.05, feature_selection=None, debug=False):
 					if are_independent(data[:,cols]):
 						S.add(a)
 		if debug:
-			print 'Done with %s' % T
+			print('Done with %s' % T)
 	
 	if feature_selection is None:
 		# RESOLVE GRAPH STRUCTURE

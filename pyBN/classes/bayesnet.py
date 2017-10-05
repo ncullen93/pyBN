@@ -127,7 +127,7 @@ class BayesNet(object):
         if not self.has_node(v):
             self.add_node(v)
         if self.has_edge(u,v):
-            print 'Edge already exists'
+            print('Edge already exists')
         else:
             self.E[u].append(v)
             self.F[v]['parents'].append(u)
@@ -222,7 +222,7 @@ class BayesNet(object):
         try:   
             return self.F[rv]['values'].index(val)
         except ValueError:
-            print "Value Index Error"
+            print("Value Index Error")
             return -1
 
     def stride(self, rv, n):

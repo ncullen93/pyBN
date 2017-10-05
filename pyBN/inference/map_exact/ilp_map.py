@@ -26,7 +26,7 @@ def ilp_map(bn, evidence={}):
     try:
         import pulp as pl
     except ImportError:
-        print "You must 'pip install pulp' to use Map Optimization methods."
+        print("You must 'pip install pulp' to use Map Optimization methods.")
         return
 
     model = pl.LpProblem("MAP Inference",pl.LpMinimize)
@@ -38,7 +38,7 @@ def ilp_map(bn, evidence={}):
     ii = 0
     for rv in bn.nodes():
         var_dict[rv] = {}
-        for idx in xrange(len(bn.cpt(rv))):
+        for idx in range(len(bn.cpt(rv))):
             str_rep = bn.cpt_str_idx(rv,idx)
             #str_rep = str(rv)+'-'+str(idx)
             new_var = pl.LpVariable(str_rep,0,1,pl.LpInteger)
@@ -59,7 +59,7 @@ def ilp_map(bn, evidence={}):
     # OUTGOING EDGE CONSTRAINTS
     k=0
     for rv in bn.nodes():
-        for val_idx in xrange(len(bn.cpt(rv))):
+        for val_idx in range(len(bn.cpt(rv))):
             val = bn.values(rv)[val_idx % bn.card(rv)] # actual rv-val
             for child in bn.children(rv):
                 # get indices of the child cpt which correspond to rv-val
@@ -74,12 +74,12 @@ def ilp_map(bn, evidence={}):
     k=0
     for rv in bn.nodes():
         if len(bn.parents(rv)) > 0:
-            for val_idx in xrange(len(bn.cpt(rv))):
+            for val_idx in range(len(bn.cpt(rv))):
                 # find which parent-vals that index belongs to
                 p_cpt = {}
                 for parent in bn.parents(rv):
                     p_cpt[parent] = []
-                    for p_idx in xrange(len(bn.cpt(parent))):
+                    for p_idx in range(len(bn.cpt(parent))):
                         p_val = bn.values(parent)[p_idx % bn.card(parent)]
                         if val_idx in bn.cpt_indices(rv, {parent:p_val}):
                             p_cpt[parent].append(p_idx)
@@ -93,4 +93,4 @@ def ilp_map(bn, evidence={}):
 
     for v in model.variables():
         if v.varValue == 1.0:
-            print v.name
+            print(v.name)

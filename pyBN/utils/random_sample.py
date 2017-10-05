@@ -44,7 +44,7 @@ def random_sample(bn, n=1000):
     rv_map = dict([(rv,idx) for idx,rv in enumerate(bn.nodes())])
     factor_map = dict([(rv,Factor(bn,rv)) for rv in bn.nodes()])
     
-    for i in xrange(n):
+    for i in range(n):
         for rv in bn.nodes():
             f = deepcopy(factor_map[rv])
             # reduce_factor by parent samples
