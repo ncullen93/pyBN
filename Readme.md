@@ -1,3 +1,6 @@
+If you are hiring for a Python-based software engineer or data analyst, email me at nickcullen31 at gmail dot com.
+
+
 NOTE: I wrote this code to go along with Daphne Koller's book and no longer
 maintain the repository, although the code should be easily adaptable. 
 If you have any questions, please email me at ncullen at seas dot upenn dot edu.
